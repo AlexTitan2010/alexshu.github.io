@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alexandr Shulyakovskiy - Creative Lead & Producer</title>
+    <meta name="description" content="Creative Lead & Producer orchestrating high-volume video pipelines & Gen AI integration.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        .project-card-glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-orange-500 selection:text-white">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent py-6">
+        <div class="container mx-auto px-6 flex justify-between items-center relative">
+            <div class="text-xl font-bold tracking-tighter text-white">
+                ALEX<span class="text-orange-500">.SHU</span>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-orange-500 transition-colors">Expertise</a>
+                <a href="#work" class="hover:text-orange-500 transition-colors">Work</a>
+                <a href="#experience" class="hover:text-orange-500 transition-colors">Experience</a>
+                <a href="#contact" class="hover:text-orange-500 transition-colors">Contact</a>
+            </div>
+
+            <!-- Mobile Actions -->
+            <div class="flex items-center space-x-4">
+                <a href="mailto:al.shulyakovskiy@gmail.com" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all">
+                    Hire Me
+                </a>
+                <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white focus:outline-none p-1">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-2xl overflow-hidden transition-all duration-300">
+            <div class="flex flex-col p-6 space-y-4 text-center">
+                <a href="#about" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Expertise</a>
+                <a href="#work" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Work</a>
+                <a href="#experience" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Experience</a>
+                <a href="#contact" class="text-slate-300 hover:text-orange-500 font-medium py-2">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-orange-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-1/4 h-full bg-blue-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 space-y-6">
+                    <div class="inline-flex items-center space-x-2 bg-slate-900/50 border border-slate-800 px-3 py-1 rounded-full text-xs font-medium text-orange-400">
+                        <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+                        <span>Open to Leadership Roles</span>
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight">
+                        Creative Lead <br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-600">
+                            Video & Game Production
+                        </span>
+                    </h1>
+                    
+                    <p class="text-lg text-slate-400 max-w-xl leading-relaxed">
+                        Orchestrating high-volume pipelines and bridging the gap between creative vision and operational efficiency. Expert in scaling content for millions of players through Gen AI integration and strategic vendor management.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#work" class="flex items-center space-x-2 bg-white text-slate-950 px-6 py-3 rounded-lg font-bold hover:bg-slate-200 transition-colors">
+                            <i data-lucide="play" class="fill-current w-4 h-4"></i>
+                            <span>See My Work</span>
+                        </a>
+                        <a href="#experience" class="flex items-center space-x-2 border border-slate-700 bg-slate-900/50 px-6 py-3 rounded-lg font-bold hover:border-orange-500 hover:text-orange-500 transition-colors">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                            <span>Work History</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative w-full max-w-md aspect-square md:aspect-[4/5] lg:aspect-square flex-shrink-0 group">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-orange-600 to-blue-600 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500 opacity-70 blur-lg"></div>
+                    <div class="absolute inset-0 bg-slate-800 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
+                    <img 
+                        src="https://media.licdn.com/dms/image/v2/D4D03AQGjhqASFWbO7A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1697970605387?e=1769040000&v=beta&t=SS98RTYs-GuRzVT-7QL7sr48e1Syt1J-YNqC0Uza0n0" 
+                        alt="Alexandr Shulyakovskiy" 
+                        class="absolute inset-0 w-full h-full object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-slate-700/50"
+                    />
+                    <div class="absolute -bottom-6 -left-6 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-xl flex items-center space-x-3">
+                        <div class="bg-orange-500/20 p-2 rounded-lg">
+                            <i data-lucide="trending-up" class="text-orange-500 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">Audience Growth</div>
+                            <div class="font-bold text-white">1,000,000+ Subs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="bg-slate-900 border-y border-slate-800 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center md:text-left">
+                    <div class="text-4xl md:text-5xl font-bold text-white mb-2">70%</div>
+                    <div class="text-orange-500 font-semibold text-sm mb-1">Cost Reduction</div>
+                    <div class="text-slate-500 text-xs">Gen AI Implementation</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-4xl md:text-5xl font-bold text-white mb-2">$200k</div>
+                    <div class="text-orange-500 font-semibold text-sm mb-1">Annual Savings</div>
+                    <div class="text-slate-500 text-xs">Vendor Optimization</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-4xl md:text-5xl font-bold text-white mb-2">1M+</div>
+                    <div class="text-orange-500 font-semibold text-sm mb-1">YouTube Growth</div>
+                    <div class="text-slate-500 text-xs">Subscribers Reached</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-4xl md:text-5xl font-bold text-white mb-2">8%</div>
+                    <div class="text-orange-500 font-semibold text-sm mb-1">CTR Increase</div>
+                    <div class="text-slate-500 text-xs">User Acquisition Creatives</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills / Tech Stack -->
+    <section class="py-20 bg-slate-950" id="about">
+        <div class="container mx-auto px-6">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-white mb-4">Core Expertise</h2>
+                <p class="text-slate-400 max-w-2xl">
+                    Leading teams through the intersection of traditional cinema craft and modern generative workflows.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="users" class="text-green-500 w-6 h-6"></i>
+                        <h3 class="font-bold text-white">Management</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Team Building</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Vendor Management</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Pipeline Design</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Budgeting</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="brain-circuit" class="text-purple-500 w-6 h-6"></i>
+                        <h3 class="font-bold text-white">Generative AI</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Workflow Integration</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Sora / Veo</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Midjourney</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">LLM Prompting</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="video" class="text-blue-500 w-6 h-6"></i>
+                        <h3 class="font-bold text-white">Video Production</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Live Broadcasting</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Post-Production</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">UE5 Integration</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Set Direction</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="zap" class="text-yellow-500 w-6 h-6"></i>
+                        <h3 class="font-bold text-white">Creative Direction</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Narrative Design</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Concept Development</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Art Direction</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="py-20 bg-slate-900" id="work">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-4">Selected Works</h2>
+                    <p class="text-slate-400">A demonstration of high-craft production, complex storytelling, and innovative broadcasting.</p>
+                </div>
+                
+                <div class="flex flex-wrap gap-2" id="filter-container">
+                    <button onclick="filterProjects('all')" class="filter-btn active px-4 py-2 rounded-full text-sm font-medium transition-all bg-orange-600 text-white" data-filter="all">All</button>
+                    <button onclick="filterProjects('Cinematic')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white" data-filter="Cinematic">Cinematic</button>
+                    <button onclick="filterProjects('Broadcast')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white" data-filter="Broadcast">Broadcast</button>
+                    <button onclick="filterProjects('Updates')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white" data-filter="Updates">Updates</button>
+                </div>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+                
+                <!-- Project 1: Low Budget Craft -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                    <div onclick="openVideo('JiThtTg_5Nc')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/JiThtTg_5Nc/maxresdefault.jpg" alt="High Quality Low Budget" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Live Action Commercials</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Efficiency</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Achieved 6x cost reduction without quality compromise. Manual production from scratch, featuring real actor integration under strict budget constraints.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Zero AI</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Budget Opt</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2: Audience Engagement -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                    <div onclick="openVideo('fqvGPcgGaws')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/fqvGPcgGaws/maxresdefault.jpg" alt="Narrative Engagement" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Narrative Campaigns</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Story</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Conceptualized a story from scratch to engage core players. Led creative direction, composition, and project management for this high-impact piece.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Concept</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Supervising</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3: Cross-Departmental Update -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Updates">
+                    <div onclick="openVideo('Mdp5tdAKzRk')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/Mdp5tdAKzRk/maxresdefault.jpg" alt="Season 5 Update" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Season Launch Strategy</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Marketing</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Orchestrated collaboration between Narrative, 3D Art, and Game Design. Produced all video assets for both in-game and marketing purposes.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Full-Cycle</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">IP Strategy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4: Community Trust Explainer -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Updates">
+                    <div onclick="openVideo('mTwUlsov26c')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/mTwUlsov26c/maxresdefault.jpg" alt="Explainer Content" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Community Engagement</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Trust</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Strategic video aimed at rebuilding player trust. Introduced upcoming quality-of-life changes that received overwhelming community applause.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Relations</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Crisis PR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5: Unreal Engine Innovation -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                    <div onclick="openVideo('1QywDp3p9Fs')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/1QywDp3p9Fs/maxresdefault.jpg" alt="UE5 Production" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Unreal Engine 5 Cinematics</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Tech</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Challenging Unreal Engine production. Managed agency collaboration and creative concept for a complex Battle Pass narrative without AI tools.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">UE5</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Outsource</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6: Zero-to-One Broadcast -->
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Broadcast">
+                    <div onclick="openVideo('uXIbYO7BMPU')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
+                        <img src="https://img.youtube.com/vi/uXIbYO7BMPU/maxresdefault.jpg" alt="Live Broadcast" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                            <i data-lucide="play" class="w-12 h-12 text-white fill-current"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Live Event Production</h3>
+                            <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Live</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6 flex-grow">Built from zero: Director, Operator, and Gaffer roles. Managed set design, hired full outsource crew, and led the opener video production.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Direction</span>
+                            <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Crew Mgmt</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section class="py-20 bg-slate-950" id="experience">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <h2 class="text-3xl font-bold text-white mb-12 text-center">Experience</h2>
+            <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
+                
+                <!-- Job 1 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 group-hover:bg-orange-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <i data-lucide="briefcase" class="text-slate-400 group-hover:text-white w-4 h-4"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
+                            <h3 class="font-bold text-white text-lg">Creative Producer</h3>
+                            <span class="text-orange-500 text-sm font-medium">Sep 2018 - Present</span>
+                        </div>
+                        <div class="text-slate-400 font-medium mb-4 flex items-center">
+                            <i data-lucide="gamepad-2" class="mr-2 w-4 h-4"></i>
+                            Wargaming.net
+                        </div>
+                        <ul class="space-y-3 text-slate-400 text-sm leading-relaxed">
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Global Vendor Management:</strong> Optimized production pipelines, resulting in $200k/year operational savings.</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Broadcast Division Leadership:</strong> Built streaming capabilities from the ground up, saving $140k/year in agency fees.</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>User Acquisition Strategy:</strong> Directed creative testing frameworks that doubled CTR to 8% for user acquisition campaigns.</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Pipeline Optimization:</strong> Reduced in-game asset production time by 20% through process re-engineering.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Job 2 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 group-hover:bg-orange-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <i data-lucide="users" class="text-slate-400 group-hover:text-white w-4 h-4"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
+                            <h3 class="font-bold text-white text-lg">Social Media Manager</h3>
+                            <span class="text-orange-500 text-sm font-medium">Feb 2017 - Sep 2018</span>
+                        </div>
+                        <div class="text-slate-400 font-medium mb-4 flex items-center">
+                            <i data-lucide="gamepad-2" class="mr-2 w-4 h-4"></i>
+                            Wargaming.net
+                        </div>
+                        <ul class="space-y-3 text-slate-400 text-sm leading-relaxed">
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Community Growth:</strong> Built and directed an influencer coalition driving 20M weekly views organically.</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Production Budgeting:</strong> Achieved 15x cost reduction on UGC video production through strategic sourcing.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer class="bg-slate-900 py-20 border-t border-slate-800" id="contact">
+        <div class="container mx-auto px-6">
+            <div class="bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl p-8 md:p-16 text-center relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Ready to scale your production?</h2>
+                    <p class="text-white/80 mb-8 text-lg">I'm available for leadership opportunities in Game Production.</p>
+                    <div class="flex flex-col md:flex-row justify-center gap-4">
+                        <a href="mailto:al.shulyakovskiy@gmail.com" class="flex items-center justify-center space-x-2 bg-white text-orange-600 px-8 py-3 rounded-lg font-bold">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                            <span>al.shulyakovskiy@gmail.com</span>
+                        </a>
+                        <div class="flex gap-4 justify-center">
+                            <a href="https://linkedin.com/in/al-shu" class="flex items-center justify-center w-12 h-12 bg-black/20 text-white rounded-lg"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                            <a href="#" class="flex items-center justify-center w-12 h-12 bg-black/20 text-white rounded-lg" title="+370 62411430"><i data-lucide="phone" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 text-center text-slate-500 text-sm">© 2024 Alexandr Shulyakovskiy.</div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="closeVideo()">
+        <div class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl scale-95 transition-transform duration-300" id="modalContent" onclick="event.stopPropagation()">
+            <button onclick="closeVideo()" class="absolute top-4 right-4 text-white/50 hover:text-white z-10 bg-black/50 p-2 rounded-full backdrop-blur-md transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <!-- Added referrerpolicy to help with preview environment restrictions -->
+            <iframe id="videoFrame" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Navbar Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-4');
+                nav.classList.remove('py-6');
+            } else {
+                nav.classList.remove('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-4');
+                nav.classList.add('py-6');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close Mobile Menu on Link Click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Simple Filter
+        function filterProjects(category) {
+            const items = document.querySelectorAll('.project-item');
+            const btns = document.querySelectorAll('.filter-btn');
+
+            btns.forEach(btn => {
+                if(btn.dataset.filter === category) {
+                    btn.classList.add('bg-orange-600', 'text-white');
+                    btn.classList.remove('bg-slate-800', 'text-slate-400');
+                } else {
+                    btn.classList.remove('bg-orange-600', 'text-white');
+                    btn.classList.add('bg-slate-800', 'text-slate-400');
+                }
+            });
+
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Video Modal Functions
+        function openVideo(videoId) {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoFrame');
+            const content = document.getElementById('modalContent');
+            
+            // REMOVED the 'origin' parameter which causes issues in local/preview environments
+            // Added 'si' (Service Integrator) parameter which sometimes helps with tracking/errors
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            // Small timeout to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+            
+            // Disable body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoFrame');
+            const content = document.getElementById('modalContent');
+
+            // Hide modal visual
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            // Wait for transition to finish
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                iframe.src = ''; // Stop video
+                document.body.style.overflow = ''; // Re-enable scroll
+            }, 300);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeVideo();
+            }
+        });
+    </script>
+</body>
+</html>
