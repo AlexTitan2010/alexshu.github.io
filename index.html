@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- FAVICON (Browser Tab Icon) -->
-    <!-- Fixed: Properly encoded SVG to prevent syntax errors -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ea580c'/%3E%3Cpath d='M11 8 L25 16 L11 24 Z' fill='white'/%3E%3C/svg%3E">
+    <!-- Updated to Red #dc2626 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23dc2626'/%3E%3Cpath d='M11 8 L25 16 L11 24 Z' fill='white'/%3E%3C/svg%3E">
 
     <!-- PRIMARY SEO CONFIGURATION -->
     <title>Alexandr Shulyakovskiy | Creative Lead & Game Video Production</title>
@@ -21,7 +21,7 @@
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://media.licdn.com/dms/image/v2/D4D03AQGjhqASFWbO7A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1697970605387?e=1769040000&v=beta&t=SS98RTYs-GuRzVT-7QL7sr48e1Syt1J-YNqC0Uza0n0">
     
-    <!-- SCHEMA.ORG JSON-LD (CRITICAL FOR NAME VARIATIONS) -->
+    <!-- SCHEMA.ORG JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -77,13 +77,18 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
         
         .project-card-glass {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(10px);
         }
         
+        ::selection {
+            background: #ea580c;
+            color: white;
+        }
+
         /* Hide elements when printing to PDF */
         @media print {
             #navbar, #videoModal, .no-print {
@@ -108,7 +113,7 @@
     <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent py-6">
         <div class="container mx-auto px-6 flex justify-between items-center relative">
             <div class="text-xl font-bold tracking-tighter text-white">
-                ALEX<span class="text-orange-500">.SHU</span>
+                ALEX<span class="text-red-600">SHU</span>
             </div>
             
             <!-- Desktop Menu -->
@@ -162,9 +167,9 @@
                         </span>
                     </h1>
                     
-                    <!-- REVISED: More natural, human-like description -->
+                    <!-- REVISED: Leadership Focus + Stats -->
                     <p class="text-lg text-slate-400 max-w-xl leading-relaxed">
-                        I connect creative goals with practical execution by improving workflows and removing bottlenecks. I grow content output reliably — serving audiences in the millions — by coordinating production partners and applying smart tooling where it adds real value.
+                        Leading with 14,000+ hours of player insight, I guide teams to bridge the gap between creative ambition and production reality. I ensure every asset resonates with the player mindset while maximizing budget efficiency.
                     </p>
                     
                     <div class="flex flex-wrap gap-4 pt-4">
@@ -188,8 +193,8 @@
                         class="absolute inset-0 w-full h-full object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-slate-700/50"
                     />
                     <div class="absolute -bottom-6 -left-6 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-xl flex items-center space-x-3">
-                        <div class="bg-orange-500/20 p-2 rounded-lg">
-                            <i data-lucide="youtube" class="text-orange-500 w-6 h-6"></i>
+                        <div class="bg-green-500/20 p-2 rounded-lg">
+                            <i data-lucide="trending-up" class="text-green-500 w-6 h-6"></i>
                         </div>
                         <div>
                             <div class="text-xs text-slate-400">Audience Growth</div>
@@ -208,7 +213,6 @@
                 <div class="text-center md:text-left">
                     <div class="text-4xl md:text-5xl font-bold text-white mb-2">70%</div>
                     <div class="text-orange-500 font-semibold text-sm mb-1">Cost Reduction</div>
-                    <!-- REVISED: More specific description -->
                     <div class="text-slate-500 text-xs">Implementing GenAI tools selectively where they reduce manual load and increase output quality.</div>
                 </div>
                 <div class="text-center md:text-left">
@@ -235,7 +239,6 @@
         <div class="container mx-auto px-6">
             <div class="mb-12">
                 <h2 class="text-3xl font-bold text-white mb-4">Core Expertise</h2>
-                <!-- REVISED: More human description -->
                 <p class="text-slate-400 max-w-2xl">
                     I help teams maintain cinematic quality while adopting modern generative tools where appropriate.
                 </p>
@@ -330,7 +333,6 @@
                             <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Snatch Movie Collaboration</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">VFX</span>
                         </div>
-                        <!-- REVISED: More accurate professional description -->
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Integrated locked movie footage with Unreal CG assets while preserving visual continuity. Engineered a new narrative context for the Snatch IP, delivering a fan-favorite collaboration despite rigid asset constraints.</p>
                         <div class="flex flex-wrap gap-2 mt-auto">
                             <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Unreal Engine</span>
@@ -397,7 +399,6 @@
                             <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Season Launch Strategy</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Marketing</span>
                         </div>
-                        <!-- REVISED: Stronger collaboration description -->
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Coordinated narrative, 3D art, and game design teams to deliver aligned creative assets. Produced all video assets for both in-game and marketing purposes.</p>
                         <div class="flex flex-wrap gap-2 mt-auto">
                             <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">Full-Cycle</span>
@@ -442,7 +443,6 @@
                             <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Unreal Engine 5 Cinematics</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Tech</span>
                         </div>
-                        <!-- REVISED: Removed AI phrasing -->
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Handled Unreal Engine production on a tight schedule, coordinating with external teams while keeping creative direction consistent.</p>
                         <div class="flex flex-wrap gap-2 mt-auto">
                             <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-500 border border-slate-800 px-2 py-1 rounded">UE5</span>
