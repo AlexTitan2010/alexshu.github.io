@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- FAVICON (Browser Tab Icon) -->
-    <!-- Updated to Red #dc2626 -->
+    <!-- Updated to Red #dc2626 as requested -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23dc2626'/%3E%3Cpath d='M11 8 L25 16 L11 24 Z' fill='white'/%3E%3C/svg%3E">
 
     <!-- PRIMARY SEO CONFIGURATION -->
@@ -59,7 +59,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -89,6 +89,21 @@
             color: white;
         }
 
+        /* Shimmer Effect for Availability Badge */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
         /* Hide elements when printing to PDF */
         @media print {
             #navbar, #videoModal, .no-print {
@@ -112,21 +127,22 @@
     <!-- Navigation -->
     <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent py-6">
         <div class="container mx-auto px-6 flex justify-between items-center relative">
+            <!-- Logo: ALEXSHU (Bold, SHU is Orange) -->
             <div class="text-xl font-bold tracking-tighter text-white">
-                ALEX<span class="text-red-600">SHU</span>
+                ALEX<span class="text-orange-600">SHU</span>
             </div>
             
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="#about" class="hover:text-orange-500 transition-colors">Expertise</a>
-                <a href="#work" class="hover:text-orange-500 transition-colors">Work</a>
-                <a href="#experience" class="hover:text-orange-500 transition-colors">Experience</a>
-                <a href="#contact" class="hover:text-orange-500 transition-colors">Contact</a>
+                <a href="#about" class="hover:text-orange-600 transition-colors">Expertise</a>
+                <a href="#work" class="hover:text-orange-600 transition-colors">Work</a>
+                <a href="#experience" class="hover:text-orange-600 transition-colors">Experience</a>
+                <a href="#contact" class="hover:text-orange-600 transition-colors">Contact</a>
             </div>
 
             <!-- Mobile Actions -->
             <div class="flex items-center space-x-4">
-                <a href="mailto:al.shulyakovskiy@gmail.com" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all">
+                <a href="mailto:al.shulyakovskiy@gmail.com" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-lg shadow-orange-600/20">
                     Contact Me
                 </a>
                 <!-- Hamburger Button -->
@@ -139,10 +155,10 @@
         <!-- Mobile Menu Dropdown -->
         <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-2xl overflow-hidden transition-all duration-300">
             <div class="flex flex-col p-6 space-y-4 text-center">
-                <a href="#about" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Expertise</a>
-                <a href="#work" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Work</a>
-                <a href="#experience" class="text-slate-300 hover:text-orange-500 font-medium py-2 border-b border-slate-800/50">Experience</a>
-                <a href="#contact" class="text-slate-300 hover:text-orange-500 font-medium py-2">Contact</a>
+                <a href="#about" class="text-slate-300 hover:text-orange-600 font-medium py-2 border-b border-slate-800/50">Expertise</a>
+                <a href="#work" class="text-slate-300 hover:text-orange-600 font-medium py-2 border-b border-slate-800/50">Work</a>
+                <a href="#experience" class="text-slate-300 hover:text-orange-600 font-medium py-2 border-b border-slate-800/50">Experience</a>
+                <a href="#contact" class="text-slate-300 hover:text-orange-600 font-medium py-2">Contact</a>
             </div>
         </div>
     </nav>
@@ -155,9 +171,11 @@
         <div class="container mx-auto px-6 relative z-10">
             <div class="flex flex-col md:flex-row items-center gap-12">
                 <div class="flex-1 space-y-6">
-                    <div class="inline-flex items-center space-x-2 bg-slate-900/50 border border-slate-800 px-3 py-1 rounded-full text-xs font-medium text-orange-400">
-                        <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
-                        <span>Open to Leadership Roles</span>
+                    <!-- Availability Badge with Shimmer -->
+                    <div class="relative inline-flex items-center space-x-2 bg-slate-900/50 border border-slate-800 px-3 py-1 rounded-full text-xs font-medium text-orange-400 overflow-hidden group">
+                        <div class="animate-shimmer absolute inset-0"></div>
+                        <span class="w-2 h-2 bg-orange-600 rounded-full animate-pulse relative z-10"></span>
+                        <span class="relative z-10">Open to Leadership Roles</span>
                     </div>
                     
                     <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight">
@@ -167,7 +185,6 @@
                         </span>
                     </h1>
                     
-                    <!-- REVISED: Leadership Focus + Stats -->
                     <p class="text-lg text-slate-400 max-w-xl leading-relaxed">
                         Leading with 14,000+ hours of player insight, I guide teams to bridge the gap between creative ambition and production reality. I ensure every asset resonates with the player mindset while maximizing budget efficiency.
                     </p>
@@ -177,7 +194,7 @@
                             <i data-lucide="play" class="fill-current w-4 h-4"></i>
                             <span>See My Work</span>
                         </a>
-                        <a href="#experience" class="flex items-center space-x-2 border border-slate-700 bg-slate-900/50 px-6 py-3 rounded-lg font-bold hover:border-orange-500 hover:text-orange-500 transition-colors">
+                        <a href="#experience" class="flex items-center space-x-2 border border-slate-700 bg-slate-900/50 px-6 py-3 rounded-lg font-bold hover:border-orange-600 hover:text-orange-600 transition-colors">
                             <i data-lucide="user" class="w-4 h-4"></i>
                             <span>Work History</span>
                         </a>
@@ -185,16 +202,20 @@
                 </div>
 
                 <div class="relative w-full max-w-md aspect-square md:aspect-[4/5] lg:aspect-square flex-shrink-0 group">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-orange-600 to-blue-600 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500 opacity-70 blur-lg"></div>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-orange-600 to-red-600 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500 opacity-70 blur-lg"></div>
                     <div class="absolute inset-0 bg-slate-800 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
+                    
+                    <!-- Profile Image: Removed grayscale to be colorful -->
                     <img 
                         src="https://media.licdn.com/dms/image/v2/D4D03AQGjhqASFWbO7A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1697970605387?e=1769040000&v=beta&t=SS98RTYs-GuRzVT-7QL7sr48e1Syt1J-YNqC0Uza0n0" 
                         alt="Alexandr Shulyakovskiy" 
-                        class="absolute inset-0 w-full h-full object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-slate-700/50"
+                        class="absolute inset-0 w-full h-full object-cover rounded-2xl transition-all duration-500 border-2 border-slate-700/50"
                     />
+                    
+                    <!-- Audience Growth Icon: Updated to Orange -->
                     <div class="absolute -bottom-6 -left-6 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-xl flex items-center space-x-3">
-                        <div class="bg-green-500/20 p-2 rounded-lg">
-                            <i data-lucide="trending-up" class="text-green-500 w-6 h-6"></i>
+                        <div class="bg-orange-500/20 p-2 rounded-lg">
+                            <i data-lucide="trending-up" class="text-orange-500 w-6 h-6"></i>
                         </div>
                         <div>
                             <div class="text-xs text-slate-400">Audience Growth</div>
@@ -212,22 +233,22 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="text-center md:text-left">
                     <div class="text-4xl md:text-5xl font-bold text-white mb-2">70%</div>
-                    <div class="text-orange-500 font-semibold text-sm mb-1">Cost Reduction</div>
+                    <div class="text-orange-600 font-semibold text-sm mb-1">Cost Reduction</div>
                     <div class="text-slate-500 text-xs">Implementing GenAI tools selectively where they reduce manual load and increase output quality.</div>
                 </div>
                 <div class="text-center md:text-left">
                     <div class="text-4xl md:text-5xl font-bold text-white mb-2">$200k</div>
-                    <div class="text-orange-500 font-semibold text-sm mb-1">Annual Savings</div>
+                    <div class="text-orange-600 font-semibold text-sm mb-1">Annual Savings</div>
                     <div class="text-slate-500 text-xs">Vendor Optimization</div>
                 </div>
                 <div class="text-center md:text-left">
                     <div class="text-4xl md:text-5xl font-bold text-white mb-2">1M+</div>
-                    <div class="text-orange-500 font-semibold text-sm mb-1">YouTube Growth</div>
+                    <div class="text-orange-600 font-semibold text-sm mb-1">YouTube Growth</div>
                     <div class="text-slate-500 text-xs">Subscribers Reached</div>
                 </div>
                 <div class="text-center md:text-left">
                     <div class="text-4xl md:text-5xl font-bold text-white mb-2">8%</div>
-                    <div class="text-orange-500 font-semibold text-sm mb-1">CTR Increase</div>
+                    <div class="text-orange-600 font-semibold text-sm mb-1">CTR Increase</div>
                     <div class="text-slate-500 text-xs">User Acquisition Creatives</div>
                 </div>
             </div>
@@ -245,6 +266,7 @@
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Management -->
                 <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
                     <div class="flex items-center space-x-3 mb-4">
                         <i data-lucide="users" class="text-green-500 w-6 h-6"></i>
@@ -258,6 +280,7 @@
                     </div>
                 </div>
 
+                <!-- Gen AI: Updated Tools -->
                 <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
                     <div class="flex items-center space-x-3 mb-4">
                         <i data-lucide="brain-circuit" class="text-purple-500 w-6 h-6"></i>
@@ -265,12 +288,13 @@
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Workflow Integration</span>
-                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Sora / Veo</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Sora 2 / Veo 3</span>
                         <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Midjourney</span>
                         <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">LLM Prompting</span>
                     </div>
                 </div>
 
+                <!-- Video Production -->
                 <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
                     <div class="flex items-center space-x-3 mb-4">
                         <i data-lucide="video" class="text-blue-500 w-6 h-6"></i>
@@ -284,13 +308,15 @@
                     </div>
                 </div>
 
+                <!-- Creative Direction: Updated with Ideation Frameworks -->
                 <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-slate-700 transition-colors">
                     <div class="flex items-center space-x-3 mb-4">
                         <i data-lucide="zap" class="text-yellow-500 w-6 h-6"></i>
                         <h3 class="font-bold text-white">Creative Direction</h3>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Narrative Design</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Magnetic Poetry</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">TRIZ / 35 Questions</span>
                         <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Concept Development</span>
                         <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">Art Direction</span>
                     </div>
@@ -320,7 +346,7 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
                 
                 <!-- Project New: Snatch Collaboration -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('xK7Pg8Kl7RQ')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/xK7Pg8Kl7RQ/maxresdefault.jpg" alt="Snatch Movie Collaboration" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -330,7 +356,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Snatch Movie Collaboration</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Snatch Movie Collaboration</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">VFX</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Integrated locked movie footage with Unreal CG assets while preserving visual continuity. Engineered a new narrative context for the Snatch IP, delivering a fan-favorite collaboration despite rigid asset constraints.</p>
@@ -342,7 +368,7 @@
                 </div>
 
                 <!-- Project 1: Low Budget Craft -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('JiThtTg_5Nc')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/JiThtTg_5Nc/maxresdefault.jpg" alt="High Quality Low Budget" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -352,7 +378,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Live Action Commercials</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Live Action Commercials</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Efficiency</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Achieved 6x cost reduction without quality compromise. Manual production from scratch, featuring real actor integration under strict budget constraints.</p>
@@ -364,7 +390,7 @@
                 </div>
 
                 <!-- Project 2: Audience Engagement -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('fqvGPcgGaws')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/fqvGPcgGaws/maxresdefault.jpg" alt="Narrative Engagement" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -374,7 +400,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Narrative Campaigns</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Narrative Campaigns</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Story</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Conceptualized a story from scratch to engage core players. Led creative direction, composition, and project management for this high-impact piece.</p>
@@ -386,7 +412,7 @@
                 </div>
 
                 <!-- Project 3: Cross-Departmental Update -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Updates">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Updates">
                     <div onclick="openVideo('Mdp5tdAKzRk')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/Mdp5tdAKzRk/maxresdefault.jpg" alt="Season 5 Update" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -396,7 +422,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Season Launch Strategy</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Season Launch Strategy</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Marketing</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Coordinated narrative, 3D art, and game design teams to deliver aligned creative assets. Produced all video assets for both in-game and marketing purposes.</p>
@@ -408,7 +434,7 @@
                 </div>
 
                 <!-- Project 4: Community Trust Explainer -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Updates">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Updates">
                     <div onclick="openVideo('mTwUlsov26c')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/mTwUlsov26c/maxresdefault.jpg" alt="Explainer Content" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -418,7 +444,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Community Engagement</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Community Engagement</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Trust</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Strategic video aimed at rebuilding player trust. Introduced upcoming quality-of-life changes that received overwhelming community applause.</p>
@@ -430,7 +456,7 @@
                 </div>
 
                 <!-- Project 5: Unreal Engine Innovation -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('1QywDp3p9Fs')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/1QywDp3p9Fs/maxresdefault.jpg" alt="UE5 Production" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -440,7 +466,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Unreal Engine 5 Cinematics</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Unreal Engine 5 Cinematics</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Tech</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Handled Unreal Engine production on a tight schedule, coordinating with external teams while keeping creative direction consistent.</p>
@@ -452,7 +478,7 @@
                 </div>
 
                 <!-- Project 6: Zero-to-One Broadcast -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Broadcast">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Broadcast">
                     <div onclick="openVideo('uXIbYO7BMPU')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/uXIbYO7BMPU/maxresdefault.jpg" alt="Live Broadcast" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -462,7 +488,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Live Event Production</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Live Event Production</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Live</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Built from zero: Director, Operator, and Gaffer roles. Managed set design, hired full outsource crew, and led the opener video production.</p>
@@ -474,7 +500,7 @@
                 </div>
 
                 <!-- Project 7: Jiří "BJP" Procházka Collaboration -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('btDxd6pCq6E')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/btDxd6pCq6E/maxresdefault.jpg" alt="UFC Fighter Collaboration" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -484,7 +510,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">UFC Collaboration: Check Czech</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">UFC Collaboration: Check Czech</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Creative</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Partnered with UFC Champion Jiří Procházka. Coined the "Check Czech" slogan and transformed a budget-constrained location into a Mortal Kombat-inspired set through creative lighting.</p>
@@ -496,7 +522,7 @@
                 </div>
 
                 <!-- Project 8: Joanna Jędrzejczyk Collaboration -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('vX0I_0YIl_A')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/vX0I_0YIl_A/maxresdefault.jpg" alt="UFC Champion Campaign" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -506,7 +532,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">UFC Champion: Joanna Jędrzejczyk</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">UFC Champion: Joanna Jędrzejczyk</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">Recovery</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Cinematic campaign featuring 5-time UFC Champion. Managed end-to-end production recovery, from on-set logistics to final color grading, delivering a high-vibrancy aesthetic per marketing KPIs.</p>
@@ -518,7 +544,7 @@
                 </div>
 
                 <!-- Project 9: Battle Pass Low Budget -->
-                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-500 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
+                <div class="project-item group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-orange-600 transition-all duration-300 flex flex-col h-full" data-category="Cinematic">
                     <div onclick="openVideo('UjhRfWmcsZQ')" class="cursor-pointer block relative aspect-video overflow-hidden shrink-0">
                         <img src="https://img.youtube.com/vi/UjhRfWmcsZQ/maxresdefault.jpg" alt="UE5 Battle Pass Cinematic" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
@@ -528,7 +554,7 @@
                     </div>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-white group-hover:text-orange-500 transition-colors">Battle Pass Cinematic</h3>
+                            <h3 class="text-xl font-bold text-white group-hover:text-orange-600 transition-colors">Battle Pass Cinematic</h3>
                             <span class="bg-orange-600/20 text-orange-400 text-[10px] uppercase font-bold px-2 py-1 rounded">UE5</span>
                         </div>
                         <p class="text-slate-400 text-sm mb-6 flex-grow">Produced fully in Unreal Engine on a lean budget. Utilized cinematic tricks like silhouettes, close-ups, and fixed poses to maximize visual impact. Ensured the narrative vision was delivered intact from concept to final render.</p>
@@ -547,27 +573,30 @@
     <section class="py-20 bg-slate-950" id="experience">
         <div class="container mx-auto px-6 max-w-4xl">
             <h2 class="text-3xl font-bold text-white mb-12 text-center">Experience</h2>
-            <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
+            <!-- Connected Timeline Line -->
+            <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-orange-600 before:via-slate-800 before:to-slate-950">
                 
                 <!-- Job 1 -->
                 <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 group-hover:bg-orange-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                        <i data-lucide="briefcase" class="text-slate-400 group-hover:text-white w-4 h-4"></i>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 group-hover:bg-orange-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 relative">
+                         <!-- Pulsing Active Dot -->
+                         <div class="absolute inset-0 bg-orange-600 rounded-full animate-ping opacity-75"></div>
+                        <i data-lucide="briefcase" class="text-slate-400 group-hover:text-white w-4 h-4 relative z-10"></i>
                     </div>
-                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg group-hover:border-orange-600/50 transition-colors">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
                             <h3 class="font-bold text-white text-lg">Creative Producer</h3>
-                            <span class="text-orange-500 text-sm font-medium">Sep 2018 - Present</span>
+                            <span class="text-orange-600 text-sm font-medium">Sep 2018 - Present</span>
                         </div>
                         <div class="text-slate-400 font-medium mb-4 flex items-center">
                             <i data-lucide="gamepad-2" class="mr-2 w-4 h-4"></i>
                             Wargaming.net
                         </div>
                         <ul class="space-y-3 text-slate-400 text-sm leading-relaxed">
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Global Vendor Management:</strong> Optimized production pipelines, resulting in $200k/year operational savings.</span></li>
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Broadcast Division Leadership:</strong> Built streaming capabilities from the ground up, saving $140k/year in agency fees.</span></li>
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>User Acquisition Strategy:</strong> Directed creative testing frameworks that doubled CTR to 8% for user acquisition campaigns.</span></li>
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Pipeline Optimization:</strong> Reduced in-game asset production time by 20% through process re-engineering.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>Global Vendor Management:</strong> Optimized production pipelines, resulting in $200k/year operational savings.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>Broadcast Division Leadership:</strong> Built streaming capabilities from the ground up, saving $140k/year in agency fees.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>User Acquisition Strategy:</strong> Directed creative testing frameworks that doubled CTR to 8% for user acquisition campaigns.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>Pipeline Optimization:</strong> Reduced in-game asset production time by 20% through process re-engineering.</span></li>
                         </ul>
                     </div>
                 </div>
@@ -577,18 +606,18 @@
                     <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 group-hover:bg-orange-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                         <i data-lucide="users" class="text-slate-400 group-hover:text-white w-4 h-4"></i>
                     </div>
-                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg group-hover:border-orange-600/50 transition-colors">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
                             <h3 class="font-bold text-white text-lg">Social Media Manager</h3>
-                            <span class="text-orange-500 text-sm font-medium">Feb 2017 - Sep 2018</span>
+                            <span class="text-orange-600 text-sm font-medium">Feb 2017 - Sep 2018</span>
                         </div>
                         <div class="text-slate-400 font-medium mb-4 flex items-center">
                             <i data-lucide="gamepad-2" class="mr-2 w-4 h-4"></i>
                             Wargaming.net
                         </div>
                         <ul class="space-y-3 text-slate-400 text-sm leading-relaxed">
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Community Growth:</strong> Built and directed an influencer coalition driving 20M weekly views organically.</span></li>
-                            <li class="flex items-start"><span class="text-orange-500 mr-3 mt-1.5">•</span><span><strong>Production Budgeting:</strong> Achieved 15x cost reduction on UGC video production through strategic sourcing.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>Community Growth:</strong> Built and directed an influencer coalition driving 20M weekly views organically.</span></li>
+                            <li class="flex items-start"><span class="text-orange-600 mr-3 mt-1.5">•</span><span><strong>Production Budgeting:</strong> Achieved 15x cost reduction on UGC video production through strategic sourcing.</span></li>
                         </ul>
                     </div>
                 </div>
