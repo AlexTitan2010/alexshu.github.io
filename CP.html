@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Producer Trainer</title>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0c0e1a;
+      --surface:     #13162a;
+      --surface2:    #1a1f38;
+      --border:      #252a47;
+      --accent:      #6c63ff;
+      --accent-glow: rgba(108,99,255,.35);
+      --gold:        #f5c842;
+      --green:       #22c55e;
+      --green-bg:    rgba(34,197,94,.12);
+      --red:         #ef4444;
+      --red-bg:      rgba(239,68,68,.12);
+      --text:        #e2e4f0;
+      --muted:       #7b80a0;
+      --radius:      14px;
+      --radius-sm:   8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Layout ────────────────────────────────────────────────────────────── */
+    .shell {
+      width: 100%;
+      max-width: 760px;
+      padding: 0 20px 80px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(12,14,26,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 760px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .score-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-badge .pts { color: var(--gold); }
+
+    /* ── Progress Bar ──────────────────────────────────────────────────────── */
+    .progress-wrap {
+      height: 3px;
+      background: var(--border);
+      width: 100%;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      transition: width .4s ease;
+    }
+
+    /* ── Screens ───────────────────────────────────────────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Intro Screen ──────────────────────────────────────────────────────── */
+    .intro-hero {
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+
+    .intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(108,99,255,.15);
+      border: 1px solid rgba(108,99,255,.35);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a78bfa;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .intro-title {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e2e4f0 30%, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .intro-desc {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+    }
+
+    /* Filter Grid */
+    .filter-section { margin-bottom: 32px; }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .18s;
+      user-select: none;
+    }
+
+    .filter-chip:hover { border-color: var(--accent); color: #a78bfa; }
+
+    .filter-chip.active {
+      background: rgba(108,99,255,.18);
+      border-color: var(--accent);
+      color: #c4b5fd;
+      font-weight: 600;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .start-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .3px;
+      transition: opacity .18s, transform .18s;
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    .start-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .start-btn:active { transform: translateY(0); }
+
+    /* ── Quiz Screen ───────────────────────────────────────────────────────── */
+    .quiz-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 0;
+      margin-bottom: 20px;
+    }
+
+    .q-counter { font-size: 13px; color: var(--muted); font-weight: 500; }
+    .q-counter span { color: var(--text); font-weight: 700; }
+
+    .tags { display: flex; gap: 6px; }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .tag-cat {
+      background: rgba(108,99,255,.15);
+      color: #a78bfa;
+      border: 1px solid rgba(108,99,255,.3);
+    }
+
+    .tag-diff-junior { background: rgba(34,197,94,.12);  color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+    .tag-diff-mid    { background: rgba(245,200,66,.12); color: #fbbf24; border: 1px solid rgba(245,200,66,.3); }
+    .tag-diff-senior { background: rgba(239,68,68,.12);  color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .q-type-hint {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .q-text {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .options-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.5;
+      transition: border-color .15s, background .15s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(108,99,255,.08);
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+
+    .option-btn.selected { border-color: var(--accent); background: rgba(108,99,255,.1); }
+    .option-btn.selected .option-letter { background: var(--accent); color: #fff; }
+    .option-btn.correct { border-color: var(--green); background: var(--green-bg); }
+    .option-btn.correct .option-letter { background: var(--green); color: #fff; }
+    .option-btn.wrong { border-color: var(--red); background: var(--red-bg); }
+    .option-btn.wrong .option-letter { background: var(--red); color: #fff; }
+    .option-btn.reveal-correct { border-color: var(--green); background: var(--green-bg); }
+    .option-btn.reveal-correct .option-letter { background: var(--green); color: #fff; }
+    .option-btn:disabled { cursor: default; }
+
+    /* Explanation */
+    .explanation {
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin-top: 12px;
+    }
+
+    .explanation.show { display: block; }
+
+    .explanation-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+    }
+
+    .explanation-header.correct-head { color: var(--green); }
+    .explanation-header.wrong-head   { color: var(--red); }
+
+    .explanation-text {
+      font-size: 14px;
+      color: #b8bcd4;
+      line-height: 1.65;
+    }
+
+    /* Controls */
+    .quiz-controls { display: flex; gap: 10px; margin-top: 20px; }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .15s;
+      letter-spacing: .2px;
+    }
+
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: #fff; display: none; }
+    .btn-primary.show { display: block; }
+
+    .btn-skip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .multi-hint { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+    .btn-check { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: #fff; display: none; }
+    .btn-check.show { display: block; }
+
+    /* ── Results Screen ────────────────────────────────────────────────────── */
+    .results-hero { text-align: center; padding: 50px 0 36px; }
+
+    .results-trophy { font-size: 56px; margin-bottom: 16px; filter: drop-shadow(0 0 20px var(--gold)); }
+
+    .results-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+
+    .results-score {
+      font-size: 56px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), #fb923c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin: 16px 0;
+    }
+
+    .results-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 32px;
+    }
+
+    .tier-gold   { background: rgba(245,200,66,.15); border: 1px solid rgba(245,200,66,.4); color: var(--gold); }
+    .tier-silver { background: rgba(167,139,250,.15); border: 1px solid rgba(167,139,250,.4); color: #c4b5fd; }
+    .tier-bronze { background: rgba(251,146,60,.15); border: 1px solid rgba(251,146,60,.4); color: #fb923c; }
+    .tier-try    { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: #f87171; }
+
+    .breakdown-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .breakdown-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+    .breakdown-row { display: flex; align-items: center; gap: 12px; }
+
+    .breakdown-cat { font-size: 13px; font-weight: 500; width: 190px; flex-shrink: 0; }
+
+    .breakdown-bar-wrap { flex: 1; height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
+
+    .breakdown-bar { height: 100%; border-radius: 999px; transition: width .6s ease; }
+
+    .breakdown-pct { font-size: 12px; font-weight: 700; width: 38px; text-align: right; flex-shrink: 0; }
+
+    .results-actions { display: flex; flex-direction: column; gap: 10px; }
+
+    .btn-lg {
+      padding: 16px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .15s;
+    }
+
+    .btn-lg:hover { opacity: .9; transform: translateY(-1px); }
+
+    .btn-restart { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: #fff; box-shadow: 0 0 30px var(--accent-glow); }
+
+    .btn-retry-wrong { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+
+    /* ── Scrollbar ─────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Animations ────────────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .q-card, .explanation { animation: fadeUp .25s ease both; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60%  { transform: translateX(-6px); }
+      40%,80%  { transform: translateX(6px); }
+    }
+    .shake { animation: shake .3s ease; }
+
+    @media (max-width: 520px) {
+      .q-text { font-size: 15px; }
+      .breakdown-cat { width: 140px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">&#127918;</div>
+        <div>
+          <div class="logo-text">CP Trainer</div>
+          <div class="logo-sub">Performance Marketing</div>
+        </div>
+      </div>
+      <div class="score-badge" id="scoreDisplay" style="display:none">
+        Score: <span class="pts" id="scorePts">0</span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <!-- ── INTRO SCREEN ─────────────────────────────────────────────────── -->
+    <div class="screen active" id="screenIntro">
+      <div class="intro-hero">
+        <div class="intro-badge">&#128640; Interactive Training</div>
+        <h1 class="intro-title">Creative Producer<br>Certification Trainer</h1>
+        <p class="intro-desc">
+          Master performance marketing for casual games. KPIs, creative formats,
+          A/B testing strategy, platform tools, and senior-level scenarios.
+        </p>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Filter by Difficulty</div>
+        <div class="filter-grid" id="diffFilters">
+          <div class="filter-chip active" data-diff="all">All Levels</div>
+          <div class="filter-chip" data-diff="junior">Junior</div>
+          <div class="filter-chip" data-diff="mid">Mid-Level</div>
+          <div class="filter-chip" data-diff="senior">Senior</div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Filter by Category</div>
+        <div class="filter-grid" id="catFilters">
+          <div class="filter-chip active" data-cat="all">All Topics</div>
+          <div class="filter-chip" data-cat="KPIs &amp; Metrics">KPIs &amp; Metrics</div>
+          <div class="filter-chip" data-cat="Creative Formats">Creative Formats</div>
+          <div class="filter-chip" data-cat="Testing &amp; Strategy">Testing &amp; Strategy</div>
+          <div class="filter-chip" data-cat="Creative Fatigue">Creative Fatigue</div>
+          <div class="filter-chip" data-cat="Tools &amp; Platforms">Tools &amp; Platforms</div>
+          <div class="filter-chip" data-cat="Production Workflow">Production Workflow</div>
+          <div class="filter-chip" data-cat="Strategy &amp; Scenarios">Strategy &amp; Scenarios</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="statQ">50</div>
+          <div class="stat-lbl">Questions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">7</div>
+          <div class="stat-lbl">Topics</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Levels</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn">Start Training Session</button>
+    </div>
+
+    <!-- ── QUIZ SCREEN ──────────────────────────────────────────────────── -->
+    <div class="screen" id="screenQuiz">
+      <div class="quiz-meta">
+        <div class="q-counter">Question <span id="qNum">1</span> of <span id="qTotal">50</span></div>
+        <div class="tags">
+          <span class="tag tag-cat" id="qCatTag"></span>
+          <span class="tag" id="qDiffTag"></span>
+        </div>
+      </div>
+
+      <div class="q-card" id="qCard">
+        <div class="q-type-hint" id="qTypeHint"></div>
+        <div class="q-text" id="qText"></div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="multi-hint" id="multiHint" style="display:none">Select all correct answers, then click Check.</div>
+      </div>
+
+      <div class="explanation" id="explanationBox">
+        <div class="explanation-header" id="expHeader"></div>
+        <div class="explanation-text" id="expText"></div>
+      </div>
+
+      <div class="quiz-controls">
+        <button class="btn btn-skip" id="skipBtn">Skip</button>
+        <button class="btn btn-check" id="checkBtn">Check Answers</button>
+        <button class="btn btn-primary" id="nextBtn">Next Question</button>
+      </div>
+    </div>
+
+    <!-- ── RESULTS SCREEN ──────────────────────────────────────────────── -->
+    <div class="screen" id="screenResults">
+      <div class="results-hero">
+        <div class="results-trophy" id="resTrophy">&#127942;</div>
+        <div class="results-title" id="resTitle">Training Complete</div>
+        <div class="results-score" id="resScore">0%</div>
+        <div class="results-tier" id="resTier"></div>
+      </div>
+
+      <div class="breakdown-title">Performance by Category</div>
+      <div class="breakdown-list" id="breakdownList"></div>
+
+      <div class="results-actions">
+        <button class="btn-lg btn-restart" id="restartBtn">Restart with Same Filters</button>
+        <button class="btn-lg btn-retry-wrong" id="retryWrongBtn" style="display:none">Retry Missed Questions</button>
+        <button class="btn-lg btn-retry-wrong" id="backToMenuBtn">Back to Menu</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
