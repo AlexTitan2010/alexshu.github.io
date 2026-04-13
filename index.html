@@ -659,46 +659,56 @@
     .mobile-menu a:hover { color: var(--gold); }
 
     /* ── RESPONSIVE ── */
-    html { overflow-x: hidden; }
+    html, body { max-width: 100%; overflow-x: hidden; }
 
     @media (max-width: 900px) {
       nav { padding: 18px 24px; }
       .nav-links { display: none; }
       .nav-burger { display: flex; }
-      #hero {
-        grid-template-columns: 1fr;
-        padding: 100px 24px 60px;
-        text-align: center;
-        overflow: hidden;
-      }
-      h1 { font-size: clamp(2.4rem, 9vw, 4rem); overflow-wrap: break-word; }
+
+      /* Critical: grid items must not expand beyond their track */
+      #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; text-align: center; }
+      #hero > * { min-width: 0; max-width: 100%; }
+
+      h1 { font-size: clamp(2.2rem, 8vw, 4rem); overflow-wrap: break-word; }
+
+      /* Eyebrow: drop the decorative line, reduce letter-spacing */
+      .hero-eyebrow { justify-content: center; letter-spacing: .1em; }
+      .hero-eyebrow::before { display: none; }
+
+      /* Hero stats: wrap to multiple rows, smaller font, tighter gap */
+      .hero-stats { gap: 20px 32px; flex-wrap: wrap; justify-content: center; }
+      .stat-num { font-size: clamp(1.4rem, 5vw, 2.4rem); }
+
+      /* Hero desc: constrain to column width */
+      .hero-desc { margin: 20px auto 0; max-width: 100%; }
+
+      /* Portrait */
       .hero-portrait { order: -1; overflow: hidden; }
-      .portrait-frame { width: min(320px, 100%); }
+      .portrait-frame { width: min(300px, 100%); }
       .portrait-frame::before { inset: -1px; }
       .portrait-frame::after { display: none; }
       .portrait-badge { left: 0; bottom: 16px; }
-      .hero-eyebrow { justify-content: center; }
-      .hero-desc { margin: 20px auto 0; }
-      .hero-stats { justify-content: center; }
+
       section { padding: 72px 24px; }
       .about-grid { grid-template-columns: 1fr; gap: 48px; }
       .skills-grid { grid-template-columns: 1fr 1fr; }
       .achievements-grid { grid-template-columns: 1fr 1fr; }
       .achievement-card { padding: 32px 20px; }
-      .achievement-val { font-size: clamp(1.6rem, 6.5vw, 3.5rem); overflow-wrap: break-word; }
+      .achievement-val { font-size: clamp(1.5rem, 6vw, 3.5rem); overflow-wrap: break-word; }
       .learn-grid { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 24px; text-align: center; }
       .footer-right { text-align: center; }
     }
     @media (max-width: 480px) {
-      h1 { font-size: clamp(2rem, 8.5vw, 2.8rem); }
-      .achievement-val { font-size: clamp(1.3rem, 6vw, 1.8rem); }
-      .achievements-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+      .achievement-val { font-size: clamp(1.2rem, 5.5vw, 1.6rem); }
     }
     @media (max-width: 560px) {
       .video-grid { grid-template-columns: 1fr; }
       .skills-grid { grid-template-columns: 1fr; }
+      .achievements-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
