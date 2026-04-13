@@ -467,6 +467,70 @@
       color: var(--muted);
     }
 
+    /* ── LEARNING CENTER ── */
+    #learn { background: var(--bg2); }
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+    .learn-card {
+      background: var(--bg3);
+      padding: 56px 48px;
+      text-decoration: none;
+      color: var(--white);
+      display: block;
+      position: relative;
+      overflow: hidden;
+      transition: background .3s;
+    }
+    .learn-card:hover { background: #222226; }
+    .learn-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s cubic-bezier(.25,.46,.45,.94);
+    }
+    .learn-card:hover::before { transform: scaleX(1); }
+    .learn-card-label {
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .learn-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 2.8rem;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      line-height: 1;
+    }
+    .learn-card-desc {
+      font-size: .84rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 16px;
+      max-width: 340px;
+    }
+    .learn-card-arrow {
+      margin-top: 36px;
+      font-size: .74rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: gap .25s;
+    }
+    .learn-card:hover .learn-card-arrow { gap: 18px; }
+
     /* ── FOOTER ── */
     footer {
       background: var(--bg2);
@@ -555,6 +619,7 @@
       .about-grid { grid-template-columns: 1fr; gap: 48px; }
       .skills-grid { grid-template-columns: 1fr 1fr; }
       .achievements-grid { grid-template-columns: 1fr 1fr; }
+      .learn-grid { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 24px; text-align: center; }
       .footer-right { text-align: center; }
@@ -575,6 +640,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#achievements">Results</a></li>
+    <li><a href="#learn">Learn</a></li>
     <li><a href="mailto:al.shulyakovskiy@gmail.com">Contact</a></li>
   </ul>
 </nav>
@@ -942,6 +1008,28 @@
       <div class="achievement-val">Mentorship</div>
       <div class="achievement-desc">Junior producers successfully developed into mid-level production roles</div>
     </div>
+  </div>
+</section>
+
+<section id="learn">
+  <div class="section-header anim">
+    <span class="section-num">05</span>
+    <h2>Learning Center</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="learn-grid">
+    <a href="lt/" class="learn-card anim anim-d1">
+      <div class="learn-card-label">Language Tool</div>
+      <div class="learn-card-title">Lithuanian</div>
+      <div class="learn-card-desc">Interactive exercises for learning the Lithuanian language from scratch.</div>
+      <div class="learn-card-arrow">Open tool &nbsp;——</div>
+    </a>
+    <a href="tools/cp/" class="learn-card anim anim-d2">
+      <div class="learn-card-label">Performance Marketing</div>
+      <div class="learn-card-title">CP Trainer</div>
+      <div class="learn-card-desc">Certification trainer for Creative Producers in casual game UA.</div>
+      <div class="learn-card-arrow">Open tool &nbsp;——</div>
+    </a>
   </div>
 </section>
 
