@@ -42,11 +42,11 @@ const questions = [
     question: "What does ROAS stand for, and what does a 300% ROAS mean?",
     options: [
       "Rate of Ad Spending — you spent 300% of your budget",
-      "Return on Ad Spend — you earned $3 for every $1 spent",
       "Revenue over Average Sales — revenue is 300% above average",
+      "Return on Ad Spend — you earned $3 for every $1 spent",
       "Real-time Output Analytics Score — 300% above baseline"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "ROAS = Revenue ÷ Ad Spend × 100%. A 300% ROAS means you earned $3 for every $1 spent. Break-even is 100%. Most studios target 300%+ to ensure profitability after operational costs."
   },
 
@@ -58,11 +58,11 @@ const questions = [
     question: "What is CTR and what does a strong CTR indicate in casual game advertising?",
     options: [
       "Cost-to-Revenue ratio — measures if the ad is profitable",
-      "Click-Through Rate — clicks ÷ impressions; a high CTR means the ad hook is compelling",
+      "Campaign Tracking Rate — percentage of users tracked post-install",
       "Creative Test Result — a quality score assigned by Meta",
-      "Campaign Tracking Rate — percentage of users tracked post-install"
+      "Click-Through Rate — clicks ÷ impressions; a high CTR means the ad hook is compelling"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "CTR = Clicks ÷ Impressions. For casual games on Meta, 2–5% is a solid benchmark. High CTR means your hook is grabbing attention — but CTR alone doesn't guarantee quality installs. Always pair with install rate and D7 ROAS."
   },
 
@@ -73,12 +73,12 @@ const questions = [
     type: "single",
     question: "What does IPM measure?",
     options: [
-      "In-app Purchase Multiplier — ratio of paying users to total users",
       "Installs Per Mille — number of installs per 1,000 impressions",
+      "In-app Purchase Multiplier — ratio of paying users to total users",
       "Impression Performance Metric — overall ad quality score",
       "Interest Per Month — audience engagement over time"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "IPM = Installs per 1,000 impressions. It combines reach and conversion into one number, making it easy to compare creative efficiency across formats and platforms without needing to normalize for spend."
   },
 
@@ -106,11 +106,11 @@ const questions = [
     question: "What does D7 ROAS represent, and what is a typical target for a casual game?",
     options: [
       "Revenue from users who installed on Day 7 of the campaign",
-      "Return on ad spend measured 7 days after install, for the install cohort — target 15–25%",
       "Daily average ROAS across a 7-day campaign window",
+      "Return on ad spend measured 7 days after install, for the install cohort — target 15–25%",
       "ROAS calculated on the 7th iteration of a creative test"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "D7 ROAS = total revenue earned by users in an install cohort, measured at Day 7 post-install, divided by the spend to acquire them. It's an early indicator of user quality. Typical targets: D7 ROAS 15–25%, D30 ROAS 40–60%."
   },
 
@@ -122,11 +122,11 @@ const questions = [
     question: "A casual puzzle game has an LTV of $6.00 and a current CPI of $5.50. Should you aggressively scale this campaign?",
     options: [
       "Yes — LTV is above CPI so it's profitable by definition",
-      "Proceed cautiously — the $0.50 margin is thin; validate D30 ROAS and payback period first",
+      "No — CPI must always be below $3 for casual games to scale",
       "Scale immediately — any positive margin means you should maximize spend",
-      "No — CPI must always be below $3 for casual games to scale"
+      "Proceed cautiously — the $0.50 margin is thin; validate D30 ROAS and payback period first"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "LTV $6.00 vs CPI $5.50 leaves only $0.50 margin before payback. Operational costs, ad network fees, and store commissions can easily wipe that out. Validate the full cohort D30 ROAS and payback period before committing to aggressive scaling."
   },
 
@@ -137,12 +137,12 @@ const questions = [
     type: "single",
     question: "A campaign has $5,000 spend, 1,250 installs, and generated $18,000 in revenue at D30. Calculate CPI and D30 ROAS.",
     options: [
-      "CPI = $0.28, D30 ROAS = 360%",
       "CPI = $4.00, D30 ROAS = 360%",
+      "CPI = $0.28, D30 ROAS = 360%",
       "CPI = $4.00, D30 ROAS = 72%",
       "CPI = $14.40, D30 ROAS = 280%"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "CPI = $5,000 ÷ 1,250 = $4.00. D30 ROAS = $18,000 ÷ $5,000 × 100% = 360%. A 360% D30 ROAS is strong — it means you earned $3.60 for every $1 spent, well above the 100% break-even."
   },
 
@@ -172,11 +172,11 @@ const questions = [
     question: "What is a playable ad and why is it effective for casual games?",
     options: [
       "A video ad longer than 30 seconds that shows full gameplay",
-      "An interactive mini-game ad that lets users experience the core mechanic before downloading",
       "A static image ad that shows the game's highest-rated review",
+      "An interactive mini-game ad that lets users experience the core mechanic before downloading",
       "An ad format exclusive to TikTok for gaming content"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Playable ads are interactive mini-games (15–60 seconds) where users experience the game's core loop before downloading. They can reduce CPI by 20–40% for mechanics-heavy games like match-3, puzzle, and idle games because the self-selection effect — users who install have already 'played' and know they enjoy it."
   },
 
@@ -188,11 +188,11 @@ const questions = [
     question: "What does UGC stand for, and why does it outperform branded content in casual game ads?",
     options: [
       "Universal Game Content — standardized formats approved by app stores",
-      "User-Generated Content — ads created by real players; outperforms branded because it feels authentic and trustworthy",
+      "User Growth Conversion — a metric for tracking organic installs",
       "Unified Growth Campaign — a Meta ad type for app installs",
-      "User Growth Conversion — a metric for tracking organic installs"
+      "User-Generated Content — ads created by real players; outperforms branded because it feels authentic and trustworthy"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "UGC = content created by real players or creators. It feels unscripted and authentic. Data shows UGC achieves ~4x higher CTR, ~20% lower CPI, and ~50% lower cost-per-click vs branded content. 83% of consumers trust brands that share real customer content."
   },
 
@@ -203,12 +203,12 @@ const questions = [
     type: "single",
     question: "On iOS, real gameplay footage in video ads typically achieves what CTR compared to cinematic trailers?",
     options: [
-      "Lower CTR — cinematic trailers are more visually impressive",
-      "The same CTR — format matters more than content type",
       "Higher CTR — ~4.27% vs ~3.34% for cinematic trailers",
+      "The same CTR — format matters more than content type",
+      "Lower CTR — cinematic trailers are more visually impressive",
       "Higher CTR only on Android, not iOS"
     ],
-    correct: 2,
+    correct: 0,
     explanation: "Real gameplay footage achieves ~4.27% CTR on iOS vs ~3.34% for cinematic trailers. Authenticity and mechanical clarity outperform cinematic polish — users want to see what the game actually plays like, not a movie trailer."
   },
 
@@ -220,11 +220,11 @@ const questions = [
     question: "Which creative format should you prioritize for a match-3 puzzle game where the core satisfaction comes from the matching mechanic itself?",
     options: [
       "Static image showing colorful game characters and a star rating",
-      "UGC video of a player reacting to the game",
       "Playable ad letting users match tiles and feel the mechanic",
+      "UGC video of a player reacting to the game",
       "Long-form video showing 10 levels of gameplay progression"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "Playable ads are purpose-built for mechanics-driven satisfaction. Match-3 games derive their appeal from the tactile act of matching — a playable ad lets users experience that dopamine loop before downloading. This is why playables reduce CPI 20–40% for this genre."
   },
 
@@ -236,11 +236,11 @@ const questions = [
     question: "What is the maximum recommended file size for a playable ad, and why does it matter?",
     options: [
       "Under 500KB — any larger causes approval delays",
-      "Under 2MB — performance drops sharply beyond 3MB due to mobile load time",
       "Under 5MB — the standard for most ad networks",
+      "Under 2MB — performance drops sharply beyond 3MB due to mobile load time",
       "Under 10MB — only limited by device storage"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Playable ads should be under 2MB. Beyond 3MB, load time on mobile networks causes significant drop-off before the ad even starts — users scroll away. Keeping it under 2MB ensures fast load on 4G/LTE and maximizes engagement rate."
   },
 
@@ -252,11 +252,11 @@ const questions = [
     question: "Your game just launched with no creative assets ready. You need to start testing immediately. Which format do you prioritize first and why?",
     options: [
       "Playable ad — it will give the most complete picture of user quality",
-      "Static image ads — can be produced and tested within hours to validate concept directions",
+      "UGC — recruit players immediately even though it takes 2–3 weeks",
       "Full video production — quality is always worth the 1–2 week wait",
-      "UGC — recruit players immediately even though it takes 2–3 weeks"
+      "Static image ads — can be produced and tested within hours to validate concept directions"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Static ads can be created in hours, making them the fastest way to validate hooks, visual angles, and concepts before investing in expensive video or playable production. Test the concept cheaply first, then build the winning idea into higher-production formats."
   },
 
@@ -267,12 +267,12 @@ const questions = [
     type: "single",
     question: "A competitor runs playable ads for their bubble shooter game. You have the same genre. What's your creative format strategy?",
     options: [
-      "Copy their playable ad approach to stay competitive in the same format",
-      "Avoid playables entirely since the competitor already owns that space",
       "Run playable ads but test a unique mechanic angle or moment they haven't shown",
+      "Avoid playables entirely since the competitor already owns that space",
+      "Copy their playable ad approach to stay competitive in the same format",
       "Shift entirely to UGC to differentiate from the competitor on format"
     ],
-    correct: 2,
+    correct: 0,
     explanation: "Don't copy or flee — differentiate within the format. Use playable ads (proven for the genre) but test a unique angle: a different level moment, emotional hook, or difficulty curve that creates a distinct reason to prefer your game over theirs."
   },
 
@@ -302,11 +302,11 @@ const questions = [
     question: "What is the purpose of A/B testing in creative production?",
     options: [
       "To run the same ad on two different platforms simultaneously",
-      "To compare two or more creative variations under the same conditions to identify which performs better based on data",
       "To test the technical quality of an ad before it goes live",
+      "To compare two or more creative variations under the same conditions to identify which performs better based on data",
       "To split the audience between App Store and Play Store users"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "A/B testing is hypothesis-driven experimentation: you create a controlled test where one variable differs between versions, then use performance data to determine which is superior. The goal is replacing opinion with evidence in creative decisions."
   },
 
@@ -319,10 +319,10 @@ const questions = [
     options: [
       "1–2 high-quality concepts per week",
       "3–5 concepts per week",
-      "10–20 concepts per week",
-      "50+ concepts per week"
+      "50+ concepts per week",
+      "10–20 concepts per week"
     ],
-    correct: 2,
+    correct: 3,
     explanation: "Industry leaders like Voodoo and Playrix test 10–20 new concepts weekly. Creative fatigue sets in within 5–10 days at scale, so you need a constant pipeline of new material. This isn't 10–20 full productions — it's a mix of statics (hours), video hook variants (days), and playable iterations."
   },
 
@@ -333,12 +333,12 @@ const questions = [
     type: "single",
     question: "What budget range is recommended for a micro-test to validate a new creative concept before scaling?",
     options: [
-      "$50–100 per concept",
       "$200–500 per concept",
+      "$50–100 per concept",
       "$2,000–5,000 per concept",
       "$10,000 minimum to reach statistical significance"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Micro-tests at $200–500 per concept quickly reveal directional signal — is this concept worth investing in? — without risking large budgets on unproven ideas. Once a concept shows promising CTR and install rate in micro-test, then invest in scaling budget."
   },
 
@@ -366,11 +366,11 @@ const questions = [
     question: "A creative has excellent CTR (4.8%) but install rate is 22% below benchmark. What does this signal?",
     options: [
       "Strong performance — CTR is the primary metric that matters",
-      "The hook is compelling but misrepresents the game, attracting users who lose interest post-click",
       "CPI is likely very low — scale immediately regardless of install rate",
+      "The hook is compelling but misrepresents the game, attracting users who lose interest post-click",
       "A technical tracking issue — check attribution settings"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "High CTR + low install rate = 'clickbait' creative. The ad generates curiosity (people click) but the actual game store page or gameplay doesn't match the expectation set by the ad. Fix: ensure the creative honestly represents the core game experience."
   },
 
@@ -382,11 +382,11 @@ const questions = [
     question: "By how much should you increase daily budget when scaling a winning creative to avoid disrupting algorithm optimization?",
     options: [
       "2x daily — move fast and maximize early traction",
-      "20–30% daily increase to maintain algorithm stability",
+      "Duplicate the campaign instead of raising budget on the original",
       "10x in week one to establish dominance in the auction",
-      "Duplicate the campaign instead of raising budget on the original"
+      "20–30% daily increase to maintain algorithm stability"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Aggressive budget increases (2x+) force ad network algorithms to reset their optimization, causing performance instability. Gradual 20–30% daily increases allow the algorithm to adapt while maintaining the optimization momentum you've already built."
   },
 
@@ -397,12 +397,12 @@ const questions = [
     type: "single",
     question: "You have $5,000 to validate 5 new creative concepts. What budget allocation strategy is most effective?",
     options: [
-      "Put all $5,000 on the concept you're most confident in",
       "$1,000 per concept in equal micro-tests; scale winners with performance data",
+      "Put all $5,000 on the concept you're most confident in",
       "$2,500 each on the top 2 concepts — too risky to spread thin",
       "$500 each and give the remaining $2,500 to the leader after 2 days"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Equal micro-testing removes bias. You cannot reliably predict which concept will win before testing — that's the entire point of testing. Equal allocation lets data decide. The $1,000 per concept gives enough signal to identify clear winners before committing scaling budget."
   },
 
@@ -414,11 +414,11 @@ const questions = [
     question: "What statistical threshold should a creative test reach before you act on the results with confidence?",
     options: [
       "ROAS above 100% — if profitable, the creative is validated",
-      "CTR above 3% — industry-standard minimum for casual games",
       "95% statistical significance — only a 5% chance the result is due to random variation",
+      "CTR above 3% — industry-standard minimum for casual games",
       "Test must run for exactly 7 days regardless of data"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "Statistical significance at 95% confidence means there's only a 5% probability the performance difference is due to chance. Acting on results before reaching significance means you may be scaling a creative that only appeared to win due to random noise."
   },
 
@@ -464,11 +464,11 @@ const questions = [
     question: "What is creative fatigue in mobile game advertising?",
     options: [
       "When the creative team is overworked and productivity declines",
-      "When ad performance deteriorates because the same audience has seen the ad too many times",
+      "When the ad budget is depleted before the campaign goal is met",
       "When an ad fails platform review due to content policy violations",
-      "When the ad budget is depleted before the campaign goal is met"
+      "When ad performance deteriorates because the same audience has seen the ad too many times"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Creative fatigue = performance decline caused by audience overexposure. The same users keep seeing the same creative and stop responding. CTR drops, CPI rises, but the network keeps spending. It's not a platform issue — it's an audience saturation issue."
   },
 
@@ -479,12 +479,12 @@ const questions = [
     type: "single",
     question: "Which combination of signals most clearly indicates creative fatigue?",
     options: [
-      "Increasing CTR + Decreasing CPI — strong performance signal",
       "Decreasing CTR + Increasing CPI + Increasing impressions — fatigue pattern",
+      "Increasing CTR + Decreasing CPI — strong performance signal",
       "Stable CTR + Increasing CPI — targeting issue, not creative fatigue",
       "Decreasing impressions + Stable CTR — delivery problem"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "The classic fatigue pattern: CTR falls (audience stops engaging), CPI rises (less efficient per dollar), but impressions keep climbing (the network serves it more to hit spend targets). This trifecta confirms the creative has worn out its welcome with the audience."
   },
 
@@ -528,11 +528,11 @@ const questions = [
     question: "Which approach BEST prevents creative fatigue at a scaling casual game studio?",
     options: [
       "Running one proven, high-quality creative as long as possible to maximize its value",
-      "Maintaining a 2+ week inventory of pre-tested concepts ready to deploy at any time",
+      "Changing audience targeting to expose the same creative to new users",
       "Reducing budget during suspected fatigue periods to slow impression delivery",
-      "Changing audience targeting to expose the same creative to new users"
+      "Maintaining a 2+ week inventory of pre-tested concepts ready to deploy at any time"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Proactive pipeline management is the professional answer. Always having 2+ weeks of tested replacements queued means you never pause in a panic. Reactive fixes (cutting budget, changing targeting) are band-aids. The real solution is a continuous testing machine that never runs dry."
   },
 
@@ -545,12 +545,12 @@ const questions = [
     type: "single",
     question: "What is AppsFlyer and why is it essential for a Creative Producer?",
     options: [
-      "A video editing tool for creating mobile game ad creatives",
       "A Mobile Measurement Partner (MMP) that tracks installs, attribution, ROAS, and cohort data across all ad networks",
+      "A video editing tool for creating mobile game ad creatives",
       "A platform for designing playable ads without coding",
       "An AI tool that generates creative variations automatically"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "AppsFlyer is the industry-standard MMP — it sits between your ad networks and your game, tracking where every install came from and how those users monetize. Without an MMP, you can't accurately calculate ROAS, compare network performance, or make data-driven creative decisions."
   },
 
@@ -562,11 +562,11 @@ const questions = [
     question: "Meta Advantage+ Creative supports how many video/image assets per campaign?",
     options: [
       "1 video and 1 image",
-      "3 videos or images",
       "Up to 10 images/videos with 5 headlines, 5 texts, 5 CTAs",
+      "3 videos or images",
       "Unlimited assets — Meta optimizes automatically"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "Meta Advantage+ Creative supports up to 10 images/videos, 5 headlines, 5 primary texts, 5 descriptions, and 5 CTA buttons in one campaign. Meta's algorithm automatically combines these elements and optimizes toward the highest-performing combinations."
   },
 
@@ -578,11 +578,11 @@ const questions = [
     question: "What is a Creative Management Platform (CMP) and when should a game studio invest in one?",
     options: [
       "A scheduling tool for managing the creative team's work calendar",
-      "Software that automates creation of ad variations, resizes assets for all platforms, and manages publishing — valuable when running 10+ creatives across 3+ networks",
       "A platform for reviewing and approving ad designs before launch",
+      "Software that automates creation of ad variations, resizes assets for all platforms, and manages publishing — valuable when running 10+ creatives across 3+ networks",
       "A social media management tool for community content"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "CMPs (like Layer AI, Smartly.io, Bannerflow) automate the creation of hundreds of creative variations from one concept and handle multi-platform resizing and publishing. The ROI threshold: once you're managing 10+ live creatives across 3+ networks, manual work becomes a bottleneck — that's when a CMP pays for itself."
   },
 
@@ -594,11 +594,11 @@ const questions = [
     question: "How does Google UAC (Universal App Campaigns) fundamentally differ from Meta Ads in creative management?",
     options: [
       "Google UAC only supports static images, not video",
-      "Google UAC is inherently programmatic/DCO — you supply assets and Google automatically optimizes across Search, Display, YouTube, and Discover",
+      "Google UAC only works for Android apps, not iOS",
       "Google UAC requires manual bidding and creative selection",
-      "Google UAC only works for Android apps, not iOS"
+      "Google UAC is inherently programmatic/DCO — you supply assets and Google automatically optimizes across Search, Display, YouTube, and Discover"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Google UAC is DCO (Dynamic Creative Optimization) by design. You supply up to 20 images, 20 videos, 10 headlines, and 5 descriptions, and Google automatically assembles and optimizes combinations across all its surfaces. You can't manually select which creative runs where — Google does it."
   },
 
@@ -609,12 +609,12 @@ const questions = [
     type: "single",
     question: "What is SKAdNetwork (SKAN) and why does every iOS UA campaign need to account for it?",
     options: [
-      "A creative quality scoring system used by Apple's App Store",
       "Apple's privacy-preserving attribution framework (post-iOS 14.5) that limits individual tracking but provides campaign-level conversion data",
+      "A creative quality scoring system used by Apple's App Store",
       "A tool for scanning ad creatives for Apple's content policy compliance",
       "A network for sharing SKU-level ad performance data with partners"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "SKAN (SKAdNetwork) is Apple's response to ATT (App Tracking Transparency). After iOS 14.5, individual user-level attribution was restricted. SKAN provides aggregated, delayed, anonymized conversion signals instead. Understanding SKAN is essential because iOS campaigns require fundamentally different measurement strategies than Android."
   },
 
@@ -642,11 +642,11 @@ const questions = [
     question: "Your studio runs 18 live creatives across Meta, TikTok, and Google UAC simultaneously. What is the strongest case for adopting a CMP?",
     options: [
       "CMPs make creatives look more professional and polished",
-      "Manual management of 18 creatives across 3 platforms with different specs creates version control chaos, resizing bottlenecks, and human error — a CMP eliminates all three",
       "CMPs are required by Meta when running more than 10 creatives",
+      "Manual management of 18 creatives across 3 platforms with different specs creates version control chaos, resizing bottlenecks, and human error — a CMP eliminates all three",
       "CMPs automatically improve creative performance through AI optimization"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "At 18+ creatives across 3 platforms, each with different specs, the operational complexity becomes unmanageable manually — mismatched sizes, version errors, delayed launches, inconsistent naming. A CMP (Layer AI, Smartly.io) solves version control, auto-resizing, and multi-platform publishing in one system."
   },
 
@@ -660,11 +660,11 @@ const questions = [
     question: "What is a creative brief and what must it include?",
     options: [
       "A short video ad under 15 seconds",
-      "A document that aligns the team before production: objective, target audience, key message, format specs, and success metrics",
+      "A summary of campaign performance sent to stakeholders",
       "A legal agreement for using licensed music in ads",
-      "A summary of campaign performance sent to stakeholders"
+      "A document that aligns the team before production: objective, target audience, key message, format specs, and success metrics"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "A creative brief is the alignment document that comes before any production begins. Without it, designers and video editors make assumptions that waste time and budget. A good brief includes: campaign objective, target audience, core message, formats/specs required, tone, and what 'success' looks like."
   },
 
@@ -675,12 +675,12 @@ const questions = [
     type: "single",
     question: "What is the typical production timeline for a fully tested and network-compliant playable ad?",
     options: [
-      "2–4 hours with the right tools",
-      "1–2 days for a simple prototype",
       "7–10 days: prototype in 3–5 days, QA and optimization in 5–7 days",
+      "1–2 days for a simple prototype",
+      "2–4 hours with the right tools",
       "4–6 weeks including full QA across all target devices"
     ],
-    correct: 2,
+    correct: 0,
     explanation: "Playable ad production: concept and art (1–2 days) → development (2–3 days prototype, 3–5 days full build) → QA on emulators and touch testing → network spec compliance → 7–10 days total for a production-ready asset. Plan this into your creative calendar."
   },
 
@@ -725,10 +725,10 @@ const questions = [
     options: [
       "Agree and lower the target — pushing the team will hurt quality",
       "Insist on 20 — competitors do it, so you must too",
-      "Break down the mix by format: static tests (hours), video hook iterations (1–2 days), playable tweaks (3–5 days) — then calculate an achievable weekly volume and identify the bottleneck",
-      "Outsource all production to an external agency to hit the number"
+      "Outsource all production to an external agency to hit the number",
+      "Break down the mix by format: static tests (hours), video hook iterations (1–2 days), playable tweaks (3–5 days) — then calculate an achievable weekly volume and identify the bottleneck"
     ],
-    correct: 2,
+    correct: 3,
     explanation: "20 concepts isn't 20 full video productions — it's a deliberate mix: 6–8 static variants (hours each), 8–10 video hook iterations (days each), 2–3 playable tweaks (3–5 days each). Breaking it down by format type reveals what's actually achievable and where the real bottleneck is: production tools, team size, or brief quality."
   },
 
@@ -741,12 +741,12 @@ const questions = [
     type: "single",
     question: "A word puzzle game is spending $50K/month on UA with CPI $4.20 but LTV of only $4.80. What is the most effective intervention?",
     options: [
-      "Scale spend to $100K/month — the margin is positive so scaling always helps",
-      "Stop all UA immediately until LTV improves",
       "Optimize creative to lower CPI AND collaborate with product on retention and monetization improvements simultaneously",
+      "Stop all UA immediately until LTV improves",
+      "Scale spend to $100K/month — the margin is positive so scaling always helps",
       "Switch entirely to playable ads — they always lower CPI to acceptable levels"
     ],
-    correct: 2,
+    correct: 0,
     explanation: "$0.60 margin is unsustainable at scale. You must attack both sides simultaneously: reduce CPI through better creative testing (formats, hooks, audiences), AND improve LTV through product changes (onboarding, monetization flow, session length). Single-sided fixes are insufficient — the math requires improvement on both variables."
   },
 
@@ -774,11 +774,11 @@ const questions = [
     question: "Tripledot Studios has no single game exceeding 10% of total revenue. What does this require of their Creative Production approach?",
     options: [
       "Focus 90% of creative resources on the top-performing game at all times",
-      "Scalable, systematic creative production processes and testing frameworks that work consistently across an entire portfolio of games",
       "Avoid investing heavily in any single game's creative to stay flexible",
+      "Scalable, systematic creative production processes and testing frameworks that work consistently across an entire portfolio of games",
       "Outsource all creative production to minimize fixed team costs"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Portfolio diversification at Tripledot's scale requires systemized creative operations — not bespoke custom processes for each title. Their success comes from applying consistent UA frameworks, testing methodologies, and creative tooling across the entire portfolio. The system is the competitive advantage, not individual creative genius."
   },
 
@@ -790,11 +790,11 @@ const questions = [
     question: "Voodoo tests hundreds of game prototypes yearly and validates them through UA creative performance benchmarks. What does this mean for the Creative Producer role at a company like Voodoo?",
     options: [
       "Creative Producers focus exclusively on visual polish and brand aesthetics",
-      "Creative Producers must operate at high speed with exceptional data intuition — creatives are the validation instrument that decides if a game lives or dies",
+      "Creative Producers focus on brand building over performance metrics",
       "Creative Producers manage long production timelines with large teams and ample budgets",
-      "Creative Producers focus on brand building over performance metrics"
+      "Creative Producers must operate at high speed with exceptional data intuition — creatives are the validation instrument that decides if a game lives or dies"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "At Voodoo, games are validated — or killed — by their creative CPI benchmarks. This elevates the Creative Producer role: your work isn't just marketing, it's product validation. Speed, data intuition, and the ability to make confident decisions with limited data are the defining skills."
   },
 
@@ -824,12 +824,12 @@ const questions = [
     type: "single",
     question: "What is tROAS bidding and when is it preferred over tCPI?",
     options: [
-      "Target Rate of Ad Spend — preferred when the game has no monetization yet",
       "Target Return on Ad Spend — preferred when users have meaningfully different revenue values, so the algorithm can prioritize high-value installs",
+      "Target Rate of Ad Spend — preferred when the game has no monetization yet",
       "Total Reach on Ad Sets — preferred when you want maximum impressions regardless of cost",
       "Tracked Revenue on Ad Spend — only used for retargeting campaigns"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "tROAS tells the algorithm to optimize for revenue value per install, not just cost per install. It's the right choice when user monetization varies significantly — for example, a game where top 5% of users generate 70% of revenue. For hypercasual games with flat IAA value, tCPI is simpler and often equally effective."
   },
 
@@ -841,11 +841,11 @@ const questions = [
     question: "How many daily purchase/conversion events does a campaign typically need before tROAS bidding can optimize reliably?",
     options: [
       "At least 5 conversions per day",
-      "At least 15 conversions per day",
       "At least 60 conversions per day",
+      "At least 15 conversions per day",
       "At least 500 conversions per day"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "Most platforms require 50–60 conversion events per day before their algorithm has enough signal to optimize tROAS reliably. Below this threshold, the algorithm is essentially guessing. Under 30 daily conversions, tCPI is more appropriate. Under 15, even tCPI may struggle — focus on volume first."
   },
 
@@ -873,11 +873,11 @@ const questions = [
     question: "What is the fundamental difference between value-based bidding and standard tCPI bidding?",
     options: [
       "Value-based bidding spends more budget — tCPI is more cost-efficient",
-      "Value-based bidding adjusts bids in real-time based on predicted user LTV, while tCPI targets a flat cost regardless of user quality",
+      "Value-based bidding is the same as tROAS but applied to video ads only",
       "tCPI is only available on Meta; value-based bidding works across all platforms",
-      "Value-based bidding is the same as tROAS but applied to video ads only"
+      "Value-based bidding adjusts bids in real-time based on predicted user LTV, while tCPI targets a flat cost regardless of user quality"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Value-based bidding uses ML to predict each user's lifetime value before winning the auction and bids higher for users predicted to spend more. tCPI treats every potential install as equally valuable and bids to hit a flat cost target. The difference matters enormously for games with high LTV variance — value-based bidding finds whales; tCPI finds installs."
   },
 
@@ -888,12 +888,12 @@ const questions = [
     type: "single",
     question: "A tROAS campaign on Google UAC has been running for 25 days and is consistently hitting 280% ROAS against a 300% target. What is the appropriate next action?",
     options: [
-      "Pause the campaign — it is not meeting target",
-      "Switch to tCPI immediately — tROAS is clearly failing",
       "Make a small downward adjustment to the tROAS target (e.g., 280%) to align with actual performance and monitor for one more week",
+      "Switch to tCPI immediately — tROAS is clearly failing",
+      "Pause the campaign — it is not meeting target",
       "Double the daily budget to force more conversions and improve performance"
     ],
-    correct: 2,
+    correct: 0,
     explanation: "After the learning period (21 days), you can make informed adjustments. If the campaign consistently lands at 280% while targeting 300%, the target is slightly too aggressive. A modest target reduction (to ~280–290%) gives the algorithm more room to scale volume without abandoning performance. Aggressive changes (doubling budget or scrapping the campaign) are reactive, not strategic."
   },
 
@@ -905,11 +905,11 @@ const questions = [
     question: "You're launching UA for a hypercasual game with pure IAA (in-app advertising) monetization, ARPDAU of $0.45, and flat user value. Which bidding strategy is most appropriate?",
     options: [
       "tROAS — it will find the highest-value users and maximize revenue",
-      "Value-based bidding — automatically optimizes for top spenders",
       "tCPI — all users have roughly equal value in IAA, so optimizing for flat install cost is most efficient",
+      "Value-based bidding — automatically optimizes for top spenders",
       "Manual CPC bidding — gives you full control over individual auction bids"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "For pure IAA games, every retained user generates similar ad revenue — there are no whales. Value-based and tROAS strategies are designed for revenue variance. When user value is flat, tCPI is the correct bidding strategy: it drives volume efficiently without over-complicating signal collection. Applying tROAS to IAA games often produces noisy, unstable campaigns."
   },
 
@@ -921,11 +921,11 @@ const questions = [
     question: "A tROAS campaign on Meta has been live for 8 days. Performance is 20% below target. Your manager wants to switch to tCPI. What is the correct recommendation?",
     options: [
       "Agree — tCPI will stabilize performance faster and give cleaner data",
-      "Disagree — switching bidding strategies mid-learning phase resets the algorithm's optimization progress and often worsens overall performance",
       "Agree, but only switch if CPI is also above benchmark",
+      "Disagree — switching bidding strategies mid-learning phase resets the algorithm's optimization progress and often worsens overall performance",
       "Suggest pausing for 48 hours, then restarting tROAS with a lower target"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Switching bidding strategies mid-learning is one of the most common and costly UA mistakes. At day 8, the algorithm is still in its calibration window (21-day runway). Each bid win/loss is training data — switching discards all of it and starts a new learning curve. The correct move is to stay the course through day 21, then evaluate. If the campaign genuinely cannot reach its learning threshold, address that first (creative performance, audience size, budget)."
   },
 
@@ -956,11 +956,11 @@ const questions = [
     question: "What is SKAdNetwork (SKAN) and what triggered its widespread adoption in mobile UA?",
     options: [
       "A creative testing framework developed by Apple for A/B testing ad formats",
-      "Apple's privacy-preserving attribution framework adopted after iOS 14.5's App Tracking Transparency (ATT) restricted individual user tracking",
+      "A Meta advertising API that replaced pixel tracking after GDPR",
       "A third-party analytics SDK that replaced IDFA for Android and iOS simultaneously",
-      "A Meta advertising API that replaced pixel tracking after GDPR"
+      "Apple's privacy-preserving attribution framework adopted after iOS 14.5's App Tracking Transparency (ATT) restricted individual user tracking"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "SKAN (SKAdNetwork) is Apple's privacy-first attribution system. When iOS 14.5 introduced ATT in April 2021, users had to opt-in to tracking — and most didn't. IDFA-based attribution collapsed. SKAN fills the gap: it provides aggregated, privacy-safe conversion data at the campaign level without exposing individual user identity. Every iOS UA team must now understand it."
   },
 
@@ -971,12 +971,12 @@ const questions = [
     type: "single",
     question: "SKAN 4.0 uses three postback windows. What is the measurement period covered by Postback 1?",
     options: [
-      "Day 0 only (install day)",
       "Day 0–2 (0 to 48 hours post-install)",
+      "Day 0 only (install day)",
       "Day 0–7",
       "Day 8–35"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "SKAN 4.0 Postback 1 covers D0–D2 (0–48 hours post-install) and is the most valuable window — it's the only one that supports fine-grained conversion values (0–63). Postback 2 covers D3–D7 and Postback 3 covers D8–D35, but both return coarse values only (low/medium/high). Earlier SKAN versions only had one postback window; 4.0's three-window model gives significantly more longitudinal data."
   },
 
@@ -1004,11 +1004,11 @@ const questions = [
     question: "What is a 'privacy threshold' in SKAN 4.0 and what happens when your campaign falls below it?",
     options: [
       "A minimum ROAS floor below which Apple blocks your ad from running",
-      "A minimum install volume per campaign per 24-hour window; below it, Apple withholds fine-grained data, source IDs, or the postback entirely",
       "A content rating system that restricts which audiences can see your ad",
+      "A minimum install volume per campaign per 24-hour window; below it, Apple withholds fine-grained data, source IDs, or the postback entirely",
       "A maximum frequency cap Apple enforces to prevent creative fatigue"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Apple's privacy threshold is about install volume per campaign per 24-hour window. It determines what data tier you receive: Tier 4 (highest volume) = full fine-grain data + source ID; Tier 1 (lowest) = coarse values only, no source ID, possibly no postback at all. The implication: consolidating ad spend under fewer campaigns increases volume per campaign and unlocks higher data tiers."
   },
 
@@ -1020,11 +1020,11 @@ const questions = [
     question: "Your iOS campaign produces strong installs, but SKAN postbacks are returning 'null' for conversion values on most installs. What is the most likely cause?",
     options: [
       "Your MMP SDK is outdated and not reading SKAN postbacks correctly",
-      "The campaign is fragmented across too many ad sets, falling below Apple's privacy threshold for each, so postbacks are withheld",
+      "Meta is blocking SKAN postbacks on new accounts under 6 months old",
       "SKAN conversion values only work for games with IAP — IAA games always return null",
-      "Meta is blocking SKAN postbacks on new accounts under 6 months old"
+      "The campaign is fragmented across too many ad sets, falling below Apple's privacy threshold for each, so postbacks are withheld"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Null conversion values almost always mean volume is too fragmented. Apple calculates the privacy threshold per campaign per 24-hour window. If you're running 20 small campaigns each driving 10 installs/day, each one falls below the threshold and postbacks return no data. The fix: consolidate into fewer, larger campaigns so each one crosses the threshold and earns higher data tiers."
   },
 
@@ -1035,12 +1035,12 @@ const questions = [
     type: "single",
     question: "How should a Creative Producer strategically map SKAN conversion values to game monetization milestones?",
     options: [
-      "Use all 63 fine-grained values to track every possible in-app action for maximum data granularity",
       "Map values to a small set of high-signal milestones — tutorial complete, first session end, first purchase tier, whale threshold — that predict LTV at D2 and proxy retention at D7",
+      "Use all 63 fine-grained values to track every possible in-app action for maximum data granularity",
       "Leave conversion values at default settings and let the MMP auto-configure them",
       "Map values exclusively to purchase amounts and ignore retention signals"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Trying to track every action wastes the limited 0–63 range and makes optimization noisy. The smart approach: identify 4–6 milestones that are strong LTV predictors (tutorial completion = early retention proxy; first purchase = monetization signal; day-3 re-engagement = retention health; whale-tier purchase = high-LTV signal). These map to coarse values (low/mid/high) in Postbacks 2 and 3 as well, so you maintain signal across all three windows."
   },
 
@@ -1052,11 +1052,11 @@ const questions = [
     question: "What does Media Mix Modeling (MMM) add that SKAN cannot provide?",
     options: [
       "Campaign-level precision on which creative drove which install",
-      "Real-time daily optimization signals for bid adjustment",
       "Incremental contribution of each channel to overall installs — the true causal impact of spend, not just last-touch credit",
+      "Real-time daily optimization signals for bid adjustment",
       "Postback window coverage beyond Day 35 for LTV modeling"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "SKAN tells you what conversions happened within a campaign. MMM tells you how much of your total growth was actually caused by that campaign vs. what would have happened organically. SKAN is good for campaign-level pacing and creative optimization. MMM is good for answering 'if we paused this channel entirely, how much would we lose?' — which SKAN fundamentally cannot answer. Best practice: use both in parallel."
   },
 
@@ -1086,11 +1086,11 @@ const questions = [
     question: "What is 'hook rate' (also called thumb-stop ratio) in video ad creative?",
     options: [
       "The percentage of users who click the CTA button at the end of a video",
-      "The percentage of impressions where the user watches at least 3 seconds of the video instead of scrolling past",
       "The ratio of installs to video views — how many viewers become players",
+      "The percentage of impressions where the user watches at least 3 seconds of the video instead of scrolling past",
       "The number of times a creative is reused across different campaigns"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Hook rate = (3-second views) / (total impressions). It measures your ad's ability to stop a scrolling user. A hook rate of 30–40% is a solid baseline; 50%+ is excellent. It's the first gate in the creative funnel — if you can't stop the scroll, nothing else matters. High hook rate alone doesn't mean a great ad, but low hook rate guarantees a poor one."
   },
 
@@ -1102,11 +1102,11 @@ const questions = [
     question: "What does 'hold rate' measure in a video ad?",
     options: [
       "How long the ad is held in the creative approval queue before going live",
-      "The percentage of users who watched the first 3 seconds and continued watching to 15 seconds",
+      "How many users 'hold' (save) the ad to their bookmarks or shares",
       "The percentage of the budget held back by the platform's pacing algorithm",
-      "How many users 'hold' (save) the ad to their bookmarks or shares"
+      "The percentage of users who watched the first 3 seconds and continued watching to 15 seconds"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Hold rate = (15-second viewers) / (3-second viewers). It measures whether your ad keeps viewers engaged after the hook. A 40–50% hold rate is average; 60%+ is strong. Hook rate captures attention — hold rate captures interest. An ad with high hook but low hold usually has a strong visual opening but a weak or misleading middle that fails to sustain curiosity."
   },
 
@@ -1117,12 +1117,12 @@ const questions = [
     type: "single",
     question: "A video ad has a 58% hook rate but only a 1.8% CTR. What does this pattern most likely indicate?",
     options: [
-      "The ad is performing very well — hook rate is the most important metric",
       "The ad stops the scroll effectively but fails to create desire or motivation to install — the middle and CTA are weak",
+      "The ad is performing very well — hook rate is the most important metric",
       "The CTR benchmark for this platform is lower than 2%, so performance is normal",
       "A technical error — high hook rate and low CTR cannot coexist in a well-served ad"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "High hook rate + low CTR = the ad grabs attention but loses the user before the call-to-action. The opening works. The content between second 3 and the end doesn't build enough desire to install. This is a creative structure problem: the AIDA framework (Attention → Interest → Desire → Action) breaks down at Interest or Desire. Fix: rework the middle section to better show the game's core satisfaction loop."
   },
 
@@ -1150,11 +1150,11 @@ const questions = [
     question: "A 'fake game' ad shows gameplay that doesn't exist in the actual game. It achieves 45% hook rate and $0.40 CPI — far better than your honest creative. Why should you NOT scale it?",
     options: [
       "Fake ads are illegal and will result in app store removal immediately",
-      "The low CPI is misleading — fake ads attract users who find a different game than advertised, driving D7 retention as low as 1.5% vs 11% for honest ads, collapsing LTV and making unit economics unprofitable",
       "Platform algorithms detect fake ads and automatically reduce their delivery over time",
+      "The low CPI is misleading — fake ads attract users who find a different game than advertised, driving D7 retention as low as 1.5% vs 11% for honest ads, collapsing LTV and making unit economics unprofitable",
       "Fake ads work well short-term but are only a problem if your game has IAP monetization"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Fake ads create a user expectation mismatch. The low CPI is real — but the installed users immediately find a different game. D7 retention collapses to ~1.5% vs ~11% for honest ads (7x difference). LTV drops to ~$0.05 vs ~$0.25. App store ratings tank (users leave 'fake ad' reviews). The unit economics look profitable at install and are catastrophically unprofitable by day 7. Low CPI from fake ads is not a competitive advantage — it's a trap."
   },
 
@@ -1166,11 +1166,11 @@ const questions = [
     question: "What is the correct relationship between hook rate, hold rate, and purchase intent in a mobile game ad?",
     options: [
       "They are independent metrics — each can be optimized separately without affecting the others",
-      "Hook rate gets users to 3s; hold rate gets them to 15s; together they determine what percentage of impressions reach the CTA with genuine interest — high scores on both are needed for strong conversion",
+      "Hold rate automatically increases when hook rate increases, so only one needs to be optimized",
       "Hook rate is the only metric that correlates with installs; hold rate only matters for brand awareness campaigns",
-      "Hold rate automatically increases when hook rate increases, so only one needs to be optimized"
+      "Hook rate gets users to 3s; hold rate gets them to 15s; together they determine what percentage of impressions reach the CTA with genuine interest — high scores on both are needed for strong conversion"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Hook and hold are sequential gates in the creative funnel. If hook rate is 40% and hold rate is 50%, then 20% of all impressions reach the 15-second mark with real engagement — that's the audience that the CTA actually speaks to. Optimizing hook without hold means you stop scrollers who leave quickly. Optimizing hold without hook means you engage a tiny fraction of passersby. Both gates must be strong for conversion to follow."
   },
 
@@ -1181,12 +1181,12 @@ const questions = [
     type: "single",
     question: "Creative A: 32% hook rate, 62% hold rate, 4.1% CTR. Creative B: 56% hook rate, 19% hold rate, 2.9% CTR. Same spend, same audience. Which do you prioritize for scaling?",
     options: [
-      "Creative B — higher hook rate means more people are engaging with the ad",
       "Creative A — high hold rate and CTR indicate users who engage are genuinely interested; the creative sustains attention and drives action, producing higher-quality traffic",
+      "Creative B — higher hook rate means more people are engaging with the ad",
       "Neither — both need to be reworked before scaling",
       "Run equal spend on both and let the platform decide automatically"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Creative A wins on quality signal. While B stops more scrollers, 81% of those users leave within 3–15 seconds — only 19% hold. A stops fewer, but 62% of those who pause stay engaged, and 4.1% click. The downstream users from A are more likely to install and monetize. High hook + low hold + lower CTR = 'clickbait-lite' pattern. High hold + higher CTR = genuine interest and intent. Scale A. Use B's hook as an element to test on future creatives."
   },
 
@@ -1216,11 +1216,11 @@ const questions = [
     question: "What does incrementality testing measure in mobile UA?",
     options: [
       "How much each ad creative incrementally improves CTR compared to the previous version",
-      "The true causal impact of advertising — how many additional installs happened because of the ad, versus installs that would have occurred organically anyway",
       "The incremental cost of each additional install as budgets scale",
+      "The true causal impact of advertising — how many additional installs happened because of the ad, versus installs that would have occurred organically anyway",
       "How much campaign performance improved after a creative refresh"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Incrementality answers the question: 'What would have happened if we hadn't run this ad?' The difference between the world with the ad and the world without it is the true incremental contribution. Last-click attribution takes credit for any install that clicked an ad — including users who would have found the game organically anyway. Incrementality testing separates real causation from coincidental correlation."
   },
 
@@ -1232,11 +1232,11 @@ const questions = [
     question: "What is a geo holdout test in incrementality measurement?",
     options: [
       "A test where certain geographic regions are excluded from a game's launch to measure organic growth patterns",
-      "A test where two groups of geographies receive different ad spend levels; the difference in installs between test and control geos reveals true incremental impact",
+      "A test that measures which geographic market has the highest LTV to determine where to scale spend",
       "A holdout test where a single geography receives all budget to maximize statistical significance",
-      "A test that measures which geographic market has the highest LTV to determine where to scale spend"
+      "A test where two groups of geographies receive different ad spend levels; the difference in installs between test and control geos reveals true incremental impact"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "Geo holdout is the gold standard for incrementality: split similar geographies into a test group (receive ads) and a control group (no ads or reduced spend). Measure organic installs in the control geo as your baseline. The installs in the test geo above that baseline are the incremental ones your ads actually drove. It's privacy-safe, channel-agnostic, and doesn't require user-level data."
   },
 
@@ -1247,12 +1247,12 @@ const questions = [
     type: "single",
     question: "Why does last-click attribution typically overstate the true performance of a campaign?",
     options: [
-      "Last-click attribution counts clicks from bots and invalid traffic, inflating install numbers",
       "It assigns full credit to the last ad a user clicked before installing, including users who were already planning to install organically — meaning it takes credit for conversions it didn't cause",
+      "Last-click attribution counts clicks from bots and invalid traffic, inflating install numbers",
       "Last-click attribution only tracks paid installs and misses organic installs, causing an imbalanced comparison",
       "Last-click attribution uses estimated data rather than real install counts"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Last-click attribution's flaw is causation vs correlation. A user who was going to search for and install a game anyway might click an ad first — and last-click gives the ad 100% of the credit. Retargeting is especially prone to this: warm users who were about to return to the game see a retargeting ad, click it, re-engage, and last-click calls it a re-acquisition success. Incrementality testing reveals how much of that would have happened without the ad."
   },
 
@@ -1280,11 +1280,11 @@ const questions = [
     question: "Your retargeting campaign shows 420% ROAS on last-click MMP data. A geo holdout test reveals true incremental ROAS is 135%. What conclusion do you draw and what action do you take?",
     options: [
       "The geo holdout test is wrong — 135% is too low to be real; trust the MMP data",
-      "The campaign is profitable (135% > 100% breakeven) but last-click is crediting it for ~310% worth of organic re-engagement; reduce retargeting budget to the level where incremental ROAS justifies the spend, not the inflated last-click figure",
       "Immediately pause the campaign — 135% incremental ROAS is below the 300% industry standard",
+      "The campaign is profitable (135% > 100% breakeven) but last-click is crediting it for ~310% worth of organic re-engagement; reduce retargeting budget to the level where incremental ROAS justifies the spend, not the inflated last-click figure",
       "Keep the budget the same — 135% incremental ROAS is still positive, so all spend is justified"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "This is a classic retargeting inflation scenario. 420% last-click vs 135% incremental means ~310% of the credited ROAS was organic re-engagement the users were going to do anyway. The campaign IS profitable at 135% incremental ROAS — but you're massively overspending for that result. The right action: recalibrate the retargeting budget downward to the level where incremental ROAS justifies the cost. Use retargeting as a margin booster, not a growth lever."
   },
 
@@ -1312,11 +1312,11 @@ const questions = [
     question: "How should a senior Creative Producer use MMM (Media Mix Modeling) and SKAN together for iOS UA measurement?",
     options: [
       "Choose one — using both creates conflicting data that confuses optimization decisions",
-      "Use SKAN for day-to-day campaign pacing and creative optimization; use MMM quarterly to validate true incremental ROAS per channel and recalibrate budget allocation accordingly",
+      "Use SKAN for iOS and MMM only for Android, where privacy restrictions are less severe",
       "Use MMM exclusively — SKAN data is too incomplete to be actionable",
-      "Use SKAN for iOS and MMM only for Android, where privacy restrictions are less severe"
+      "Use SKAN for day-to-day campaign pacing and creative optimization; use MMM quarterly to validate true incremental ROAS per channel and recalibrate budget allocation accordingly"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "SKAN and MMM serve complementary purposes at different time horizons. SKAN provides campaign-level, near-real-time signal for creative decisions and bid adjustments — it tells you which ads are working this week. MMM provides channel-level, aggregated causal inference over months — it tells you which channels are truly driving growth vs. attributing organic. Running MMM quarterly recalibrates your understanding of where each channel's budget should sit, catching over-attribution that SKAN's last-touch model can't reveal."
   },
 
@@ -1362,11 +1362,11 @@ const questions = [
     question: "A hypercasual game has ARPDAU of $0.40, D30 retention of 8%, and current CPI of $0.65. Is this scalable at the current CPI?",
     options: [
       "Yes — ARPDAU is positive, so every install generates profit",
-      "No — approximate 30-day LTV is ~$0.96, but after accounting for the payback period and operational costs, $0.65 CPI leaves dangerously thin margin; CPI needs to come down or retention needs to improve",
       "Yes — hypercasual games always achieve payback within 7 days, making $0.65 CPI acceptable regardless of LTV",
+      "No — approximate 30-day LTV is ~$0.96, but after accounting for the payback period and operational costs, $0.65 CPI leaves dangerously thin margin; CPI needs to come down or retention needs to improve",
       "Cannot be determined — ARPDAU and retention are not sufficient inputs to evaluate CPI viability"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Rough LTV calculation: $0.40 ARPDAU × 30 days × 8% avg retention ≈ $0.96 estimated D30 LTV. Against $0.65 CPI, the margin is $0.31 — less than 50% of CPI. Operational costs, store fees (30%), and ad network margins typically consume that gap. This is marginally scalable at best and fragile to any performance dip. The goal should be reducing CPI (better creative) or improving retention (product), not scaling aggressively at current economics."
   },
 
@@ -1378,11 +1378,11 @@ const questions = [
     question: "What is pLTV (predicted Lifetime Value) and why is it valuable for early UA decision-making?",
     options: [
       "pLTV is a fixed LTV figure set by the studio at launch, used to cap bidding across all campaigns",
-      "pLTV is a machine-learning prediction of a user's total future revenue, generated from early behavior signals (D2–D7) so UA teams can make bidding and scaling decisions without waiting 30–90 days for actual LTV to materialize",
+      "pLTV is only calculated after a user has been active for 30 days; it has no use in early campaign optimization",
       "pLTV is the maximum LTV a platform will accept for tROAS campaign bids",
-      "pLTV is only calculated after a user has been active for 30 days; it has no use in early campaign optimization"
+      "pLTV is a machine-learning prediction of a user's total future revenue, generated from early behavior signals (D2–D7) so UA teams can make bidding and scaling decisions without waiting 30–90 days for actual LTV to materialize"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "pLTV solves a fundamental timing problem in UA: actual LTV takes 30–90+ days to materialize, but campaign decisions need to happen in days. Modern ML models (from MMPs like AppsFlyer, Adjust, or Tenjin) analyze D2–D7 behavior signals — purchase frequency, session depth, progression speed — and predict total LTV with ~90% accuracy. This allows UA teams to tune bids and allocate budget toward high-value users weeks before their actual revenue is confirmed."
   },
 
@@ -1393,12 +1393,12 @@ const questions = [
     type: "single",
     question: "A casual game shows D7 retention of 9% across all cohorts. What does this signal about the game's LTV potential at scale?",
     options: [
-      "Strong LTV potential — 9% D7 retention is above the casual game benchmark",
       "A warning sign — games with D7 retention below 10% rarely achieve profitable LTV at scale unless CPI is extremely low (hypercasual-level)",
+      "Strong LTV potential — 9% D7 retention is above the casual game benchmark",
       "No signal — D7 retention is irrelevant; only D30 retention predicts LTV",
       "Acceptable LTV potential if the game is IAA-monetized; problematic only for IAP games"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "D7 retention below 10% is a yellow-to-red flag for LTV viability. It means most users churn before they've had a chance to significantly monetize, regardless of model. The exception is pure hypercasual games where extremely low CPI ($0.20–0.40) makes even 8% D7 retention profitable. For hybrid or IAP-focused casual games, D7 retention below 10% typically means unit economics will never close at meaningful scale."
   },
 
@@ -1426,11 +1426,11 @@ const questions = [
     question: "A hybrid-monetization casual game (IAP + IAA) is scaling UA aggressively. The UA team treats all installs as equal value for bidding purposes. What is the core strategic risk?",
     options: [
       "Platform algorithms will penalize hybrid games for mixed revenue signals",
-      "Treating equal-value installs overspends on IAA-only users (lower LTV) and underspends on IAP users (higher LTV), misallocating budget and capping overall profitability",
       "No risk — hybrid games always outperform single-model games in ROAS regardless of targeting",
+      "Treating equal-value installs overspends on IAA-only users (lower LTV) and underspends on IAP users (higher LTV), misallocating budget and capping overall profitability",
       "The risk is only significant for games with ARPDAU below $1.00"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Hybrid monetization creates user segments with very different LTV profiles. An IAP spender might be worth $15 over 30 days; an IAA-only user might be worth $1.20. Treating both as a $3.00 average LTV install means: you're bidding too high for IAA users (overpaying) and too low for IAP users (leaving value on the table). Senior approach: segment UA by predicted monetization path, use value-based bidding for IAP user acquisition, and standard tCPI for volume-driven IAA cohorts."
   },
 
@@ -1442,11 +1442,11 @@ const questions = [
     question: "pLTV models achieve approximately 90% accuracy vs actual LTV. When is it appropriate to make major budget scaling decisions based on pLTV alone, and when must you wait for actual LTV?",
     options: [
       "Always use pLTV — 90% accuracy is sufficient for all decisions at any scale",
-      "Use pLTV for directional decisions within the D0–D14 window (bid tuning, budget pacing, creative scoring); wait for actual D30+ LTV before committing to major scale increases (10x+ budget, new market entry, or changing monetization strategy)",
+      "Use pLTV only if your MMP is AppsFlyer; other MMPs produce unreliable predictions",
       "Never use pLTV — 10% error rate is too high for financial decisions in UA",
-      "Use pLTV only if your MMP is AppsFlyer; other MMPs produce unreliable predictions"
+      "Use pLTV for directional decisions within the D0–D14 window (bid tuning, budget pacing, creative scoring); wait for actual D30+ LTV before committing to major scale increases (10x+ budget, new market entry, or changing monetization strategy)"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "pLTV's 90% accuracy is excellent for early optimization but contains enough uncertainty for major financial commitments. For daily bid tuning and campaign pacing, pLTV is the best available signal. For 10x budget increases, entering new markets, or restructuring monetization — decisions with potentially large downside — wait for D30 actual LTV to validate the model's prediction. The cost of waiting 3–4 weeks for validation is far lower than the cost of scaling a flawed pLTV estimate at 10x budget."
   },
 
@@ -1459,12 +1459,12 @@ const questions = [
     type: "single",
     question: "What is AppLovin MAX and why is it significant for mobile game publishers?",
     options: [
-      "AppLovin's user acquisition platform for running performance campaigns",
       "AppLovin's ad mediation platform that manages multiple ad networks in one SDK, optimizing which network fills each ad impression to maximize publisher revenue",
+      "AppLovin's user acquisition platform for running performance campaigns",
       "AppLovin's creative testing tool for A/B testing ad formats",
       "A premium subscription tier for AppLovin advertisers with higher budget limits"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "MAX is AppLovin's mediation platform — it sits in your game's SDK and manages multiple ad networks simultaneously, holding real-time auctions to find the highest-paying ad for every impression. By 2025, 73% of top-200 grossing games use MAX. Its dominance means it has become the de facto standard for mobile game ad monetization, giving AppLovin significant leverage over both publishers and advertisers."
   },
 
@@ -1492,11 +1492,11 @@ const questions = [
     question: "What is the key difference between TikTok AEO (App Event Optimization) and TikTok VBO (Value-Based Optimization)?",
     options: [
       "AEO runs on TikTok's feed; VBO runs on TikTok's search and discovery surfaces",
-      "AEO optimizes for users likely to complete a specific in-app event (e.g., any purchase); VBO optimizes for users likely to generate higher purchase value — it finds spenders, not just converters",
       "AEO is for new user acquisition; VBO is exclusively for retargeting lapsed users",
+      "AEO optimizes for users likely to complete a specific in-app event (e.g., any purchase); VBO optimizes for users likely to generate higher purchase value — it finds spenders, not just converters",
       "They are the same optimization type with different names across campaign objectives"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "AEO and VBO target different outcome types. AEO finds users likely to complete an event — including low-value purchases or free actions. VBO specifically targets users predicted to spend more money. For a game with IAP, AEO might find players who make a $0.99 purchase, while VBO is more likely to find players who spend $20+. VBO is the TikTok equivalent of value-based bidding on Meta — designed for profitability, not just volume."
   },
 
@@ -1508,11 +1508,11 @@ const questions = [
     question: "AppLovin ROAS campaigns — its user acquisition product — are restricted to publishers using which platform?",
     options: [
       "Any mobile game with 50,000+ daily active users",
-      "Only publishers using AppLovin MAX mediation, creating a direct link between monetization and user acquisition on the platform",
+      "Publishers who have spent $100,000+ on AppLovin UA campaigns in the previous 6 months",
       "Only games published through AppLovin's own publishing arm",
-      "Publishers who have spent $100,000+ on AppLovin UA campaigns in the previous 6 months"
+      "Only publishers using AppLovin MAX mediation, creating a direct link between monetization and user acquisition on the platform"
     ],
-    correct: 1,
+    correct: 3,
     explanation: "AppLovin ROAS campaigns are exclusively available to MAX mediation users. This is a deliberate strategic lock-in: by making ROAS campaigns conditional on MAX adoption, AppLovin captures both the supply side (publisher ad monetization via MAX) and demand side (advertiser UA spend via ROAS campaigns) margins simultaneously. Understanding this dynamic is important when evaluating AppLovin as a UA partner — it's a platform play, not just an ad network."
   },
 
@@ -1523,12 +1523,12 @@ const questions = [
     type: "single",
     question: "A game publisher using AppLovin MAX wants to switch to a competitor mediation platform. What are the primary operational risks?",
     options: [
-      "There are no real risks — mediation platforms are interchangeable and switching is straightforward",
       "SDK re-integration (new ad placement code throughout the game), potential eCPM dip during transition as new platform learns your inventory, loss of access to AppLovin ROAS campaigns, and renegotiating fill rates with individual networks",
+      "There are no real risks — mediation platforms are interchangeable and switching is straightforward",
       "The only risk is regulatory — switching mediation requires notifying Apple and Google",
       "Loss of SKAN attribution data for the 30 days surrounding the switch"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Switching mediation platforms is technically and commercially complex: engineering must re-integrate all ad placements with a new SDK (weeks of work), the new platform needs time to learn your inventory and build fill relationships (temporary eCPM dip of 10–20% common), and you lose access to AppLovin ROAS campaigns entirely. This is precisely why AppLovin's MAX lock-in is so effective — the switching cost is real and substantial, even when the competitor's terms may be better."
   },
 
@@ -1540,11 +1540,11 @@ const questions = [
     question: "Your TikTok VBO (Value-Based Optimization) campaign is in its third day and performance looks poor — high CPAs, low purchase values. Your team wants to intervene. What is the correct action?",
     options: [
       "Switch to AEO immediately — VBO is underperforming",
-      "Pause and restart the campaign to reset the algorithm",
       "Do nothing — VBO requires a minimum 7-day learning window; adjustments in the first 3 days destabilize optimization and should be avoided unless spend is critically overpacing",
+      "Pause and restart the campaign to reset the algorithm",
       "Reduce the daily budget by 50% to reduce wasted spend during the learning phase"
     ],
-    correct: 2,
+    correct: 1,
     explanation: "VBO on TikTok needs a 7-day minimum learning window. The algorithm is collecting purchase value data and calibrating which user signals correlate with higher spend. Day 3 data is noise, not signal. The single most common mistake is making changes during the learning phase — it resets the optimization clock and often produces worse long-term results than simply letting the campaign stabilize. The exception: if daily spend is dramatically overpacing budget, a budget cap adjustment is acceptable."
   },
 
@@ -1556,11 +1556,11 @@ const questions = [
     question: "TikTok's Broad Audience targeting frequently outperforms custom audience targeting (lookalikes, interest segments). What explains this?",
     options: [
       "TikTok's custom audience tools are technically broken and produce poor results",
-      "TikTok's recommendation algorithm is strong enough to find the right users without audience constraints — adding custom audiences narrows reach in ways that limit the algorithm's ability to explore and optimize",
       "Broad targeting is cheaper on TikTok because it avoids premium CPM audiences",
+      "TikTok's recommendation algorithm is strong enough to find the right users without audience constraints — adding custom audiences narrows reach in ways that limit the algorithm's ability to explore and optimize",
       "Broad targeting works only for hypercasual games; mid-core games still require custom audiences"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "TikTok's core algorithm was built for content recommendation, not ad targeting — and its user modeling is exceptionally strong as a result. When you apply custom audiences (lookalikes, interests), you're constraining an already-powerful signal engine. Broad targeting lets TikTok's algorithm find the optimal audience without your assumptions limiting the search space. The counter-intuitive professional move: trust the platform, remove manual targeting layers, and let the algorithm explore. Custom audiences should be tested but rarely win against Broad on TikTok."
   },
 
@@ -1573,10 +1573,10 @@ const questions = [
     options: [
       "Allocate 40% less budget to TikTok to reduce exposure speed and extend creative life",
       "Run fewer creative variations on TikTok to avoid overwhelming the algorithm",
-      "Operate a faster creative refresh cadence on TikTok (2-week component rotation) than on Meta (7–10 day full rotation), maintaining separate creative calendars and production pipelines per platform",
-      "Treat creative fatigue identically across platforms since total impression volume is the key variable, not platform-specific fatigue speed"
+      "Treat creative fatigue identically across platforms since total impression volume is the key variable, not platform-specific fatigue speed",
+      "Operate a faster creative refresh cadence on TikTok (2-week component rotation) than on Meta (7–10 day full rotation), maintaining separate creative calendars and production pipelines per platform"
     ],
-    correct: 2,
+    correct: 3,
     explanation: "Platform-specific creative cadences are a mark of operational maturity. TikTok's DCO burns combinations fast — 2-week component refreshes are the minimum. Meta's algorithm is somewhat more conservative, but at scale still requires 7–10 day rotation. Managing both simultaneously means separate creative calendars, separate production queues, and platform-specific asset specs. A single creative calendar for both platforms will always result in one platform being over- or under-served."
   },
 
@@ -1589,12 +1589,12 @@ const questions = [
     type: "single",
     question: "What is probabilistic attribution in mobile measurement, and when is it used?",
     options: [
-      "A method of attributing installs based on probability that the user saw your ad at least once in the past 30 days",
       "An ML-based statistical approach that infers user identity and install source without deterministic device IDs, used as a fallback when IDFA/GAID is unavailable — typically on iOS post-ATT",
+      "A method of attributing installs based on probability that the user saw your ad at least once in the past 30 days",
       "A randomized attribution method where credit is distributed equally across all channels a user touched",
       "A fraud detection technique that flags installs with a low probability of being genuine"
     ],
-    correct: 1,
+    correct: 0,
     explanation: "Probabilistic attribution uses device signals (IP address, user agent, screen resolution, timestamp patterns) and ML to make statistically informed guesses about install sources when individual device IDs aren't available. On iOS post-ATT, where most users don't grant tracking permission, probabilistic attribution fills the gap — but with inherent uncertainty. It's best used for directional insights (is this channel driving installs?) rather than precision decisions (exactly how much ROAS per creative)."
   },
 
@@ -1622,11 +1622,11 @@ const questions = [
     question: "What is the fundamental difference between using last-touch MMP data and incrementality data when evaluating a retargeting campaign's true contribution to revenue?",
     options: [
       "Last-touch MMP data is more accurate because it tracks individual users; incrementality data only provides estimates",
-      "Last-touch MMP data measures what happened after an ad interaction; incrementality measures what happened because of the ad — the difference reveals how much revenue would have occurred organically without the campaign",
       "They measure the same outcome — the difference is only in reporting format and attribution window length",
+      "Last-touch MMP data measures what happened after an ad interaction; incrementality measures what happened because of the ad — the difference reveals how much revenue would have occurred organically without the campaign",
       "Incrementality data is only valid for prospecting campaigns; for retargeting, last-touch MMP data is the correct measurement methodology"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "This is the single most important conceptual distinction in modern UA measurement. Last-touch MMP: user sees retargeting ad → clicks → re-engages → MMP credits ad with re-engagement value. Incrementality: compare a group of similar users who didn't see the ad — if they re-engaged at 80% the rate of the exposed group, only 20% of re-engagements were actually caused by the ad. The gap between last-touch ROAS and incremental ROAS (often 2–4x for retargeting) is the over-attribution you're paying for. Senior UA operators run incrementality tests precisely because they refuse to budget based on a measurement framework that systematically overstates results."
   }
 
