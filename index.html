@@ -606,12 +606,73 @@
     .anim-d3 { animation-delay: .3s; }
     .anim-d4 { animation-delay: .4s; }
 
+    /* ── HAMBURGER ── */
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px; height: 40px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      padding: 8px;
+      flex-shrink: 0;
+    }
+    .nav-burger span {
+      display: block;
+      width: 18px; height: 1.5px;
+      background: var(--white);
+      transition: transform .25s, opacity .25s;
+      transform-origin: center;
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(14,14,15,.97);
+      z-index: 98;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      backdrop-filter: blur(12px);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 2.6rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--white);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       nav { padding: 18px 24px; }
       .nav-links { display: none; }
-      #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; text-align: center; }
-      .hero-portrait { order: -1; }
+      .nav-burger { display: flex; }
+      #hero {
+        grid-template-columns: 1fr;
+        padding: 100px 24px 60px;
+        text-align: center;
+        overflow: hidden;
+      }
+      .hero-portrait { order: -1; overflow: hidden; }
+      .portrait-frame { width: min(340px, 100%); }
+      .portrait-frame::after { display: none; }
+      .portrait-badge { left: 0; }
       .hero-eyebrow { justify-content: center; }
       .hero-desc { margin: 20px auto 0; }
       .hero-stats { justify-content: center; }
@@ -643,7 +704,19 @@
     <li><a href="#learn">Learn</a></li>
     <li><a href="mailto:al.shulyakovskiy@gmail.com">Contact</a></li>
   </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#work" class="mobile-link">Work</a>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#skills" class="mobile-link">Skills</a>
+  <a href="#achievements" class="mobile-link">Results</a>
+  <a href="#learn" class="mobile-link">Learn</a>
+  <a href="mailto:al.shulyakovskiy@gmail.com" class="mobile-link">Contact</a>
+</div>
 
 <section id="hero">
   <div class="hero-text">
@@ -1093,6 +1166,23 @@
   // ── Trigger hero anims immediately ──
   document.querySelectorAll('#hero .anim').forEach(el => {
     setTimeout(() => el.classList.add('visible'), 100);
+  });
+
+  // ── HAMBURGER MENU ──
+  const burger = document.getElementById('navBurger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  function closeMobileMenu() {
+    burger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  burger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    burger.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
   });
 </script>
 </body>

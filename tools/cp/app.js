@@ -19,6 +19,10 @@ function showScreen(name) {
     el(id).classList.remove('active');
   });
   el(name).classList.add('active');
+  // Show back-to-filters button and score when not on intro
+  var isQuizOrResults = name === 'screenQuiz' || name === 'screenResults';
+  el('navBackBtn').classList[isQuizOrResults ? 'add' : 'remove']('visible');
+  el('navScore').classList[name === 'screenQuiz' ? 'add' : 'remove']('visible');
 }
 
 // ── Filter chips ──────────────────────────────────────────────────────────────
@@ -78,7 +82,6 @@ el('startBtn').addEventListener('click', function() {
     if (!catStats[q.category]) catStats[q.category] = { total: 0, correct: 0 };
     catStats[q.category].total++;
   });
-  el('scoreDisplay').style.display = 'flex';
   el('scorePts').textContent = '0';
   showScreen('screenQuiz');
   renderQuestion();
@@ -190,7 +193,7 @@ function revealSingle(chosen, q) {
     card.classList.add('shake');
     setTimeout(function() { card.classList.remove('shake'); }, 350);
   }
-
+  el('qCard').classList.add('answered');
   showExplanation(isCorrect, q.explanation);
 }
 
@@ -230,6 +233,7 @@ el('checkBtn').addEventListener('click', function() {
     setTimeout(function() { card.classList.remove('shake'); }, 350);
   }
 
+  el('qCard').classList.add('answered');
   el('checkBtn').classList.remove('show');
   showExplanation(isCorrect, q.explanation);
 });
@@ -266,7 +270,6 @@ el('skipBtn').addEventListener('click', function() {
 // ── Results ───────────────────────────────────────────────────────────────────
 function showResults() {
   el('progressFill').style.width = '100%';
-  el('scoreDisplay').style.display = 'none';
   showScreen('screenResults');
 
   var total = deck.length;
@@ -295,13 +298,20 @@ function showResults() {
 
   // Category breakdown
   var catColors = {
-    'KPIs & Metrics':       '#6c63ff',
-    'Creative Formats':     '#22c55e',
-    'Testing & Strategy':   '#f5c842',
-    'Creative Fatigue':     '#fb923c',
-    'Tools & Platforms':    '#38bdf8',
-    'Production Workflow':  '#e879f9',
-    'Strategy & Scenarios': '#f87171'
+    'KPIs & Metrics':         '#e8a630',
+    'Creative Formats':       '#22c55e',
+    'Testing & Strategy':     '#e8a630',
+    'Creative Fatigue':       '#fb923c',
+    'Tools & Platforms':      '#38bdf8',
+    'Production Workflow':    '#e879f9',
+    'Strategy & Scenarios':   '#f87171',
+    'Bidding & Algorithms':   '#e8a630',
+    'iOS Attribution':        '#38bdf8',
+    'Creative Metrics':       '#22c55e',
+    'Incrementality':         '#fb923c',
+    'Monetization & LTV':     '#e8a630',
+    'Advanced Platforms':     '#f87171',
+    'Advanced Analytics':     '#a78bfa'
   };
 
   var breakList = el('breakdownList');
@@ -324,13 +334,11 @@ function showResults() {
     var bar = document.createElement('div');
     bar.className = 'breakdown-bar';
     bar.style.width = '0%';
-    bar.style.background = color;
     bar.setAttribute('data-target', p);
     barWrap.appendChild(bar);
 
     var pctDiv = document.createElement('div');
     pctDiv.className = 'breakdown-pct';
-    pctDiv.style.color = color;
     pctDiv.textContent = p + '%';
 
     row.appendChild(catDiv);
@@ -373,16 +381,17 @@ el('retryWrongBtn').addEventListener('click', function() {
     catStats[q.category].total++;
   });
   el('scorePts').textContent = '0';
-  el('scoreDisplay').style.display = 'flex';
   showScreen('screenQuiz');
   renderQuestion();
 });
 
-el('backToMenuBtn').addEventListener('click', function() {
-  el('scoreDisplay').style.display = 'none';
+function goToFilters() {
   el('progressFill').style.width = '0%';
   showScreen('screenIntro');
-});
+}
+
+el('backToMenuBtn').addEventListener('click', goToFilters);
+el('navBackBtn').addEventListener('click', goToFilters);
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 bindChips('diffFilters', 'diff');
