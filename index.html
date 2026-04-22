@@ -238,67 +238,78 @@
     /* ── WORK / VIDEO GRID ── */
     #work { background: var(--bg2); }
 
-    .video-grid {
+    /* ── WORK CATEGORIES ── */
+    .work-categories {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .work-group-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .work-group-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .work-group-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .work-links {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 2px;
     }
 
-    .video-card {
-      position: relative;
-      overflow: hidden;
+    .work-link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
       background: var(--bg3);
-      cursor: pointer;
-      aspect-ratio: 16/9;
-    }
-    .video-placeholder {
-      width: 100%; height: 100%;
-      background: var(--bg3);
+      text-decoration: none;
+      color: var(--white);
+      transition: background .2s, border-color .2s;
+      border-left: 2px solid transparent;
     }
 
-    .video-card img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform .5s cubic-bezier(.25,.46,.45,.94), filter .5s;
-      filter: grayscale(30%) brightness(.85);
-    }
-    .video-card:hover img {
-      transform: scale(1.06);
-      filter: grayscale(0%) brightness(1);
+    .work-link-card:hover {
+      background: var(--bg2);
+      border-left-color: var(--gold);
     }
 
-    .video-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(14,14,15,.9) 0%, transparent 55%);
-      opacity: 0;
-      transition: opacity .35s;
-      display: flex; flex-direction: column;
-      justify-content: flex-end;
-      padding: 20px;
+    .work-link-title {
+      font-size: .88rem;
+      font-weight: 300;
+      line-height: 1.4;
     }
-    .video-card:hover .video-overlay { opacity: 1; }
 
-    .play-btn {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(.8);
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: rgba(232,166,48,.9);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
-      opacity: 0;
-    }
-    .play-btn svg { width: 20px; height: 20px; fill: #0e0e0f; margin-left: 3px; }
-    .video-card:hover .play-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-    .video-label {
+    .work-link-arrow {
+      font-family: 'Barlow Condensed', sans-serif;
       font-size: .72rem;
+      font-weight: 600;
       letter-spacing: .14em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--muted);
+      white-space: nowrap;
+      transition: color .2s;
     }
+
+    .work-link-card:hover .work-link-arrow { color: var(--gold); }
 
     .work-disclaimer {
       margin-top: 32px;
@@ -310,7 +321,7 @@
       letter-spacing: 0.05em;
     }
 
-    /* ── ABOUT / EXPERIENCE ── */
+        /* ── ABOUT / EXPERIENCE ── */
     #about { background: var(--bg); }
     .about-grid {
       display: grid;
@@ -567,39 +578,7 @@
     .footer-right a { color: var(--gold); text-decoration: none; }
 
     /* ── MODAL ── */
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(10,10,11,.92);
-      z-index: 200;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .3s;
-      backdrop-filter: blur(8px);
-    }
-    .modal-backdrop.open { opacity: 1; pointer-events: all; }
-    .modal-inner {
-      width: min(880px, 94vw);
-      aspect-ratio: 16/9;
-      position: relative;
-    }
-    .modal-inner iframe {
-      width: 100%; height: 100%;
-      border: none;
-    }
-    .modal-close {
-      position: absolute;
-      top: -44px; right: 0;
-      background: none; border: none;
-      color: var(--muted); cursor: pointer;
-      font-size: .78rem; letter-spacing: .14em;
-      text-transform: uppercase;
-      display: flex; align-items: center; gap: 8px;
-      transition: color .2s;
-    }
-    .modal-close:hover { color: var(--white); }
-    .modal-close svg { width: 16px; height: 16px; }
-
-    /* ── ANIMATIONS ── */
+        /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(28px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -711,7 +690,7 @@
       .achievement-val { font-size: clamp(1.2rem, 5.5vw, 1.6rem); }
     }
     @media (max-width: 560px) {
-      .video-grid { grid-template-columns: 1fr; }
+      .work-links { grid-template-columns: 1fr; }
       .skills-grid { grid-template-columns: 1fr; }
       .achievements-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -793,149 +772,158 @@
     <div class="section-line"></div>
   </div>
 
-  <div class="video-grid">
- <div class="video-card anim" data-video="05htdGFFI8U" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
+  <div class="work-categories">
+
+    <div class="work-group">
+      <div class="work-group-header">
+        <span class="work-group-tag">IP Collaborations</span>
+        <div class="work-group-line"></div>
+      </div>
+      <div class="work-links">
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=vX0I_0YIl_A" target="_blank" rel="noopener">
+          <span class="work-link-title">Joanna Jędrzejczyk shows True Polish Character in WoT Blitz</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=JiThtTg_5Nc" target="_blank" rel="noopener">
+          <span class="work-link-title">The Walking Dead in World of Tanks Blitz!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=btDxd6pCq6E" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz × Jiří Procházka. New Czech Tanks!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d3" href="https://www.youtube.com/watch?v=samgsYd70h8" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz: Lukas Podolski names the best shot of his career</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=brTlAVjC1Ew" target="_blank" rel="noopener">
+          <span class="work-link-title">The Walking Dead × WoT Blitz crossover event is LIVE NOW!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+      </div>
     </div>
-    <div class="video-card anim anim-d1" data-video="fqvGPcgGaws" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
+
+    <div class="work-group">
+      <div class="work-group-header">
+        <span class="work-group-tag">Beats Boredom Series</span>
+        <div class="work-group-line"></div>
+      </div>
+      <div class="work-links">
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=05htdGFFI8U" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz Beats Boredom — Dancing Shadow</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=H34ZMNGUeo0" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz Beats Boredom — Calling Ex</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=bdS34aC8pDc" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz Beats Boredom — Breaking Stuff</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+      </div>
     </div>
-    <div class="video-card anim anim-d2" data-video="Mdp5tdAKzRk" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
+
+    <div class="work-group">
+      <div class="work-group-header">
+        <span class="work-group-tag">Events &amp; Campaigns</span>
+        <div class="work-group-line"></div>
+      </div>
+      <div class="work-links">
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=fqvGPcgGaws" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Halloween Event. Lightbringer vs Souleater!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=1QywDp3p9Fs" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Operation Bard’s Song. Raid the Dungeon and Claim Untold Riches!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=sA19frjQ0zo" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Realistic August. Tiger Frontline Event</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d3" href="https://www.youtube.com/watch?v=P6KwsJGf4gU" target="_blank" rel="noopener">
+          <span class="work-link-title">WoTB. Battle of the Best: Summer Cup Finals’ Highlights!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=MswmfRGLBoc" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Clan Event: Take the challenge. Claim the M46 Jaguar</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=LRLXDauhSVs" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Grab Biter for FREE. New Event, Abyssal Lockboxes and Gifts!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=msvnOZT2nAg" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. New Game Mode: Infected Front. Learn How to Play</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d3" href="https://www.youtube.com/watch?v=UPIunyVsz4Q" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. AC-09V Sterope. Triple Shot Burst Gun in Action!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=sISj-3-tGjM" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. The Clandestine Lab Event</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+      </div>
     </div>
-    <div class="video-card anim anim-d3" data-video="1QywDp3p9Fs" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
+
+    <div class="work-group">
+      <div class="work-group-header">
+        <span class="work-group-tag">Update Reviews</span>
+        <div class="work-group-line"></div>
+      </div>
+      <div class="work-links">
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=Mdp5tdAKzRk" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Season Update Review: New French Tanks, New Game Mode, and Breathtaking Season Tanks</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=v2RbyiOBnkg" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Coming Soon. New Gun Sounds and More...</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=mTwUlsov26c" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz Reforged: Tech tree and Sets Changes On The Next Test</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d3" href="https://www.youtube.com/watch?v=1J7-QUQeMlE" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. What’s New in the Next Update?</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=_n8JHxHTjZc" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Update Overview. Gun Marks, The Return of Classic Maps, a Gift and Much More</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=s4tEIM2dE4Q" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Update Review. New Polish Tech Tree, New Events and Gifts!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=lCLd0-hNucw" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Coming Soon. Episode 38. New Stuff. Good Stuff!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d3" href="https://www.youtube.com/watch?v=xirtpDKZcAA" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Reforged Update Diaries: Graphics, Physics, and Battle Interface Improvements</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim" href="https://www.youtube.com/watch?v=W_rDJumqxGM" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Halloween is Coming. Update Overview. New tanks, Camouflages, and a Brand-New Game Mode!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d1" href="https://www.youtube.com/watch?v=ie3wVPzDBw8" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Coming Soon. EP 43. New Polish Tech Tree, Events and More</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+        <a class="work-link-card anim anim-d2" href="https://www.youtube.com/watch?v=6T0MueILe-0" target="_blank" rel="noopener">
+          <span class="work-link-title">WoT Blitz. Coming Soon. New Tanks, Quests and Rewards!</span>
+          <span class="work-link-arrow">Watch →</span>
+        </a>
+      </div>
     </div>
-    <div class="video-card anim" data-video="vX0I_0YIl_A" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="H34ZMNGUeo0" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="JiThtTg_5Nc" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="btDxd6pCq6E" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim" data-video="samgsYd70h8" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="P6KwsJGf4gU" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="v2RbyiOBnkg" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="sA19frjQ0zo" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim" data-video="bdS34aC8pDc" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="mTwUlsov26c" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="1J7-QUQeMlE" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="_n8JHxHTjZc" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim" data-video="s4tEIM2dE4Q" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="lCLd0-hNucw" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="xirtpDKZcAA" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="W_rDJumqxGM" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim" data-video="MswmfRGLBoc" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="LRLXDauhSVs" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="ie3wVPzDBw8" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="brTlAVjC1Ew" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim" data-video="msvnOZT2nAg" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d1" data-video="UPIunyVsz4Q" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d2" data-video="sISj-3-tGjM" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
-    <div class="video-card anim anim-d3" data-video="6T0MueILe-0" data-label="Case Study">
-      <div class="video-placeholder"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="video-overlay"><span class="video-label">Case Study</span></div>
-    </div>
+
   </div>
-  <p class="work-disclaimer anim">Publicly released work produced while employed by Wargaming, all rights belong to their respective owners, links provided for portfolio reference only</p>
+    <p class="work-disclaimer anim">Publicly released work produced while employed by Wargaming, all rights belong to their respective owners, links provided for portfolio reference only</p>
 </section>
 
 <section id="about">
@@ -1141,41 +1129,9 @@
   </div>
 </footer>
 
-<div class="modal-backdrop" id="modal">
-  <div class="modal-inner">
-    <button class="modal-close" id="modal-close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      Close
-    </button>
-    <iframe id="modal-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  </div>
-</div>
 
 <script>
-  // ── VIDEO MODAL ──
-  const modal = document.getElementById('modal');
-  const iframe = document.getElementById('modal-iframe');
-
-  document.querySelectorAll('.video-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.dataset.video;
-      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    });
-  });
-
-  function closeModal() {
-    modal.classList.remove('open');
-    iframe.src = '';
-    document.body.style.overflow = '';
-  }
-
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // ── INTERSECTION OBSERVER for anim ──
+    // ── INTERSECTION OBSERVER for anim ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
