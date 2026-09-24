@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     ALEXANDR SHULYAKOVSKIY — PORTFOLIO ("Orbit" edition)
+     Scroll flies a camera through "stations" in CSS 3D space (4 on desktop, 7 on phones)
+     (hero → signature works → what I did & can do → contact),
+     then the page LANDS and continues as a normal, skimmable document.
+     EU-wide hiring edition: no portrait photo. Canonical → https://alexshu.com/
+     No third-party imagery. Employer named (Wargaming.net). No internal figures:
+     public platform counts and cleared annual volumes only.
+     ============================================================ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alexandr Shulyakovskiy — Creative &amp; Performance Marketing Producer</title>
+  <meta name="description" content="Alexandr Shulyakovskiy (Alex Shu) — Creative Producer and Performance Marketing Video Producer with 12 years in games, nearly eight of them as Senior Creative Producer on World of Tanks Blitz at Wargaming.net. Content production, performance marketing videos, A/B testing, ASO, livestream, and IP collaborations with Snatch (Sony Pictures), UFC, The Walking Dead, and deadmau5. Based in the EU." />
+  <meta name="keywords" content="Creative Producer, Content Producer, Marketing Producer, Performance Marketing Producer, Video Producer, Performance Marketing Videos, Marketing Videos, Content Production, ASO, A/B Testing, Mobile Games Marketing, Alex Shu, Alexandr Shulyakovskiy, Aliaksandr Shuliakouski, Al Shu, Александр Шуляковский" />
+  <meta name="author" content="Alexandr Shulyakovskiy" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://alexshu.com/" />
+  <meta name="theme-color" content="#050510" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://alexshu.com/" />
+  <meta property="og:site_name" content="Alexandr Shulyakovskiy — Portfolio" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="Alexandr Shulyakovskiy — Creative &amp; Performance Marketing Producer" />
+  <meta property="og:description" content="Creative Producer and Performance Marketing Video Producer. Content production, performance marketing videos, A/B testing, ASO, and high-profile IP collaborations." />
+  <meta property="og:image" content="https://alexshu.com/assets/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Alexandr Shulyakovskiy — Creative &amp; Performance Marketing Producer" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://alexshu.com/assets/og-card.png" />
+  <meta name="twitter:title" content="Alexandr Shulyakovskiy — Creative &amp; Performance Marketing Producer" />
+  <meta name="twitter:description" content="Creative Producer &amp; Performance Marketing Video Producer — content production, performance marketing videos, A/B testing, ASO, IP collaborations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       0. TOKENS & RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* space palette */
+      --bg:        #050510;
+      --panel:     rgba(14,14,28,.78);
+      --panel-hi:  rgba(20,20,38,.92);
+      --text:      #e4e6f0;
+      --muted:     #9a9aab;
+      --hair:      rgba(228,230,240,.12);
+      --hair-2:    rgba(228,230,240,.07);
+      /* brand accent (kept from the live site) */
+      --gold:      #e8a630;
+      --gold-lt:   #ffd98a;
+      --gold-dim:  #a87520;
+      --gold-a:    rgba(232,166,48,.28);
+      /* secondary cool — tiny details only */
+      --cool:      #6f7cff;
+      --cool-a:    rgba(111,124,255,.38);
+      /* type */
+      --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      /* geometry */
+      --step:      1100px;          /* 3D distance between stations (JS reads this) */
+      --stations:  7;
+      --slot:      92vh;            /* scroll distance per station */
+      --head-h:    72px;
+      --pad-x:     clamp(20px, 4vw, 56px);
+      --max:       1200px;
+      --r:         11px;
+      --ease:      cubic-bezier(.76,0,.24,1);
+      --ease-out:  cubic-bezier(.16,1,.3,1);
+    }
+
+    html {
+      background: var(--bg);
+      overflow-x: hidden;               /* on html only — keeps position:sticky working */
+      scroll-padding-top: calc(var(--head-h) + 8px);
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* both elements: with overflow-x on html, body's overflow is no longer propagated to the
+       viewport, so locking body alone let the page scroll behind the open menu */
+    html.menu-open, body.menu-open { overflow: hidden; }
+    a { color: inherit; }
+    svg { display: block; }
+    ul { list-style: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    strong { font-weight: 600; }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* accessibility */
+    .skip-link {
+      position: absolute; left: -999px; top: 0; z-index: 200;
+      background: var(--gold); color: var(--bg);
+      padding: 12px 20px; text-decoration: none;
+      font: 500 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+    }
+    .skip-link:focus { left: 0; }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+    /* optional grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 999; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .028;
+    }
+
+    /* HUD corner brackets — 1px corners, 12px long */
+    .hud-box { position: relative; }
+    .hud-box::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+      --c: rgba(232,166,48,.75); --l: 12px;
+      background:
+        linear-gradient(var(--c), var(--c)) top left     / var(--l) 1px,
+        linear-gradient(var(--c), var(--c)) top left     / 1px var(--l),
+        linear-gradient(var(--c), var(--c)) top right    / var(--l) 1px,
+        linear-gradient(var(--c), var(--c)) top right    / 1px var(--l),
+        linear-gradient(var(--c), var(--c)) bottom left  / var(--l) 1px,
+        linear-gradient(var(--c), var(--c)) bottom left  / 1px var(--l),
+        linear-gradient(var(--c), var(--c)) bottom right / var(--l) 1px,
+        linear-gradient(var(--c), var(--c)) bottom right / 1px var(--l);
+      background-repeat: no-repeat;
+    }
+
+    /* duplicated-text hover (the reference's "View case study" trick) */
+    .swap { display: inline-grid; overflow: hidden; line-height: 1.25; vertical-align: middle; }
+    .swap > span { grid-area: 1 / 1; white-space: nowrap; transition: transform .5s var(--ease); }
+    .swap > span:last-child { transform: translateY(115%); }
+    .swap-host:hover .swap > span:first-child,
+    .swap-host:focus-visible .swap > span:first-child { transform: translateY(-115%); }
+    .swap-host:hover .swap > span:last-child,
+    .swap-host:focus-visible .swap > span:last-child { transform: none; }
+
+    /* ============================================================
+       1. HEADER (hidden → slides in after 900 ms — and stays)
+       ============================================================ */
+    .site-head {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+      height: var(--head-h);
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      padding: 0 var(--pad-x);
+      /* solid by default (safe without JS); JS makes it transparent at the top of the page */
+      background: rgba(5,5,16,.8);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--hair);
+      transform: translateY(-100%);
+      animation: headIn .9s var(--ease-out) .9s forwards;
+      transition: background .3s, box-shadow .3s;
+    }
+    .site-head::before {
+      content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(5,5,16,.85), rgba(5,5,16,0));
+      opacity: 0; transition: opacity .3s;
+    }
+    html.js .site-head:not(.scrolled) {
+      background: transparent; box-shadow: none;
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+    }
+    html.js .site-head:not(.scrolled)::before { opacity: 1; }
+    @keyframes headIn { to { transform: none; } }
+
+    .wordmark {
+      display: flex; align-items: center; gap: 10px;
+      font: 500 12px/1 var(--font-mono); letter-spacing: .18em; text-transform: uppercase;
+      color: var(--text); text-decoration: none; white-space: nowrap;
+    }
+    .wordmark i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+
+    .nav { display: flex; gap: clamp(18px, 2.6vw, 36px); }
+    .nav a {
+      position: relative; padding: 6px 0;
+      font: 500 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .25s;
+    }
+    .nav a::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+      background: var(--gold); transform: scaleX(0); transform-origin: left;
+      transition: transform .35s var(--ease);
+    }
+    .nav a:hover { color: var(--text); }
+    .nav a:hover::after { transform: scaleX(1); }
+
+    /* "Send email →" with the duplicated-arrow hover */
+    .btn-mail {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 16px; border-radius: var(--r);
+      background: var(--gold); color: #0b0814;
+      font: 700 12px/1 var(--font-sans); letter-spacing: .02em; text-decoration: none; white-space: nowrap;
+      transition: background .25s;
+    }
+    .btn-mail:hover { background: var(--gold-lt); }
+    .arr { display: inline-grid; width: 1em; overflow: hidden; line-height: 1; }
+    .arr i { grid-area: 1 / 1; font-style: normal; transition: transform .45s var(--ease); }
+    .arr i:last-child { transform: translateX(-130%); }
+    .btn-mail:hover .arr i:first-child { transform: translateX(130%); }
+    .btn-mail:hover .arr i:last-child { transform: none; }
+
+    /* sound: speaker button; hovering (or focusing) it drops a vertical volume slider below */
+    .head-actions { display: flex; align-items: center; gap: 10px; }
+    .sound { position: relative; }
+    .snd {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; padding: 0; border-radius: var(--r);
+      border: 1px solid var(--hair); background: rgba(14,14,28,.55); color: var(--gold);
+      cursor: pointer; transition: border-color .25s, background .25s, color .25s;
+    }
+    .snd:hover, .sound:has(:focus-visible) .snd { border-color: rgba(232,166,48,.55); background: rgba(20,20,38,.8); }
+    .snd-ico { width: 20px; height: 20px; display: block; }
+    .snd-ico .w1, .snd-ico .w2 { transition: opacity .25s; transform-origin: 14px 12px; }
+    .snd-ico .mx { opacity: 0; transition: opacity .25s; }
+    .snd.muted { color: var(--muted); }
+    .snd.muted .w1, .snd.muted .w2 { opacity: 0; }
+    .snd.muted .mx { opacity: 1; }
+    .snd.low .w2 { opacity: .25; }                                 /* quiet: second wave fades */
+    /* invitation: a flickering gold halo around the button when you arrive (stops on first click or after ~20 s) */
+    .snd::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; opacity: 0;
+      box-shadow: 0 0 0 1px rgba(232,166,48,.9), 0 0 18px 4px rgba(232,166,48,.45), 0 0 42px 10px rgba(232,166,48,.18); }
+    .snd { position: relative; }
+    .snd.invite::after { animation: invite 2.1s ease-in-out 8; }
+    @keyframes invite {
+      0% { opacity: 0; } 12% { opacity: 1; } 20% { opacity: .35; } 30% { opacity: .95; } 42% { opacity: .5; }
+      55% { opacity: 1; } 70% { opacity: .25; } 82% { opacity: .8; } 100% { opacity: 0; }
+    }
+    /* the volume panel */
+    .vol {
+      position: absolute; top: calc(100% + 8px); left: 50%; z-index: 5;
+      width: 40px; padding: 10px 0 12px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: rgba(10,10,22,.92); border: 1px solid var(--hair); border-radius: var(--r);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      opacity: 0; visibility: hidden; transform: translate(-50%, -6px);
+      transition: opacity .22s, transform .22s var(--ease-out), visibility 0s .22s;
+    }
+    .vol::before { content: ''; position: absolute; left: 0; right: 0; top: -9px; height: 9px; }   /* hover bridge over the gap */
+    /* shown while hovered, while the thumb is being dragged (.is-dragging, JS) or on KEYBOARD focus (:focus-visible).
+       Plain :focus-within would pin the panel open after a mouse click until the next click elsewhere. */
+    .sound:hover .vol, .sound.is-dragging .vol, .sound:has(:focus-visible) .vol { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity .22s, transform .22s var(--ease-out), visibility 0s; }
+    @supports not selector(:has(*)) { .sound:focus-within .vol { opacity: 1; visibility: visible; transform: translate(-50%, 0); } }
+    .vol-val { font-size: 10px; letter-spacing: .08em; color: var(--muted); min-width: 2ch; text-align: center; }
+    .vol-rail { position: relative; width: 24px; height: 112px; }
+    /* a horizontal range rotated upright: keyboard ↑/→ raise the volume, ↓/← lower it */
+    .vol-range {
+      position: absolute; left: 50%; top: 50%; width: 112px; height: 24px; margin: 0;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer;
+      --v: 40%;
+    }
+    .vol-range:focus-visible { outline: none; }
+    .vol-range::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: linear-gradient(to right, var(--gold) var(--v), rgba(228,230,240,.18) var(--v)); }
+    .vol-range::-moz-range-track { height: 3px; border-radius: 2px; background: rgba(228,230,240,.18); }
+    .vol-range::-moz-range-progress { height: 3px; border-radius: 2px; background: var(--gold); }
+    .vol-range::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -4.5px; border-radius: 50%; background: var(--gold); border: 2px solid #0b0814; box-shadow: 0 0 0 1px var(--gold); }
+    .vol-range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid #0b0814; box-shadow: 0 0 0 1px var(--gold); }
+    .vol-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(232,166,48,.35); }
+    .vol-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px rgba(232,166,48,.35); }
+    .menu-sound {
+      display: inline-flex; align-items: center; margin-top: 28px; padding: 10px 0;
+      background: none; border: 0; color: var(--muted); cursor: pointer;
+      font: 500 12px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase;
+      opacity: 0; transform: translateY(14px); transition: opacity .5s var(--ease-out), transform .6s var(--ease-out), color .25s;
+    }
+    .menu-sound b { font-weight: 500; color: var(--gold); margin-left: .4em; }
+    .menu-sound:hover { color: var(--text); }
+    .menu.open .menu-sound { opacity: 1; transform: none; transition-delay: calc(80ms + var(--k) * 55ms); }
+    html:not(.js) .sound, html:not(.js) .menu-sound { display: none; }
+    @media (prefers-reduced-motion: reduce) { .snd.invite::after { animation: none; opacity: .7; } }
+
+    .burger {
+      display: none; flex: none; width: 42px; height: 42px;
+      border: 1px solid var(--hair); border-radius: var(--r); text-decoration: none;
+      flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    }
+    .burger span { display: block; width: 18px; height: 1.5px; background: var(--text); transition: transform .3s var(--ease), opacity .3s; }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* full-screen menu (≤ 900px) */
+    .menu {
+      position: fixed; inset: 0; z-index: 55;
+      background: rgba(5,5,16,.975);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: calc(var(--head-h) + 24px) var(--pad-x) 48px;
+      visibility: hidden; opacity: 0;
+      transition: opacity .4s, visibility 0s .4s;
+    }
+    .menu.open { visibility: visible; opacity: 1; transition: opacity .4s; }
+    .menu-link {
+      display: block; padding: 10px 0;
+      font: 800 clamp(2rem, 9vw, 3.4rem)/1.1 var(--font-sans); letter-spacing: -.02em;
+      color: var(--text); text-decoration: none;
+      opacity: 0; transform: translateY(18px);
+      transition: opacity .5s var(--ease-out), transform .5s var(--ease-out), color .2s;
+    }
+    .menu-link:hover { color: var(--gold); }
+    .menu.open .menu-link { opacity: 1; transform: none; transition-delay: calc(80ms + var(--k) * 55ms); }
+    .menu .menu-foot { margin-top: 32px; color: var(--muted); }
+    .menu-close {
+      position: absolute; top: 15px; right: var(--pad-x);
+      width: 42px; height: 42px; display: grid; place-items: center;
+      border: 1px solid var(--hair); border-radius: var(--r);
+      color: var(--text); text-decoration: none; font-size: 22px; line-height: 1;
+    }
+    html.js .menu-close { display: none; }
+    /* no-JS fallback: the burger is a link to #menu, :target opens the menu, the × link closes it */
+    html:not(.js) .menu:target { visibility: visible; opacity: 1; z-index: 70; }   /* above the header so × is clickable */
+    html:not(.js) .menu:target .menu-link { opacity: 1; transform: none; }
+
+    /* ============================================================
+       2. BUTTONS
+       ============================================================ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 24px; border-radius: var(--r); border: 1px solid transparent;
+      font: 700 13px/1 var(--font-sans); letter-spacing: .02em; text-decoration: none;
+      transition: background .25s, color .25s, border-color .25s;
+    }
+    .btn--gold { background: var(--gold); color: #0b0814; }
+    .btn--gold:hover { background: var(--gold-lt); }
+    .btn--ghost { border-color: var(--hair); color: var(--text); }
+    .btn--ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .pill {
+      display: inline-flex; align-items: center;
+      padding: 11px 18px; border-radius: 999px;
+      background: var(--gold); color: #0b0814;
+      font: 700 12px/1 var(--font-sans); letter-spacing: .04em; text-decoration: none;
+      transition: background .25s;
+    }
+    .pill:hover { background: var(--gold-lt); }
+    .chip {
+      display: inline-block; padding: 5px 9px; border-radius: 3px;
+      color: var(--gold); border: 1px solid var(--cool-a);
+    }
+
+    /* ============================================================
+       3. THE FLIGHT — default = stacked (no JS / reduced motion / < 700px)
+       ============================================================ */
+    .flight { position: relative; background: var(--bg); }
+    .stage  { position: relative; overflow: hidden; overflow: clip; }   /* clip: the stage must never become a scroll container */
+    .stars, .hud { display: none; }
+    .world  { position: relative; }
+
+    /* stacked (no flight): only the hero station is shown — the works, results and contact
+       already live in the document below as index sections, so nothing is duplicated */
+    .station { position: relative; padding: clamp(56px, 8vh, 96px) var(--pad-x); }
+    html:not(.fly) .station:not(.station--hero),
+    html:not(.fly) .landed,
+    html:not(.fly) .sec-head .sub { display: none; }
+    .station--hero {
+      min-height: 100vh; min-height: 100svh;
+      padding-top: calc(var(--head-h) + 48px);
+      display: grid; align-items: center; overflow: hidden;
+    }
+    .st-inner { position: relative; z-index: 0; width: 100%; max-width: var(--w, 1100px); margin: 0 auto; }
+
+    /* fly mode: sticky stage, 3D world, stations on the z-axis */
+    /* scroll budget: one viewport for the hero + one --slot per remaining station. A shorter slot
+       means a flick of the trackpad moves you to the next station instead of a long empty pull. */
+    html.fly .flight { height: calc(100vh + (var(--stations) - 1) * var(--slot)); height: calc(100svh + (var(--stations) - 1) * var(--slot)); }
+    html.fly .stage {
+      position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden; overflow: clip;
+    }
+    html.fly .stars { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* The camera lives in CSS variables on .world (--cx/--cy = lateral position, --cz = depth,
+       --rx/--ry = pointer tilt) and every plane applies them itself. Perspective sits on .world and
+       .world stays FLAT on purpose: with transform-style: preserve-3d Chromium could not hit-test
+       links on planes that share one depth (the four work cards), so the Watch buttons were dead. */
+    html.fly .world { position: absolute; inset: 0; perspective: 1200px; perspective-origin: 50% 50%; --cx: 0px; --cy: 0px; --cz: 0px; --rx: 0deg; --ry: 0deg; }
+    /* each station is a full-stage box (no -50% translate: Chromium mis-hit-tests a
+       percentage-translated layer inside a tilted preserve-3d context) centred with grid */
+    html.fly .station {
+      --cam-y: 16px;                       /* camera target sits a little below the fixed header */
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      display: grid; place-items: center;
+      padding: 0 var(--pad-x); border: 0;
+      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+                 translate3d(calc(var(--sx, 0px) + var(--cx, 0px)), calc(var(--sy, 0px) + var(--cam-y) + var(--cy, 0px)), calc(var(--cz, 0px) - var(--i, 0) * var(--step)));
+      opacity: var(--o, 0);
+      pointer-events: none;
+      will-change: opacity;
+    }
+    /* stations stay in the DOM, the tab order and the accessibility tree at opacity 0,
+       so keyboard and screen-reader users travel the flight in order; focusing a
+       station flies the camera to it (see JS) */
+    html.fly .station--hero { min-height: 0; overflow: visible; }
+    html.fly .station.is-current .st-inner { pointer-events: auto; }
+    html.fly .st-inner { width: 100%; max-width: var(--w, 1100px); }
+    /* WORK PLANES. Desktop: the four cards share logical station 1 and sit side by side on the same
+       depth (a row ≥1180px, a 2×2 grid below); phones: one card per station, gently zig-zagging. */
+    .station--work { --sx: 0px; --sy: 0px; --w: 272px; }
+    .plane-w1 { --sx: -438px; } .plane-w2 { --sx: -146px; } .plane-w3 { --sx: 146px; } .plane-w4 { --sx: 438px; }
+    @media (min-width: 1600px) and (min-height: 760px) {
+      .station--work { --w: 320px; }
+      .plane-w1 { --sx: -516px; } .plane-w2 { --sx: -172px; } .plane-w3 { --sx: 172px; } .plane-w4 { --sx: 516px; }
+    }
+    @media (max-width: 1179px) {
+      .station--work { --w: 300px; }
+      .plane-w1 { --sx: -162px; --sy: -152px; } .plane-w2 { --sx: 162px; --sy: -152px; }
+      .plane-w3 { --sx: -162px; --sy: 152px; }  .plane-w4 { --sx: 162px; --sy: 152px; }
+    }
+    @media (max-width: 699px) {
+      .station--work { --w: min(92vw, 520px); --sy: 0px; }
+      .plane-w1 { --sx: 4vw; } .plane-w2 { --sx: -4vw; } .plane-w3 { --sx: 4vw; } .plane-w4 { --sx: -4vw; }
+    }
+    .station--skills { --sx: 4vw; --sy: 0px; }
+    .station--contact { --sx: -3vw; --sy: 0px; }
+    @media (max-width: 699px) { .station--skills, .station--contact { --sx: 0px; } }
+    html.fly .hud { display: block; }
+    /* mid-distance stations get a little blur (.is-soft toggled by JS for .1 < o < .98) — desktop + pointer only */
+    @supports (filter: blur(1px)) {
+      @media (min-width: 1024px) and (hover: hover) {
+        html.fly .station.is-soft .st-inner { filter: blur(calc((1 - var(--o, 0)) * 3px)); }
+      }
+    }
+    /* stations that are not current (the ones peeking ahead) carry a faint gold outline + glow,
+       so a half-transparent card still reads as a card against the black — a runway light */
+    html.fly .station .card,
+    html.fly .station .contact-st { transition: border-color .45s ease, box-shadow .45s ease; }
+    html.fly .station:not(.is-current) .card,
+    html.fly .station:not(.is-current) .contact-st {
+      border-color: rgba(232,166,48,.38);
+      box-shadow: 0 0 0 1px rgba(232,166,48,.06), 0 0 48px rgba(232,166,48,.12);
+    }
+
+    /* orbital rings (decorative, behind panels) */
+    .orbit { pointer-events: none; }
+    .orbit--spin { animation: spin 90s linear infinite; transform-origin: 50% 50%; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- station 0: HERO ---- */
+    .hero-orbit {
+      position: absolute; z-index: -1; right: -14%; top: 50%;
+      width: min(620px, 54vw); aspect-ratio: 2 / 1;
+      translate: 0 -50%; opacity: .9;          /* `translate` so the spin animation's transform does not fight it */
+    }
+    /* soft darkening behind the hero copy so stars and the ring never sit under the text */
+    .station--hero .st-inner::before {
+      content: ''; position: absolute; z-index: -2; pointer-events: none;
+      inset: -48px -60px -48px -120px;
+      background: radial-gradient(ellipse 50% 62% at 30% 52%, rgba(5,5,16,.94), rgba(5,5,16,0) 72%);
+    }
+    .eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      color: var(--gold); margin-bottom: clamp(16px, 2.4vh, 28px);
+    }
+    .eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--gold); flex: none; }
+    .hero-name {
+      font-weight: 800;
+      font-size: clamp(2.5rem, min(8.4vw, 13.5vh), 8.5rem);
+      line-height: .95; letter-spacing: -.025em;
+    }
+    .hero-name span { display: block; }
+    .hero-name span:last-child { color: var(--gold); }
+    .hero-desc {
+      margin-top: clamp(18px, 3vh, 30px); max-width: 600px;
+      color: var(--muted); font-size: clamp(.98rem, 1.1vw, 1.08rem); line-height: 1.7;
+    }
+    .hero-desc strong { color: var(--text); }
+    .hero-actions { margin-top: clamp(22px, 3.4vh, 34px); display: flex; flex-wrap: wrap; gap: 12px; }
+    .caps {
+      margin-top: clamp(26px, 4.4vh, 44px); padding-top: 18px;
+      border-top: 1px solid var(--hair);
+      display: flex; flex-wrap: wrap; gap: 8px 0;
+      color: var(--muted); font-size: 11px; letter-spacing: .12em;
+    }
+    .caps li { display: inline-flex; align-items: center; }
+    /* the separator trails its item, so a wrapped line never starts with a dangling diamond */
+    .caps li:not(:last-child)::after { content: '◆'; color: var(--gold); font-size: 7px; margin: 0 14px; }
+    /* staggered rise on load (fill: backwards → visible if animations are off) */
+    .rise { animation: rise .9s var(--ease-out) calc(.25s + var(--d, 0) * .12s) backwards; }
+    @keyframes rise { from { opacity: 0; transform: translateY(22px); } }
+
+    /* ---- stations 1–4: WORK CARDS ---- */
+    .card {
+      width: 100%; background: rgba(11,11,23,.94);
+      border: 1px solid var(--hair); border-radius: 4px; overflow: hidden;
+    }
+    .card-visual {
+      --vis-h: min(240px, 28vh);
+      position: relative; height: var(--vis-h); display: grid; place-items: center;
+      overflow: hidden;                       /* the spinning ring never leaves the visual band */
+      border-bottom: 1px solid var(--hair);
+      background: radial-gradient(ellipse 60% 70% at 50% 60%, rgba(232,166,48,.09), transparent 70%);
+    }
+    .card-visual .orbit { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .card-visual .motif { position: relative; width: var(--vis-h); height: var(--vis-h); }
+    .card-body { padding: 22px 28px 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .card-title { font-weight: 700; font-size: clamp(1.25rem, 1.6vw, 1.7rem); line-height: 1.2; letter-spacing: -.015em; }
+    .card-desc { color: var(--muted); font-size: .94rem; }
+    .card .pill { margin-top: 6px; }
+    @media (min-width: 700px) {
+      html.fly .station--work .card-visual { --vis-h: 118px; }
+      html.fly .station--work .card-visual .motif { width: 118px; height: 118px; }
+      html.fly .station--work .card-body { padding: 14px 16px 16px; gap: 8px; }
+      /* title and blurb RESERVE their clamped line count (3 + 2), so the four planes are the same height
+         whatever the copy length — otherwise a three-line title made the first card taller than the row */
+      html.fly .station--work .card-title { font-size: .98rem; line-height: 1.25; min-height: calc(3 * 1.25em); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+      html.fly .station--work .card-desc { font-size: .8rem; line-height: 1.4; min-height: calc(2 * 1.4em); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      html.fly .station--work .chip { font-size: 9px; }
+      html.fly .station--work .pill { padding: 7px 12px; font-size: 11px; margin-top: 2px; }
+    }
+    @media (min-width: 700px) and (max-height: 820px) and (max-width: 1179px) {
+      html.fly .station--work .card-desc { display: none; }    /* 2×2 on a short laptop: drop the blurb so the grid fits */
+    }
+
+    /* ---- station 2 (desktop) / 5 (mobile): WHAT I DID & WHAT I CAN DO ---- */
+    .st-kicker { color: var(--gold); margin-bottom: 12px; }
+    .st-title { font-weight: 800; font-size: clamp(1.9rem, 3.6vw, 3rem); letter-spacing: -.02em; line-height: 1.05; }
+    .skills-st {
+      padding: clamp(22px, 3vw, 40px) clamp(22px, 3.2vw, 44px);
+      background: var(--panel); border: 1px solid var(--hair);
+    }
+    .skills-st .st-title { font-size: clamp(1.5rem, 2.6vw, 2.2rem); }
+    .skills-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px clamp(24px, 3.5vw, 56px); margin-top: 22px; }
+    .skills-h { color: var(--gold); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--hair); }
+    .skills-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+    .skills-list li { position: relative; padding-left: 16px; font-size: clamp(.84rem, .95vw, .95rem); line-height: 1.45; color: var(--text); }
+    .skills-list li::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px rgba(232,166,48,.6); }
+    .skills-list--can li { color: var(--muted); }
+    .skills-list--can b { color: var(--text); font-weight: 700; }
+    @media (max-height: 760px) {
+      .skills-st { padding: 20px 26px 22px; }
+      .skills-cols { margin-top: 14px; gap: 18px 32px; }
+      .skills-list { gap: 6px; } .skills-list li { font-size: .84rem; line-height: 1.38; }
+      .skills-h { margin-bottom: 8px; padding-bottom: 7px; }
+      .skills-st .st-kicker { margin-bottom: 6px; }
+    }
+    .skills-foot { text-align: center; }
+    .skills-foot .continue { margin-top: 18px; }
+    @media (max-height: 760px) { .skills-foot .continue { margin-top: 12px; } }
+    @media (max-width: 699px) {
+      .skills-more { display: none; }                       /* phones: titles only, so the slide fits the screen */
+      .skills-foot .continue { margin-top: 10px; }
+      .skills-cols { grid-template-columns: 1fr; gap: 16px; margin-top: 14px; }
+      .skills-st { padding: 18px 18px 20px; }
+      .skills-st .st-title { font-size: 1.35rem; }
+      .skills-list { gap: 5px; } .skills-list li { font-size: .8rem; line-height: 1.35; padding-left: 14px; }
+      .skills-list li::before { width: 5px; height: 5px; top: .55em; }
+      .skills-h { font-size: 10px; margin-bottom: 6px; padding-bottom: 6px; }
+    }
+
+    /* ---- station 6: CONTACT ---- */
+    .contact-st {
+      padding: clamp(28px, 4vw, 48px); text-align: center;
+      background: var(--panel); border: 1px solid var(--hair);
+    }
+    .contact-mail {
+      display: inline-block; margin-top: 18px;
+      font-weight: 800; font-size: clamp(1.3rem, 3.2vw, 2.4rem); letter-spacing: -.02em; line-height: 1.1;
+      color: var(--text); text-decoration: none; word-break: break-all; transition: color .25s;
+    }
+    .contact-mail:hover { color: var(--gold); }
+    .contact-row { margin-top: 14px; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 20px; color: var(--muted); font-size: .95rem; }
+    .contact-row a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--hair); transition: color .2s, border-color .2s; }
+    .contact-row a:hover { color: var(--gold); border-color: var(--gold); }
+    .avail {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 22px;
+      padding: 10px 16px; border: 1px solid var(--hair); border-radius: 999px;
+      font-size: .82rem; letter-spacing: .02em;
+    }
+    .pulse { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: pulse 2.4s infinite; }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(232,166,48,.55); }
+      70%  { box-shadow: 0 0 0 9px rgba(232,166,48,0); }
+      100% { box-shadow: 0 0 0 0 rgba(232,166,48,0); }
+    }
+    .continue {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 28px;
+      color: var(--gold); text-decoration: none;
+    }
+    .continue small { color: var(--muted); font-size: 10px; letter-spacing: .1em; }
+    .continue b { display: inline-block; font-weight: inherit; animation: bob 1.6s ease-in-out infinite; }
+    @keyframes bob { 50% { transform: translateY(3px); } }
+
+    /* ---- HUD overlay (fixed within the stage) ---- */
+    .hud {
+      position: absolute; inset: 0; z-index: 5; pointer-events: none;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hud-station { position: absolute; left: var(--pad-x); bottom: 30px; display: flex; gap: 10px; }
+    .hud-num { color: var(--gold); }
+    .hud-pill {
+      position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+      display: grid; padding: 10px 16px; white-space: nowrap; overflow: hidden;
+      border: 1px solid var(--hair); border-radius: 999px;
+      background: rgba(14,14,28,.7); color: var(--text);
+      transition: opacity .4s, transform .4s;
+    }
+    /* the two strings slide through the pill — only one is ever readable */
+    .hud-pill > span { grid-area: 1 / 1; transition: opacity .25s, transform .45s var(--ease); }
+    .hud-pill b { display: inline-block; font-weight: inherit; animation: bob 1.6s ease-in-out infinite; }
+    .hud-pill[data-state="start"] .hud-pill-b { opacity: 0; transform: translateY(120%); }
+    .hud-pill[data-state="keep"]  .hud-pill-a,
+    .hud-pill[data-state="off"]   .hud-pill-a { opacity: 0; transform: translateY(-120%); }
+    .hud-pill[data-state="off"] { opacity: 0; transform: translate(-50%, 8px); }
+    .hud-right { position: absolute; right: var(--pad-x); bottom: 24px; width: 134px; }
+    .hud-ticks { display: flex; gap: 6px; margin-bottom: 8px; }
+    .hud-ticks i { flex: 1; height: 2px; background: var(--hair); transition: background .3s; }
+    .hud-ticks i.on { background: var(--gold); }
+    .hud-bar { display: block; height: 1px; background: var(--hair); overflow: hidden; }
+    /* phones: the pill sits above the caption row; ticks shrink so they never touch the station name */
+    @media (max-width: 699px) {
+      .hud { font-size: 9px; letter-spacing: .1em; }
+      .hud-station { bottom: 22px; right: calc(var(--pad-x) + 84px); gap: 6px; flex-wrap: wrap; line-height: 1.3; }
+      .hud-pill { bottom: 58px; padding: 9px 14px; font-size: 9px; }
+      .hud-right { width: 72px; bottom: 20px; }
+      .hud-ticks { gap: 3px; margin-bottom: 6px; }
+    }
+    @media (min-width: 700px) and (max-height: 700px) {
+      .hud-station { bottom: 20px; } .hud-pill { bottom: 18px; } .hud-right { bottom: 16px; }
+    }
+    .hud-bar-fill { display: block; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+
+    /* ============================================================
+       4. THE LANDING — the document part
+       ============================================================ */
+    .landed {
+      position: relative; z-index: 3;
+      max-width: var(--max); margin: 0 auto; padding: 40px var(--pad-x) 0;
+      display: flex; align-items: center; gap: 18px; color: var(--muted); text-align: center;
+    }
+    /* the divider rises over the last stretch of the flight (the contact station and HUD
+       fade out there), so the released stage never leaves an empty band */
+    html.fly .landed { margin-top: -16vh; }
+    .landed::before, .landed::after { content: ''; flex: 1; height: 1px; background: var(--hair); }
+
+    .sec { position: relative; z-index: 2; padding: clamp(64px, 8vw, 112px) var(--pad-x); }   /* above the released stage */
+    .sec-in { max-width: var(--max); margin: 0 auto; }
+    .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: clamp(32px, 4vw, 52px); }
+    .sec-num { color: var(--gold); }
+    .sec-head h2 { font-weight: 800; font-size: clamp(1.8rem, 3.2vw, 2.75rem); letter-spacing: -.02em; line-height: 1.05; }
+    .sec-head h2 .sub { color: var(--muted); font-weight: 400; }
+    .sec-line { flex: 1; height: 1px; background: linear-gradient(to right, var(--hair), transparent); }
+
+    /* reveal on scroll (JS only; visible without JS) */
+    .reveal { transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); transition-delay: calc(var(--d, 0) * 60ms); }
+    html.js .reveal:not(.in) { opacity: 0; transform: translateY(22px); }
+
+    /* 01 what I bring */
+    .x-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .x-card { padding: 32px 26px 30px; background: var(--panel); border: 1px solid var(--hair-2); transition: background .3s; }
+    .x-card:hover { background: var(--panel-hi); }
+    .x-icon { width: 40px; height: 40px; color: var(--gold); margin-bottom: 22px; }
+    .x-icon svg { width: 100%; height: 100%; }
+    .x-card h3 { font-weight: 700; font-size: 1.06rem; letter-spacing: -.01em; line-height: 1.25; margin-bottom: 10px; }
+    .x-card p { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+    /* 02 signature works — index */
+    .sig-list { border-top: 1px solid var(--hair); }
+    .sig-row {
+      display: grid; grid-template-columns: 36px 72px 1fr auto; gap: 22px; align-items: center;
+      padding: 18px 0; border-bottom: 1px solid var(--hair);
+      text-decoration: none; color: var(--text); transition: background .25s;
+    }
+    .sig-idx { color: var(--muted); }
+    .sig-motif { width: 72px; height: 72px; display: grid; place-items: center; border: 1px solid var(--hair-2); background: rgba(14,14,28,.7); }
+    .sig-motif svg { width: 66px; height: 66px; }
+    .sig-meta .chip { margin-bottom: 8px; }
+    .sig-title { font-weight: 700; font-size: 1.08rem; letter-spacing: -.01em; line-height: 1.3; transition: color .25s; }
+    .sig-row:hover .sig-title { color: var(--gold); }
+    .sig-desc { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+    .sig-go { color: var(--gold); }
+
+    /* 03 selected work */
+    .w-groups { display: flex; flex-direction: column; gap: 48px; }
+    .w-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .w-icon { width: 20px; height: 20px; color: var(--gold); flex: none; }
+    .w-icon svg { width: 100%; height: 100%; }
+    .w-tag { color: var(--gold); white-space: nowrap; }
+    .w-count { color: var(--muted); }
+    .w-line { flex: 1; height: 1px; background: var(--hair); }
+    .w-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; border-top: 1px solid var(--hair-2); }
+    .w-row {
+      display: grid; grid-template-columns: 30px 1fr auto; gap: 14px; align-items: baseline;
+      padding: 13px 0; border-bottom: 1px solid var(--hair-2);
+      text-decoration: none; color: var(--text); font-size: .92rem; line-height: 1.45;
+    }
+    .w-num { color: var(--muted); }
+    .w-title { transition: color .2s; }
+    .w-go { color: var(--muted); transition: color .2s; }
+    .w-row:hover .w-title, .w-row:hover .w-go { color: var(--gold); }
+    .disclaimer {
+      margin-top: 40px; max-width: 680px; color: var(--muted);
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; line-height: 1.65;
+    }
+
+    /* 04 about & experience */
+    .about-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: clamp(40px, 6vw, 88px); align-items: start; }
+    .about-intro { color: var(--muted); font-size: 1.02rem; line-height: 1.75; }
+    .about-intro + .about-intro { margin-top: 18px; }
+    .about-intro strong { color: var(--text); }
+    .about-col .avail { margin-top: 26px; }
+    .contacts { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; }
+    .contacts a { display: inline-flex; align-items: center; gap: 12px; color: var(--muted); text-decoration: none; font-size: .92rem; transition: color .2s; }
+    .contacts a::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex: none; }
+    .contacts a:hover { color: var(--gold); }
+    .langs { margin-top: 36px; }
+    .langs h3 { color: var(--gold); margin-bottom: 16px; }
+    .lang { display: grid; grid-template-columns: 100px 1fr auto; gap: 14px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
+    .lang-bar { height: 3px; background: rgba(228,230,240,.08); overflow: hidden; }
+    .lang-fill { display: block; height: 100%; width: var(--w); background: linear-gradient(to right, var(--gold-dim), var(--gold)); transition: width 1.2s var(--ease-out); }
+    html.js .langs:not(.in) .lang-fill { width: 0; }
+    .lang-level { color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+
+    .exp { position: relative; padding-left: 28px; }
+    .exp::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--hair); }
+    .exp-item { position: relative; padding-bottom: 36px; }
+    .exp-item:last-child { padding-bottom: 0; }
+    .exp-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--gold); background: var(--bg); }
+    .exp-item::after  { content: ''; position: absolute; left: -24px; top: 10px; width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
+    .exp-period { color: var(--gold); margin-bottom: 8px; }
+    .exp-role { font-weight: 700; font-size: 1.2rem; letter-spacing: -.01em; line-height: 1.2; }
+    .exp-co { margin-top: 6px; color: var(--muted); }
+    .exp-bullets { margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+    .exp-bullets li { position: relative; padding-left: 16px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--gold-dim); }
+
+    /* 05 skills */
+    .sk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .sk-col { padding: 30px 26px; background: var(--panel); border: 1px solid var(--hair-2); }
+    .sk-col h3 { color: var(--gold); margin-bottom: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips li {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--hair); padding: 6px 10px; border-radius: 3px;
+    }
+
+    /* 06 key results — index */
+    .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+    .res-card { padding: 30px 26px; background: var(--panel); border: 1px solid var(--hair-2); }
+    .res-word { font-weight: 800; font-size: 1.55rem; letter-spacing: -.02em; color: var(--gold); line-height: 1; }
+    .res-card p { margin-top: 12px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+    /* 07 learning */
+    .learn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .learn-tile { display: block; padding: 44px 40px; background: var(--panel); border: 1px solid var(--hair-2); text-decoration: none; color: var(--text); transition: background .3s; }
+    .learn-tile:hover { background: var(--panel-hi); }
+    .learn-label { color: var(--gold); margin-bottom: 12px; }
+    .learn-title { font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -.02em; line-height: 1; }
+    .learn-desc { margin-top: 14px; color: var(--muted); font-size: .92rem; max-width: 360px; }
+    .learn-go { margin-top: 30px; color: var(--gold); }
+
+    /* footer */
+    .foot { border-top: 1px solid var(--hair); padding: 48px var(--pad-x) 40px; }
+    .foot-in { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+    .foot-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; }
+    .foot-role { margin-top: 6px; color: var(--muted); }
+    .foot-alt { margin-top: 6px; color: var(--muted); font-size: .85rem; }
+    .foot-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; color: var(--muted); font-size: .9rem; }
+    .foot-right .mail { color: var(--gold); text-decoration: none; }
+    .foot-top { margin-top: 10px; color: var(--text); text-decoration: none; }
+
+    /* ============================================================
+       5. RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .x-grid, .res-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) {
+      .nav, .btn-mail { display: none; }
+      .burger { display: inline-flex; }
+      .head-actions { gap: 8px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .sk-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .w-links { grid-template-columns: 1fr; }
+      .sig-row { grid-template-columns: 28px 56px 1fr; gap: 14px; }
+      .sig-motif { width: 56px; height: 56px; } .sig-motif svg { width: 50px; height: 50px; }
+      .sig-go { grid-column: 3; }
+      .card-visual { height: 200px; } .card-visual .motif { width: 200px; height: 200px; }
+      .card-body { padding: 20px 22px 24px; }
+    }
+    /* short windows (laptops at 1366×650 etc.): tighter hero rhythm, smaller name */
+    @media (max-height: 700px) {
+      .hero-name { font-size: clamp(2.3rem, min(8vw, 11vh), 8.5rem); }
+      .hero-desc { margin-top: 14px; }
+      .hero-actions { margin-top: 18px; }
+      .caps { margin-top: 20px; padding-top: 14px; }
+      .card-body { padding: 18px 24px 22px; gap: 10px; }
+    }
+    @media (max-width: 560px) {
+      .x-grid, .res-grid, .sk-grid, .learn-grid { grid-template-columns: 1fr; }
+      .foot-in { flex-direction: column; align-items: flex-start; }
+      .foot-right { align-items: flex-start; text-align: left; }
+      .lang { grid-template-columns: 86px 1fr auto; gap: 10px; }
+      .w-head { flex-wrap: wrap; }
+      .w-tag { white-space: normal; line-height: 1.5; }
+      .w-line { display: none; }
+      .learn-tile { padding: 36px 26px; }
+      .eyebrow::before { width: 22px; }
+    }
+
+    /* ============================================================
+       6. REDUCED MOTION — static layout, nothing moves
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .site-head { transform: none; }
+      html.js .reveal:not(.in) { opacity: 1; transform: none; }
+      html.js .langs:not(.in) .lang-fill { width: var(--w); }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alexandr Shulyakovskiy",
+    "alternateName": ["Alex Shu", "Al Shu", "Alex Shulyakovskiy", "Aliaksandr Shuliakouski", "Александр Шуляковский"],
+    "jobTitle": "Creative Producer & Performance Marketing Video Producer",
+    "description": "Creative Producer and Performance Marketing Video Producer with 12 years in games, nearly eight of them as Senior Creative Producer on World of Tanks Blitz: content production, performance marketing videos, A/B testing, ASO, livestream, and high-profile IP collaborations.",
+    "url": "https://alexshu.com/",
+    "email": "mailto:al.shulyakovskiy@gmail.com",
+    "telephone": "+37062411430",
+    "image": "https://alexshu.com/assets/og-card.png",
+    "sameAs": ["https://www.linkedin.com/in/al-shu/"],
+    "knowsAbout": ["Creative Production", "Content Production", "Content Producer", "Performance Marketing", "Performance Marketing Videos", "Video Production", "Marketing Videos", "A/B Testing", "ASO", "User Acquisition", "Livestream Production", "IP Collaborations", "Project Management", "Mobile Games Marketing"],
+    "knowsLanguage": ["English", "Russian", "Belarusian", "Lithuanian"],
+    "alumniOf": [{ "@type": "Organization", "name": "Wargaming.net" }, { "@type": "CollegeOrUniversity", "name": "Belarusian State Technological University" }],
+    "address": { "@type": "PostalAddress", "addressLocality": "Vilnius", "addressCountry": "LT" }
+  }
+  </script>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- shared SVG assets: gradient for motif 1 + orbital ring symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8a630" stop-opacity=".5"/><stop offset="1" stop-color="#e8a630" stop-opacity="0"/></linearGradient>
+    <symbol id="rings" viewBox="0 0 800 400">
+      <g fill="none" stroke="#e8a630" stroke-width="1">
+        <ellipse cx="400" cy="200" rx="380" ry="118" stroke-opacity=".24"/>
+        <ellipse cx="400" cy="200" rx="300" ry="164" stroke-opacity=".17" transform="rotate(-14 400 200)"/>
+        <ellipse cx="400" cy="200" rx="196" ry="196" stroke-opacity=".12"/>
+      </g>
+      <circle cx="780" cy="200" r="3" fill="#e8a630" opacity=".75"/>
+      <circle cx="118" cy="122" r="2" fill="#6f7cff" opacity=".6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ───────────── HEADER ───────────── -->
+<header class="site-head" id="siteHead">
+  <a href="#hero" class="wordmark" data-station="0"><i aria-hidden="true"></i>A.Shulyakovskiy</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#expertise">Expertise</a>
+    <a href="#signature" data-jump="now">Work</a>
+    <a href="#about">About</a>
+    <a href="#results">Results</a>
+    <a href="#learn">Learn</a>
+    <a href="mailto:al.shulyakovskiy@gmail.com">Contact</a>
+  </nav>
+  <div class="head-actions">
+    <div class="sound" id="sound">
+      <button class="snd" type="button" data-sound aria-pressed="false" aria-label="Sound" title="Sound: off — click to turn on">
+        <svg class="snd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <path class="spk" d="M4 9.5v5h3.2L12 18.5v-13L7.2 9.5H4z"/>
+          <path class="w1" d="M15.5 9.6a3.4 3.4 0 0 1 0 4.8"/>
+          <path class="w2" d="M18.2 7a7 7 0 0 1 0 10"/>
+          <path class="mx" d="M16 9.8l4.6 4.4M20.6 9.8L16 14.2"/>
+        </svg>
+      </button>
+      <div class="vol" role="group" aria-label="Volume">
+        <span class="vol-val mono" aria-hidden="true">40</span>
+        <div class="vol-rail">
+          <input class="vol-range" type="range" min="0" max="100" value="40" step="1" aria-label="Volume" aria-orientation="vertical" style="--v:40%">
+        </div>
+      </div>
+    </div>
+    <a class="btn-mail" href="mailto:al.shulyakovskiy@gmail.com">Send email <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
+    <a class="burger" id="burger" href="#menu" role="button" aria-label="Toggle menu" aria-controls="menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </a>
+  </div>
+</header>
+
+<nav class="menu" id="menu" aria-label="Mobile">
+  <a class="menu-close" href="#hero" aria-label="Close menu">×</a>
+  <a class="menu-link" href="#expertise" style="--k:0">Expertise</a>
+  <a class="menu-link" href="#signature" style="--k:1" data-jump="now">Work</a>
+  <a class="menu-link" href="#about" style="--k:2">About</a>
+  <a class="menu-link" href="#results" style="--k:3">Results</a>
+  <a class="menu-link" href="#learn" style="--k:4">Learn</a>
+  <a class="menu-link" href="mailto:al.shulyakovskiy@gmail.com" style="--k:5">Contact</a>
+  <button class="menu-sound mono" type="button" data-sound aria-pressed="false" style="--k:6">
+    Sound · <b class="snd-state">off</b>
+  </button>
+  <p class="menu-foot mono">al.shulyakovskiy@gmail.com · Based in the EU</p>
+</nav>
+
+<main id="main">
+
+<!-- ═══════════════ THE FLIGHT ═══════════════ -->
+<section id="flight" class="flight" aria-label="Introduction and signature works">
+  <div class="stage">
+    <canvas class="stars" aria-hidden="true"></canvas>
+
+    <div class="world">
+
+      <!-- STATION 0 — HERO -->
+      <article class="station station--hero" id="hero" style="--w:1100px" data-id="0" data-im="0" data-name="Intro" data-exit="0.03,0.18" data-peek="0">
+        <div class="st-inner">
+          <svg class="orbit orbit--spin hero-orbit" aria-hidden="true" focusable="false"><use href="#rings"/></svg>
+          <p class="eyebrow mono rise" style="--d:0">Creative Producer · Content Producer</p>
+          <h1 class="hero-name rise" style="--d:1"><span>Alexandr</span> <span>Shulyakovskiy</span></h1>
+          <p class="hero-desc rise" style="--d:2">
+            12 years in games, nearly eight of them as Senior Creative Producer on World of Tanks Blitz,
+            leading <strong>end-to-end delivery</strong> across performance marketing, UA, social, livestream,
+            and content, including high-profile collaborations with
+            <strong>Snatch (Sony Pictures), UFC, The Walking Dead, and deadmau5</strong>.
+          </p>
+          <div class="hero-actions rise" style="--d:3">
+            <a class="btn btn--gold" href="mailto:al.shulyakovskiy@gmail.com">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+              Get in touch
+            </a>
+            <a class="btn btn--ghost" href="#signature" data-station="1">View work</a>
+          </div>
+          <ul class="caps mono rise" style="--d:4" aria-label="Capabilities">
+            <li>Performance Marketing</li>
+            <li>Content Production</li>
+            <li>Video Production</li>
+            <li>Performance Creative</li>
+            <li>A/B Testing &amp; Experimentation</li>
+            <li>ASO &amp; Storefront Assets</li>
+            <li>Livestream Production</li>
+            <li>IP &amp; Talent Collaborations</li>
+            <li>Project Management</li>
+            <li>GenAI Workflows</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- STATION 1 — UPDATE REVIEW -->
+      <article class="station station--work plane-w1" id="flight-works" data-id="1" data-im="1" data-name="Update Review" data-name-d="Signature Works">
+        <div class="st-inner">
+          <h2 class="sr-only">Signature works — the flight</h2>
+          <div class="card hud-box">
+            <div class="card-visual">
+              <svg class="orbit orbit--spin" aria-hidden="true" focusable="false"><use href="#rings"/></svg>
+              <svg class="motif" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false">
+                <rect x="44" y="50" width="112" height="100" rx="5" stroke="#e8a630" stroke-opacity=".38" stroke-width="1.3"/>
+                <circle cx="56" cy="62" r="2.6" fill="#e8a630" opacity=".7"/>
+                <rect x="66" y="59" width="46" height="6" rx="3" fill="url(#g1)"/>
+                <line x1="44" y1="74" x2="156" y2="74" stroke="#e8a630" stroke-opacity=".22"/>
+                <rect x="58" y="86" width="60" height="5" rx="2.5" fill="#e8a630" opacity=".2"/>
+                <rect x="58" y="97" width="44" height="5" rx="2.5" fill="#e8a630" opacity=".14"/>
+                <polyline points="58,134 80,116 98,124 118,100 142,112" stroke="#e8a630" stroke-width="1.8" stroke-opacity=".75"/>
+                <circle cx="142" cy="112" r="3.4" fill="#e8a630"/>
+              </svg>
+            </div>
+            <div class="card-body">
+              <span class="chip mono">Update Review</span>
+              <h3 class="card-title">WoT Blitz. Season Update Review — New French Tanks, Game Mode &amp; Season Tanks</h3>
+              <p class="card-desc">Feature framing, gameplay clarity, and update-value messaging across a full season launch.</p>
+              <a class="pill swap-host" href="https://www.youtube.com/watch?v=Mdp5tdAKzRk" target="_blank" rel="noopener" aria-label="Watch on YouTube: WoT Blitz. Season Update Review"><span class="swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- STATION 2 — TALENT COLLABORATION -->
+      <article class="station station--work plane-w2" data-id="1" data-im="2" data-name="Talent Collaboration" data-name-d="Signature Works">
+        <div class="st-inner">
+          <div class="card hud-box">
+            <div class="card-visual">
+              <svg class="orbit orbit--spin" aria-hidden="true" focusable="false"><use href="#rings"/></svg>
+              <svg class="motif" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false">
+                <polygon points="100,18 60,168 140,168" fill="#e8a630" opacity=".06"/>
+                <polygon points="100,22 74,168 126,168" fill="#e8a630" opacity=".05"/>
+                <circle cx="100" cy="86" r="23" stroke="#e8a630" stroke-opacity=".5" stroke-width="1.4"/>
+                <path d="M70 146c0-19 13-32 30-32s30 13 30 32" stroke="#e8a630" stroke-opacity=".45" stroke-width="1.4"/>
+                <path d="M150 52l3.5 8 8.5 1-6 5.5 1.5 8.5-7.5-4.5-7.5 4.5 1.5-8.5-6-5.5 8.5-1z" fill="#e8a630" opacity=".55"/>
+                <g stroke="#e8a630" stroke-opacity=".5" stroke-width="1.3"><path d="M44 70l7 0M47.5 66.5l0 7"/></g>
+              </svg>
+            </div>
+            <div class="card-body">
+              <span class="chip mono">Talent Collaboration</span>
+              <h3 class="card-title">WoT Blitz — Lukas Podolski Names the Best Shot of His Career</h3>
+              <p class="card-desc">Partner-ready production for a high-profile athlete, with brand-safe delivery end to end.</p>
+              <a class="pill swap-host" href="https://www.youtube.com/watch?v=samgsYd70h8" target="_blank" rel="noopener" aria-label="Watch on YouTube: WoT Blitz — Lukas Podolski Names the Best Shot of His Career"><span class="swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- STATION 3 — EVENT CAMPAIGN -->
+      <article class="station station--work plane-w3" data-id="1" data-im="3" data-name="Event Campaign" data-name-d="Signature Works">
+        <div class="st-inner">
+          <div class="card hud-box">
+            <div class="card-visual">
+              <svg class="orbit orbit--spin" aria-hidden="true" focusable="false"><use href="#rings"/></svg>
+              <svg class="motif" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false">
+                <g stroke="#e8a630" stroke-width="1.5" stroke-opacity=".55" transform="translate(100 100)">
+                  <line x1="0" y1="0" x2="0" y2="-52"/><line x1="0" y1="0" x2="37" y2="-37"/><line x1="0" y1="0" x2="52" y2="0"/><line x1="0" y1="0" x2="37" y2="37"/><line x1="0" y1="0" x2="0" y2="52"/><line x1="0" y1="0" x2="-37" y2="37"/><line x1="0" y1="0" x2="-52" y2="0"/><line x1="0" y1="0" x2="-37" y2="-37"/>
+                </g>
+                <circle cx="100" cy="100" r="4.5" fill="#e8a630"/>
+                <circle cx="152" cy="54" r="2.4" fill="#e8a630" opacity=".5"/>
+                <circle cx="50" cy="150" r="2" fill="#e8a630" opacity=".4"/>
+                <circle cx="150" cy="150" r="1.6" fill="#e8a630" opacity=".35"/>
+                <circle cx="52" cy="54" r="1.6" fill="#e8a630" opacity=".4"/>
+              </svg>
+            </div>
+            <div class="card-body">
+              <span class="chip mono">Event Campaign</span>
+              <h3 class="card-title">WoT Blitz. Halloween Event — Lightbringer vs. Souleater!</h3>
+              <p class="card-desc">Seasonal event creative with a strong theme and clear gameplay hooks.</p>
+              <a class="pill swap-host" href="https://www.youtube.com/watch?v=fqvGPcgGaws" target="_blank" rel="noopener" aria-label="Watch on YouTube: WoT Blitz. Halloween Event — Lightbringer vs. Souleater!"><span class="swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- STATION 4 — CREATIVE SERIES -->
+      <article class="station station--work plane-w4" data-id="1" data-im="4" data-name="Creative Series" data-name-d="Signature Works">
+        <div class="st-inner">
+          <div class="card hud-box">
+            <div class="card-visual">
+              <svg class="orbit orbit--spin" aria-hidden="true" focusable="false"><use href="#rings"/></svg>
+              <svg class="motif" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false">
+                <g fill="#e8a630">
+                  <rect x="44" y="82" width="6" height="36" rx="3" opacity=".4"/>
+                  <rect x="58" y="66" width="6" height="68" rx="3" opacity=".55"/>
+                  <rect x="72" y="48" width="6" height="104" rx="3" opacity=".72"/>
+                  <rect x="86" y="74" width="6" height="52" rx="3" opacity=".46"/>
+                  <rect x="100" y="58" width="6" height="84" rx="3" opacity=".6"/>
+                  <rect x="114" y="44" width="6" height="112" rx="3" opacity=".74"/>
+                  <rect x="128" y="70" width="6" height="60" rx="3" opacity=".5"/>
+                  <rect x="142" y="82" width="6" height="36" rx="3" opacity=".4"/>
+                </g>
+              </svg>
+            </div>
+            <div class="card-body">
+              <span class="chip mono">Creative Series</span>
+              <h3 class="card-title">WoT Blitz Beats Boredom — Breaking Stuff</h3>
+              <p class="card-desc">Social-first entertainment built on audience-native humor and pacing.</p>
+              <a class="pill swap-host" href="https://www.youtube.com/watch?v=bdS34aC8pDc" target="_blank" rel="noopener" aria-label="Watch on YouTube: WoT Blitz Beats Boredom — Breaking Stuff"><span class="swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- STATION 5 — KEY RESULTS CONSTELLATION -->
+      <article class="station station--skills" style="--w:1040px" data-id="2" data-im="5" data-name="What I do" data-peek="0.35">
+        <div class="st-inner skills-st hud-box">
+          <p class="st-kicker mono">Station brief</p>
+          <h2 class="st-title">What I did &amp; what I can do</h2>
+          <div class="skills-cols">
+            <div class="skills-col">
+              <h3 class="skills-h mono">What I did</h3>
+              <ul class="skills-list">
+                <li>Managed end-to-end delivery of marketing, UA, broadcast, and community projects — briefs, timelines, dependencies, quality control</li>
+                <li>Owned the creative for UA campaigns on Meta, Google, Moloco, and Remerge; A/B-tested store asset packages and icons</li>
+                <li>Managed IP collaborations with Snatch (Sony Pictures), UFC, The Walking Dead, and deadmau5; supervised athlete shoots on set</li>
+                <li>Rebuilt vendor operations and brought livestream production in-house; owned project budgets and resource allocation</li>
+                <li>Introduced AI-assisted workflows; developed three junior producers to mid-level capability</li>
+              </ul>
+            </div>
+            <div class="skills-col">
+              <h3 class="skills-h mono">What I can do</h3>
+              <ul class="skills-list skills-list--can">
+                <li><b>Performance creative production</b><span class="skills-more"> — UA videos, gameplay assets, creative testing and iteration loops</span></li>
+                <li><b>ASO &amp; storefront assets</b><span class="skills-more"> — screenshots, videos, icons, campaign graphics for every store</span></li>
+                <li><b>Creative operations</b><span class="skills-more"> — briefs, feedback loops, vendor coordination, budget discipline, delivery pipelines</span></li>
+                <li><b>Brand &amp; player communication</b><span class="skills-more"> — partner-ready IP work, CRM / lifecycle creative, player-facing updates</span></li>
+                <li><b>Livestream &amp; broadcast</b><span class="skills-more"> — in-house production setup, run-of-show, vMix</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="skills-foot">
+            <a class="continue mono" href="#expertise" data-jump="now"><span>Full resume <b aria-hidden="true">↓</b></span><small>What I bring · experience · skills &amp; tools</small></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- STATION 6 — CONTACT -->
+      <article class="station station--contact" style="--w:760px" data-id="3" data-im="6" data-name="Contact">
+        <div class="st-inner contact-st hud-box">
+          <p class="st-kicker mono">Final station</p>
+          <h2 class="st-title">Let's talk</h2>
+          <a class="contact-mail" href="mailto:al.shulyakovskiy@gmail.com">al.shulyakovskiy@gmail.com</a>
+          <div class="contact-row">
+            <a href="https://www.linkedin.com/in/al-shu/" target="_blank" rel="noopener">LinkedIn Profile</a>
+            <a href="tel:+37062411430">+370 624 11430</a>
+          </div>
+          <div class="avail"><span class="pulse" aria-hidden="true"></span>Based in the EU · Open to EU-wide opportunities &amp; relocation</div>
+          <div>
+            <a class="continue mono" href="#landed"><span>Continue <b aria-hidden="true">↓</b></span><small>full portfolio below</small></a>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /.world -->
+
+    <!-- HUD overlay -->
+    <div class="hud" aria-hidden="true">
+      <div class="hud-station"><span class="hud-num">Station 01 / 07</span><span>—</span><span class="hud-name">Intro</span></div>
+      <div class="hud-pill" data-state="start">
+        <span class="hud-pill-a">Scroll to start the flight <b>↓</b></span>
+        <span class="hud-pill-b">Keep scrolling <b>↓</b></span>
+      </div>
+      <div class="hud-right">
+        <div class="hud-ticks"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="hud-bar"><span class="hud-bar-fill"></span></span>
+      </div>
+    </div>
+  </div><!-- /.stage -->
+</section>
+
+<!-- ═══════════════ THE LANDING ═══════════════ -->
+<div class="landed mono" id="landed">// Landed — full portfolio below</div>
+
+<!-- 01 WHAT I BRING -->
+<section id="expertise" class="sec" aria-label="What I bring">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">01</span>
+      <h2>What I Bring</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="x-grid">
+      <div class="x-card hud-box reveal" style="--d:0">
+        <div class="x-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="6" y="12" width="36" height="24" rx="2"/>
+            <line x1="6" y1="18" x2="42" y2="18"/><line x1="6" y1="30" x2="42" y2="30"/>
+            <line x1="14" y1="12" x2="14" y2="18"/><line x1="22" y1="12" x2="22" y2="18"/><line x1="30" y1="12" x2="30" y2="18"/>
+            <line x1="14" y1="30" x2="14" y2="36"/><line x1="22" y1="30" x2="22" y2="36"/><line x1="30" y1="30" x2="30" y2="36"/>
+            <polyline points="18,27 23,22 27,25 33,19"/>
+          </svg>
+        </div>
+        <h3>Performance Creative Production</h3>
+        <p>UA videos, gameplay assets, creative testing, iteration loops, and paid-channel production.</p>
+      </div>
+      <div class="x-card hud-box reveal" style="--d:1">
+        <div class="x-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="9" y="6" width="14" height="26" rx="2"/>
+            <rect x="26" y="14" width="13" height="28" rx="2"/>
+            <line x1="12" y1="11" x2="20" y2="11"/><line x1="12" y1="15" x2="20" y2="15"/>
+            <circle cx="32.5" cy="38" r="1.3" fill="currentColor" stroke="none"/>
+            <line x1="29" y1="19" x2="36" y2="19"/><line x1="29" y1="23" x2="36" y2="23"/>
+          </svg>
+        </div>
+        <h3>ASO &amp; Storefront Assets</h3>
+        <p>Screenshots, icons, store trailers, and Live Events art for Steam, App Store, Microsoft Store, Google Play, and Galaxy Store, with A/B-tested packages and icons.</p>
+      </div>
+      <div class="x-card hud-box reveal" style="--d:2">
+        <div class="x-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="11" cy="12" r="4"/><circle cx="37" cy="12" r="4"/><circle cx="24" cy="36" r="4"/>
+            <path d="M15 12h18"/><path d="M12 16l10 16"/><path d="M36 16l-10 16"/>
+          </svg>
+        </div>
+        <h3>Creative Operations</h3>
+        <p>Briefs, timelines, feedback loops, vendor coordination, budget discipline, and scalable delivery pipelines.</p>
+      </div>
+      <div class="x-card hud-box reveal" style="--d:3">
+        <div class="x-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M8 10h32v20H20l-8 8v-8H8z"/>
+            <path d="M16 17c1.5 2 1.5 4 0 6" opacity=".7"/>
+            <path d="M24 15c2.5 3 2.5 6 0 9" opacity=".85"/>
+            <path d="M32 13c3.5 4 3.5 9 0 13"/>
+          </svg>
+        </div>
+        <h3>Brand &amp; Player Communication</h3>
+        <p>Partner-ready IP work, CRM / lifecycle creative, retention assets, and player-facing updates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 SIGNATURE WORKS — INDEX -->
+<section id="signature" class="sec" aria-label="Signature works index">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">02</span>
+      <h2>Signature Works <span class="sub">— index</span></h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="sig-list">
+      <a class="sig-row swap-host reveal" style="--d:0" href="https://www.youtube.com/watch?v=Mdp5tdAKzRk" target="_blank" rel="noopener">
+        <span class="sig-idx mono">01</span>
+        <span class="sig-motif" aria-hidden="true">
+          <svg viewBox="0 0 200 200" fill="none" focusable="false">
+            <rect x="44" y="50" width="112" height="100" rx="5" stroke="#e8a630" stroke-opacity=".38" stroke-width="1.3"/>
+            <circle cx="56" cy="62" r="2.6" fill="#e8a630" opacity=".7"/>
+            <rect x="66" y="59" width="46" height="6" rx="3" fill="url(#g1)"/>
+            <line x1="44" y1="74" x2="156" y2="74" stroke="#e8a630" stroke-opacity=".22"/>
+            <rect x="58" y="86" width="60" height="5" rx="2.5" fill="#e8a630" opacity=".2"/>
+            <rect x="58" y="97" width="44" height="5" rx="2.5" fill="#e8a630" opacity=".14"/>
+            <polyline points="58,134 80,116 98,124 118,100 142,112" stroke="#e8a630" stroke-width="1.8" stroke-opacity=".75"/>
+            <circle cx="142" cy="112" r="3.4" fill="#e8a630"/>
+          </svg>
+        </span>
+        <span class="sig-meta">
+          <span class="chip mono">Update Review</span>
+          <span class="sig-title" style="display:block">WoT Blitz. Season Update Review — New French Tanks, Game Mode &amp; Season Tanks</span>
+          <span class="sig-desc" style="display:block">Feature framing, gameplay clarity, and update-value messaging across a full season launch.</span>
+        </span>
+        <span class="sig-go mono swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span>
+      </a>
+      <a class="sig-row swap-host reveal" style="--d:1" href="https://www.youtube.com/watch?v=samgsYd70h8" target="_blank" rel="noopener">
+        <span class="sig-idx mono">02</span>
+        <span class="sig-motif" aria-hidden="true">
+          <svg viewBox="0 0 200 200" fill="none" focusable="false">
+            <polygon points="100,18 60,168 140,168" fill="#e8a630" opacity=".06"/>
+            <polygon points="100,22 74,168 126,168" fill="#e8a630" opacity=".05"/>
+            <circle cx="100" cy="86" r="23" stroke="#e8a630" stroke-opacity=".5" stroke-width="1.4"/>
+            <path d="M70 146c0-19 13-32 30-32s30 13 30 32" stroke="#e8a630" stroke-opacity=".45" stroke-width="1.4"/>
+            <path d="M150 52l3.5 8 8.5 1-6 5.5 1.5 8.5-7.5-4.5-7.5 4.5 1.5-8.5-6-5.5 8.5-1z" fill="#e8a630" opacity=".55"/>
+            <g stroke="#e8a630" stroke-opacity=".5" stroke-width="1.3"><path d="M44 70l7 0M47.5 66.5l0 7"/></g>
+          </svg>
+        </span>
+        <span class="sig-meta">
+          <span class="chip mono">Talent Collaboration</span>
+          <span class="sig-title" style="display:block">WoT Blitz — Lukas Podolski Names the Best Shot of His Career</span>
+          <span class="sig-desc" style="display:block">Partner-ready production for a high-profile athlete, with brand-safe delivery end to end.</span>
+        </span>
+        <span class="sig-go mono swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span>
+      </a>
+      <a class="sig-row swap-host reveal" style="--d:2" href="https://www.youtube.com/watch?v=fqvGPcgGaws" target="_blank" rel="noopener">
+        <span class="sig-idx mono">03</span>
+        <span class="sig-motif" aria-hidden="true">
+          <svg viewBox="0 0 200 200" fill="none" focusable="false">
+            <g stroke="#e8a630" stroke-width="1.5" stroke-opacity=".55" transform="translate(100 100)">
+              <line x1="0" y1="0" x2="0" y2="-52"/><line x1="0" y1="0" x2="37" y2="-37"/><line x1="0" y1="0" x2="52" y2="0"/><line x1="0" y1="0" x2="37" y2="37"/><line x1="0" y1="0" x2="0" y2="52"/><line x1="0" y1="0" x2="-37" y2="37"/><line x1="0" y1="0" x2="-52" y2="0"/><line x1="0" y1="0" x2="-37" y2="-37"/>
+            </g>
+            <circle cx="100" cy="100" r="4.5" fill="#e8a630"/>
+            <circle cx="152" cy="54" r="2.4" fill="#e8a630" opacity=".5"/>
+            <circle cx="50" cy="150" r="2" fill="#e8a630" opacity=".4"/>
+            <circle cx="150" cy="150" r="1.6" fill="#e8a630" opacity=".35"/>
+            <circle cx="52" cy="54" r="1.6" fill="#e8a630" opacity=".4"/>
+          </svg>
+        </span>
+        <span class="sig-meta">
+          <span class="chip mono">Event Campaign</span>
+          <span class="sig-title" style="display:block">WoT Blitz. Halloween Event — Lightbringer vs. Souleater!</span>
+          <span class="sig-desc" style="display:block">Seasonal event creative with a strong theme and clear gameplay hooks.</span>
+        </span>
+        <span class="sig-go mono swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span>
+      </a>
+      <a class="sig-row swap-host reveal" style="--d:3" href="https://www.youtube.com/watch?v=bdS34aC8pDc" target="_blank" rel="noopener">
+        <span class="sig-idx mono">04</span>
+        <span class="sig-motif" aria-hidden="true">
+          <svg viewBox="0 0 200 200" fill="none" focusable="false">
+            <g fill="#e8a630">
+              <rect x="44" y="82" width="6" height="36" rx="3" opacity=".4"/>
+              <rect x="58" y="66" width="6" height="68" rx="3" opacity=".55"/>
+              <rect x="72" y="48" width="6" height="104" rx="3" opacity=".72"/>
+              <rect x="86" y="74" width="6" height="52" rx="3" opacity=".46"/>
+              <rect x="100" y="58" width="6" height="84" rx="3" opacity=".6"/>
+              <rect x="114" y="44" width="6" height="112" rx="3" opacity=".74"/>
+              <rect x="128" y="70" width="6" height="60" rx="3" opacity=".5"/>
+              <rect x="142" y="82" width="6" height="36" rx="3" opacity=".4"/>
+            </g>
+          </svg>
+        </span>
+        <span class="sig-meta">
+          <span class="chip mono">Creative Series</span>
+          <span class="sig-title" style="display:block">WoT Blitz Beats Boredom — Breaking Stuff</span>
+          <span class="sig-desc" style="display:block">Social-first entertainment built on audience-native humor and pacing.</span>
+        </span>
+        <span class="sig-go mono swap"><span>Watch →</span><span aria-hidden="true">Watch →</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 03 SELECTED WORK -->
+<section id="work" class="sec" aria-label="Selected work">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">03</span>
+      <h2>Selected Work</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="w-groups">
+
+      <div class="w-group reveal">
+        <div class="w-head">
+          <span class="w-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h3l2-6 4 14 3-9 2 4h4"/></svg></span>
+          <span class="w-tag mono">Beats Boredom Series</span>
+          <span class="w-count mono">02</span>
+          <span class="w-line"></span>
+        </div>
+        <div class="w-links">
+          <a class="w-row" href="https://www.youtube.com/watch?v=05htdGFFI8U" target="_blank" rel="noopener"><span class="w-num mono">01</span><span class="w-title">WoT Blitz Beats Boredom — Dancing Shadow</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=H34ZMNGUeo0" target="_blank" rel="noopener"><span class="w-num mono">02</span><span class="w-title">WoT Blitz Beats Boredom — Calling Ex</span><span class="w-go mono">Watch →</span></a>
+        </div>
+      </div>
+
+      <div class="w-group reveal">
+        <div class="w-head">
+          <span class="w-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="9" y1="3" x2="9" y2="7"/><line x1="15" y1="3" x2="15" y2="7"/></svg></span>
+          <span class="w-tag mono">Events &amp; Campaigns</span>
+          <span class="w-count mono">08</span>
+          <span class="w-line"></span>
+        </div>
+        <div class="w-links">
+          <a class="w-row" href="https://www.youtube.com/watch?v=1QywDp3p9Fs" target="_blank" rel="noopener"><span class="w-num mono">01</span><span class="w-title">WoT Blitz. Operation Bard’s Song. Raid the Dungeon and Claim Untold Riches!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=LRLXDauhSVs" target="_blank" rel="noopener"><span class="w-num mono">02</span><span class="w-title">WoT Blitz. Grab Biter for FREE. New Event, Abyssal Lockboxes and Gifts!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=sA19frjQ0zo" target="_blank" rel="noopener"><span class="w-num mono">03</span><span class="w-title">WoT Blitz. Realistic August. Tiger Frontline Event</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=msvnOZT2nAg" target="_blank" rel="noopener"><span class="w-num mono">04</span><span class="w-title">WoT Blitz. New Game Mode: Infected Front. Learn How to Play</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=P6KwsJGf4gU" target="_blank" rel="noopener"><span class="w-num mono">05</span><span class="w-title">WoTB. Battle of the Best: Summer Cup Finals’ Highlights!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=UPIunyVsz4Q" target="_blank" rel="noopener"><span class="w-num mono">06</span><span class="w-title">WoT Blitz. AC-09V Sterope. Triple Shot Burst Gun in Action!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=MswmfRGLBoc" target="_blank" rel="noopener"><span class="w-num mono">07</span><span class="w-title">WoT Blitz. Clan Event: Take the challenge. Claim the M46 Jaguar</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=sISj-3-tGjM" target="_blank" rel="noopener"><span class="w-num mono">08</span><span class="w-title">WoT Blitz. The Clandestine Lab Event</span><span class="w-go mono">Watch →</span></a>
+        </div>
+      </div>
+
+      <div class="w-group reveal">
+        <div class="w-head">
+          <span class="w-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span>
+          <span class="w-tag mono">IP Collaborations &amp; Talent</span>
+          <span class="w-count mono">04</span>
+          <span class="w-line"></span>
+        </div>
+        <div class="w-links">
+          <a class="w-row" href="https://www.youtube.com/watch?v=vX0I_0YIl_A" target="_blank" rel="noopener"><span class="w-num mono">01</span><span class="w-title">Joanna Jędrzejczyk shows True Polish Character in WoT Blitz</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=JiThtTg_5Nc" target="_blank" rel="noopener"><span class="w-num mono">02</span><span class="w-title">The Walking Dead in World of Tanks Blitz!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=btDxd6pCq6E" target="_blank" rel="noopener"><span class="w-num mono">03</span><span class="w-title">WoT Blitz × Jiří Procházka. New Czech Tanks!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=brTlAVjC1Ew" target="_blank" rel="noopener"><span class="w-num mono">04</span><span class="w-title">The Walking Dead × WoT Blitz crossover event is LIVE NOW!</span><span class="w-go mono">Watch →</span></a>
+        </div>
+      </div>
+
+      <div class="w-group reveal">
+        <div class="w-head">
+          <span class="w-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
+          <span class="w-tag mono">Update Reviews &amp; Player Communication</span>
+          <span class="w-count mono">10</span>
+          <span class="w-line"></span>
+        </div>
+        <div class="w-links">
+          <a class="w-row" href="https://www.youtube.com/watch?v=v2RbyiOBnkg" target="_blank" rel="noopener"><span class="w-num mono">01</span><span class="w-title">WoT Blitz. Coming Soon. New Gun Sounds and More...</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=lCLd0-hNucw" target="_blank" rel="noopener"><span class="w-num mono">02</span><span class="w-title">WoT Blitz. Coming Soon. Episode 38. New Stuff. Good Stuff!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=mTwUlsov26c" target="_blank" rel="noopener"><span class="w-num mono">03</span><span class="w-title">WoT Blitz Reforged: Tech Tree and Sets Changes on the Next Test</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=xirtpDKZcAA" target="_blank" rel="noopener"><span class="w-num mono">04</span><span class="w-title">WoT Blitz. Reforged Update Diaries: Graphics, Physics, and Battle Interface Improvements</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=1J7-QUQeMlE" target="_blank" rel="noopener"><span class="w-num mono">05</span><span class="w-title">WoT Blitz. What’s New in the Next Update?</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=W_rDJumqxGM" target="_blank" rel="noopener"><span class="w-num mono">06</span><span class="w-title">WoT Blitz. Halloween is Coming. Update Overview. New Tanks, Camouflages, and a Brand-New Game Mode!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=_n8JHxHTjZc" target="_blank" rel="noopener"><span class="w-num mono">07</span><span class="w-title">WoT Blitz. Update Overview. Gun Marks, The Return of Classic Maps, a Gift and Much More</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=ie3wVPzDBw8" target="_blank" rel="noopener"><span class="w-num mono">08</span><span class="w-title">WoT Blitz. Coming Soon. EP 43. New Polish Tech Tree, Events and More</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=s4tEIM2dE4Q" target="_blank" rel="noopener"><span class="w-num mono">09</span><span class="w-title">WoT Blitz. Update Review. New Polish Tech Tree, New Events and Gifts!</span><span class="w-go mono">Watch →</span></a>
+          <a class="w-row" href="https://www.youtube.com/watch?v=6T0MueILe-0" target="_blank" rel="noopener"><span class="w-num mono">10</span><span class="w-title">WoT Blitz. Coming Soon. New Tanks, Quests and Rewards!</span><span class="w-go mono">Watch →</span></a>
+        </div>
+      </div>
+
+    </div>
+    <p class="disclaimer reveal">Publicly released work produced while employed at Wargaming.net. All rights belong to their respective owners; links are provided for portfolio reference only.</p>
+  </div>
+</section>
+
+<!-- 04 ABOUT & EXPERIENCE -->
+<section id="about" class="sec" aria-label="About and experience">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">04</span>
+      <h2>About &amp; Experience</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="about-grid">
+      <div class="about-col">
+        <p class="about-intro reveal">
+          Creative and performance-marketing producer with <strong>12 years in games</strong> at Wargaming.net,
+          nearly eight of them as Senior Creative Producer on World of Tanks Blitz, a free-to-play live-service
+          title on mobile and PC. I led end-to-end production across performance marketing, UA, social,
+          livestream, and content, and I pair creative vision with full project ownership: A/B testing,
+          budgets, vendors, documentation, and data-informed iteration.
+        </p>
+        <p class="about-intro reveal" style="--d:1">
+          Experienced in driving large-scale franchise collaborations with
+          <strong>world-renowned IP including Snatch (Sony Pictures), UFC, The Walking Dead, and deadmau5</strong>,
+          and athlete collaborations with Lukas Podolski, Joanna Jędrzejczyk, and Jiří Procházka, whose shoots
+          I supervised on set. I align partner requirements, brand guidelines, and delivery timelines across
+          high-stakes stakeholders.
+        </p>
+        <div class="avail reveal" style="--d:1"><span class="pulse" aria-hidden="true"></span>Based in the EU · Open to EU-wide opportunities &amp; relocation</div>
+        <div class="contacts reveal" style="--d:2">
+          <a href="mailto:al.shulyakovskiy@gmail.com">al.shulyakovskiy@gmail.com</a>
+          <a href="https://www.linkedin.com/in/al-shu/" target="_blank" rel="noopener">LinkedIn Profile</a>
+          <a href="tel:+37062411430">+370 624 11430</a>
+        </div>
+        <div class="langs reveal" style="--d:2">
+          <h3 class="mono">Languages</h3>
+          <div class="lang"><span>English</span><span class="lang-bar"><span class="lang-fill" style="--w:96%"></span></span><span class="lang-level">C2</span></div>
+          <div class="lang"><span>Russian</span><span class="lang-bar"><span class="lang-fill" style="--w:100%"></span></span><span class="lang-level">Native</span></div>
+          <div class="lang"><span>Belarusian</span><span class="lang-bar"><span class="lang-fill" style="--w:90%"></span></span><span class="lang-level">Fluent</span></div>
+          <div class="lang"><span>Lithuanian</span><span class="lang-bar"><span class="lang-fill" style="--w:33%"></span></span><span class="lang-level">A2</span></div>
+        </div>
+      </div>
+
+      <div class="exp">
+        <div class="exp-item reveal">
+          <div class="exp-period mono">Sep 2018 – Jul 2026</div>
+          <h3 class="exp-role">Senior Creative Producer, World of Tanks Blitz</h3>
+          <div class="exp-co mono">Wargaming.net</div>
+          <ul class="exp-bullets">
+            <li>Managed end-to-end delivery of marketing, UA, broadcast, and community projects — owning briefs, timelines, dependencies, and quality control across cross-functional teams.</li>
+            <li>Delivered 300+ marketing and community videos and 40 live broadcasts a year.</li>
+            <li>Owned the creative for UA campaigns on Meta, Google, Moloco, and Remerge and iterated it on the UA team's test results, lifting UA video CTR.</li>
+            <li>Delivered full store asset packages for Steam, the App Store, the Microsoft Store, Google Play, and the Samsung Galaxy Store, and A/B-tested alternative asset packages and icons.</li>
+            <li>Managed IP collaborations with Snatch (Sony Pictures), UFC, The Walking Dead, and deadmau5, aligning partner requirements, brand guidelines, and delivery timelines; supervised athlete shoots with Lukas Podolski, Joanna Jędrzejczyk, and Jiří Procházka on set.</li>
+            <li>Rebuilt vendor operations and brought livestream production in-house, cutting annual production costs; owned project budgets and resource allocation.</li>
+            <li>Created and maintained project documentation — briefs, run-of-show schedules, review pipelines, and onboarding playbooks.</li>
+            <li>Introduced AI-assisted workflows that cut costs on selected creative.</li>
+            <li>Communicated status, risks, and trade-offs to stakeholders and leadership; developed three junior producers to mid-level capability.</li>
+          </ul>
+        </div>
+        <div class="exp-item reveal" style="--d:1">
+          <div class="exp-period mono">Feb 2017 – Sep 2018</div>
+          <h3 class="exp-role">Social Media Marketing Manager</h3>
+          <div class="exp-co mono">Wargaming.net</div>
+          <ul class="exp-bullets">
+            <li>Scaled an influencer network to high weekly view volumes at zero paid budget, and built a creator support program on top of it with in-game rewards.</li>
+            <li>Produced UGC video for the official English-language YouTube channel at a significant cost reduction versus standard production rates.</li>
+          </ul>
+        </div>
+        <div class="exp-item reveal" style="--d:2">
+          <div class="exp-period mono">Jan 2014 – Feb 2017</div>
+          <h3 class="exp-role">Customer Support Specialist</h3>
+          <div class="exp-co mono">Wargaming.net</div>
+          <ul class="exp-bullets">
+            <li>Improved support workflows and case-processing speed through automation and structured process improvements.</li>
+            <li>Resolved a high volume of player cases at a high satisfaction rate and contributed substantially to the player support knowledge base.</li>
+          </ul>
+        </div>
+        <div class="exp-item reveal" style="--d:3">
+          <div class="exp-period mono">2009 – 2014</div>
+          <h3 class="exp-role">B.Sc. Industrial Automation</h3>
+          <div class="exp-co mono">Belarusian State Technological University</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SKILLS & TOOLS -->
+<section id="skills" class="sec" aria-label="Skills and tools">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">05</span>
+      <h2>Skills &amp; Tools</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="sk-grid">
+      <div class="sk-col hud-box reveal" style="--d:0">
+        <h3 class="mono">Capabilities</h3>
+        <ul class="chips">
+          <li>UA Creative Production</li><li>Performance Creative</li><li>Creative Testing</li><li>ASO Asset Production</li><li>Store A/B Testing</li><li>CRM / Lifecycle Creative</li><li>Gameplay Capture</li><li>UGC Production</li><li>A/B Testing &amp; Experimentation</li>
+        </ul>
+      </div>
+      <div class="sk-col hud-box reveal" style="--d:1">
+        <h3 class="mono">Operations &amp; Delivery</h3>
+        <ul class="chips">
+          <li>Project Management</li><li>Budget Planning</li><li>Vendor Management</li><li>Stakeholder Communication</li><li>Risk &amp; Blocker Management</li><li>Project Documentation</li><li>Cross-functional Collaboration</li><li>Brand Safeguarding</li>
+        </ul>
+      </div>
+      <div class="sk-col hud-box reveal" style="--d:2">
+        <h3 class="mono">Tools</h3>
+        <ul class="chips">
+          <li>Premiere Pro</li><li>After Effects</li><li>Photoshop</li><li>Frame.io</li><li>Figma</li><li>Miro</li><li>Jira</li><li>Sensor Tower</li><li>vMix</li><li>GenAI Tools</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 KEY RESULTS — INDEX -->
+<section id="results" class="sec" aria-label="Key results index">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">06</span>
+      <h2>Key Results</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="res-grid">
+      <div class="res-card reveal" style="--d:0"><div class="res-word">300+</div><p>Marketing and community videos delivered a year.</p></div>
+      <div class="res-card reveal" style="--d:1"><div class="res-word">40</div><p>Live broadcasts delivered a year.</p></div>
+      <div class="res-card reveal" style="--d:2"><div class="res-word">180,000</div><p>Peak concurrent viewers on the Blitz Twister Cup esports broadcast.</p></div>
+      <div class="res-card reveal" style="--d:3"><div class="res-word">475,000</div><p>Views on the most-watched official YouTube live stream I produced.</p></div>
+      <div class="res-card reveal" style="--d:0"><div class="res-word">1M</div><p>Subscribers on the English-language YouTube channel I created and helped grow.</p></div>
+      <div class="res-card reveal" style="--d:1"><div class="res-word">380,000+</div><p>TikTok followers, grown from zero without paid traffic.</p></div>
+      <div class="res-card reveal" style="--d:2"><div class="res-word">50M</div><p>Views on a record TikTok video.</p></div>
+      <div class="res-card reveal" style="--d:3"><div class="res-word">~3.8M</div><p>Followers across six official community channels.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 LEARNING CENTER -->
+<section id="learn" class="sec" aria-label="Learning center">
+  <div class="sec-in">
+    <div class="sec-head reveal">
+      <span class="sec-num mono">07</span>
+      <h2>Learning Center</h2>
+      <span class="sec-line"></span>
+    </div>
+    <div class="learn-grid">
+      <a href="lt/" class="learn-tile hud-box swap-host reveal" style="--d:0">
+        <div class="learn-label mono">Language Tool</div>
+        <h3 class="learn-title">Lithuanian</h3>
+        <p class="learn-desc">Interactive exercises for learning the Lithuanian language from scratch.</p>
+        <div class="learn-go mono"><span class="swap"><span>Open tool →</span><span aria-hidden="true">Open tool →</span></span></div>
+      </a>
+      <a href="tools/cp/" class="learn-tile hud-box swap-host reveal" style="--d:1">
+        <div class="learn-label mono">Performance Marketing</div>
+        <h3 class="learn-title">CP Trainer</h3>
+        <p class="learn-desc">Certification trainer for Creative Producers in casual game UA.</p>
+        <div class="learn-go mono"><span class="swap"><span>Open tool →</span><span aria-hidden="true">Open tool →</span></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- background music: OFF by default (browsers refuse audible autoplay before a user gesture, so the button
+     carries an inviting glow instead). Starts at 40 % when switched on; the file is pre-attenuated (−3.5 dB, 96 kbps). -->
+<audio id="bgm" preload="none" loop src="assets/ambient-astronomy-96k.mp3" aria-hidden="true"></audio>  <!-- preload=none: the 3.5 MB track is fetched only when the listener switches it on (play() flips preload to auto) -->
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <div class="foot-name">Alexandr Shulyakovskiy</div>
+      <div class="foot-role mono">Creative &amp; Performance Marketing Producer · Mobile Games · EU</div>
+      <div class="foot-alt">Alex Shu · Aliaksandr Shuliakouski · Александр Шуляковский</div>
+    </div>
+    <div class="foot-right">
+      <a class="mail" href="mailto:al.shulyakovskiy@gmail.com">al.shulyakovskiy@gmail.com</a>
+      <span>Open to EU-wide opportunities</span>
+      <a class="foot-top mono" href="#hero" data-station="0">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var doc = document, html = doc.documentElement, body = doc.body;
+  html.classList.add('js');
+
+  var $  = function (s, c) { return (c || doc).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); };
+  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
+  var lerp  = function (a, b, t) { return a + (b - a) * t; };
+  var sstep = function (e0, e1, x) { var t = clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+
+  /* ---------------- header ---------------- */
+  var head = $('#siteHead');
+  var onScrollHead = function () { head.classList.toggle('scrolled', window.scrollY > 40); };
+  onScrollHead();
+  window.addEventListener('scroll', onScrollHead, { passive: true });
+
+  /* ---------------- menu ---------------- */
+  var burger = $('#burger'), menu = $('#menu');
+  /* everything outside the menu + burger goes inert while the menu is open (focus stays inside) */
+  var menuOutside = [$('#main'), $('footer'), $('.nav'), $('.btn-mail'), $('.wordmark'), $('.head-actions .sound')];
+  function setMenu(open) {
+    menu.classList.toggle('open', open);
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    body.classList.toggle('menu-open', open);
+    html.classList.toggle('menu-open', open);
+    menuOutside.forEach(function (el) { if (el) el.inert = open; });
+    if (open) { var f = $('.menu-link', menu); if (f) setTimeout(function () { f.focus(); }, 120); }
+  }
+  burger.addEventListener('click', function (e) { e.preventDefault(); setMenu(!menu.classList.contains('open')); });
+  burger.addEventListener('keydown', function (e) { if (e.key === ' ') { e.preventDefault(); burger.click(); } });
+  $$('a', menu).forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+  doc.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
+  });
+
+  /* ---------------- scroll reveals ---------------- */
+  var reveals = $$('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ======================================================
+     BACKGROUND MUSIC — OFF by default (browsers refuse audible
+     autoplay before a user gesture, so a glowing button invites
+     the click instead). Click = on/off, hover = volume slider
+     (starts at 40 %), remembered, fades, pauses in a hidden tab.
+     ====================================================== */
+  (function sound() {
+    var audio = $('#bgm'), btns = $$('[data-sound]'), range = $('.vol-range'), val = $('.vol-val'), headBtn = $('.head-actions .snd');
+    if (!audio || !btns.length) return;
+    var K_ON = 'orbit-sound', K_VOL = 'orbit-vol';
+    var wantOn = false, vol = 40, playing = false, fadeRaf = 0, inviteT = 0;
+    try { wantOn = localStorage.getItem(K_ON) === '1'; var v = parseInt(localStorage.getItem(K_VOL), 10); if (v >= 0 && v <= 100) vol = v; } catch (e) {}
+    function level() { return vol / 100; }
+    function ui() {
+      var on = wantOn && vol > 0;
+      btns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(on));
+        b.classList.toggle('muted', !on);
+        b.classList.toggle('low', on && vol < 40);
+        var st = b.querySelector('.snd-state'); if (st) st.textContent = on ? 'on' : 'off';
+        if (b.hasAttribute('title')) b.setAttribute('title', on ? 'Sound: on — click to mute' : 'Sound: off — click to turn on');
+      });
+      if (range) { range.value = vol; range.style.setProperty('--v', vol + '%'); range.setAttribute('aria-valuetext', vol + '%'); }
+      if (val) val.textContent = vol;
+    }
+    function fade(to, ms, then) {
+      cancelAnimationFrame(fadeRaf);
+      var from = audio.volume, t0 = performance.now();
+      (function f(now) {
+        var t = clamp((now - t0) / ms, 0, 1);               /* clamp: the first rAF timestamp can precede t0 */
+        audio.volume = clamp(from + (to - from) * t * (2 - t), 0, 1);
+        if (t < 1) fadeRaf = requestAnimationFrame(f); else if (then) then();
+      })(t0);
+    }
+    function invite(onOff) {                                 /* the glowing halo that asks for the click */
+      if (!headBtn) return;
+      clearTimeout(inviteT);
+      headBtn.classList.toggle('invite', onOff);
+      if (onOff) inviteT = setTimeout(function () { headBtn.classList.remove('invite'); }, 20000);
+    }
+    function play() {
+      if (vol === 0) return;
+      audio.preload = 'auto'; audio.volume = 0;
+      var p = audio.play();
+      var ok = function () { playing = true; invite(false); ui(); fade(level(), 1600); };
+      if (p && p.then) p.then(ok).catch(function () { playing = false; wantOn = false; ui(); invite(true); });   /* refused: stay off, keep inviting */
+      else ok();
+    }
+    function stop() { playing = false; ui(); fade(0, 500, function () { audio.pause(); }); }
+    function toggle() {
+      invite(false);
+      wantOn = !(wantOn && vol > 0);
+      if (wantOn && vol === 0) vol = 40;                    /* switching on from a zeroed slider: default level */
+      try { localStorage.setItem(K_ON, wantOn ? '1' : '0'); localStorage.setItem(K_VOL, String(vol)); } catch (e) {}
+      ui();
+      if (wantOn) play(); else stop();
+    }
+    btns.forEach(function (b) { b.addEventListener('click', toggle); });
+    if (range) {
+      var soundBox = range.closest('.sound');                /* dragging the thumb past the panel's edge must not close it */
+      range.addEventListener('pointerdown', function () { if (soundBox) soundBox.classList.add('is-dragging'); });
+      ['pointerup', 'pointercancel'].forEach(function (ev) { window.addEventListener(ev, function () { if (soundBox) soundBox.classList.remove('is-dragging'); }); });
+      range.addEventListener('input', function () {
+        vol = parseInt(range.value, 10) || 0;
+        try { localStorage.setItem(K_VOL, String(vol)); } catch (e) {}
+        if (vol > 0 && !wantOn) { wantOn = true; try { localStorage.setItem(K_ON, '1'); } catch (e) {} }
+        ui();
+        if (vol === 0) { if (playing) stop(); return; }
+        if (!playing) { invite(false); play(); return; }     /* moving the slider is a gesture: start right away */
+        cancelAnimationFrame(fadeRaf); audio.volume = level();
+      });
+    }
+    doc.addEventListener('visibilitychange', function () {
+      if (!playing) return;
+      if (doc.hidden) audio.pause(); else { var p = audio.play(); if (p && p.catch) p.catch(function () {}); }
+    });
+    ui();
+    if (wantOn && vol > 0) play();                           /* a returning listener: resume where the browser allows it */
+    else setTimeout(function () { invite(true); }, 1400);    /* first visit: glow once the header has slid in */
+  })();
+
+  /* ======================================================
+     THE FLIGHT
+     ====================================================== */
+  var flight = $('#flight'), stage = $('.stage', flight), world = $('.world', flight);
+  /* PLANES vs STATIONS. Every <article class="station"> is a plane in 3D space; its logical station
+     index comes from data-id (desktop: the four work cards share station 1 and sit side by side) or
+     data-im (phones: one card per station). N = number of logical stations in the current mode. */
+  var planes = $$('.station', flight), N = 0, IDX = [], SX = [], SY = [], GX = [], GY = [], NAMES = [], EXIT = [], PEEK = [];
+  var mobileQ = window.matchMedia('(max-width: 699px)');
+  var STEP = parseFloat(getComputedStyle(doc.documentElement).getPropertyValue('--step')) || 1100;
+  var AHEAD_FLOOR = 0;        /* stations ahead stay hidden; they fade in only as the camera approaches */
+  var canvas = $('.stars', flight), ctx = canvas.getContext('2d');
+  var hud = $('.hud', flight), hudNum = $('.hud-num', flight), hudName = $('.hud-name', flight), hudPill = $('.hud-pill', flight);
+  var ticksWrap = $('.hud-ticks', flight), ticks = [], bar = $('.hud-bar-fill', flight);
+  /* a plane's --sx / --sy (px, vw or vh from the stylesheet) → px */
+  function cssLen(el, prop) {
+    var v = (getComputedStyle(el).getPropertyValue(prop) || '').trim(), n = parseFloat(v);
+    if (!v || isNaN(n)) return 0;
+    if (v.indexOf('vw') > -1) return n * stage.clientWidth / 100;
+    if (v.indexOf('vh') > -1) return n * stage.clientHeight / 100;
+    return n;
+  }
+  function layoutStations() {
+    var mob = mobileQ.matches, cnt = [];
+    N = 0; IDX = []; SX = []; SY = []; GX = []; GY = []; NAMES = []; EXIT = []; PEEK = [];
+    planes.forEach(function (s, j) {
+      var i = parseInt(s.getAttribute(mob ? 'data-im' : 'data-id'), 10) || 0;
+      IDX[j] = i; s.style.setProperty('--i', i); N = Math.max(N, i + 1);
+    });
+    flight.style.setProperty('--stations', N);
+    planes.forEach(function (s, j) {
+      var i = IDX[j];
+      SX[j] = cssLen(s, '--sx'); SY[j] = cssLen(s, '--sy');
+      GX[i] = (GX[i] || 0) + SX[j]; GY[i] = (GY[i] || 0) + SY[j]; cnt[i] = (cnt[i] || 0) + 1;
+      if (!NAMES[i]) NAMES[i] = (!mob && s.getAttribute('data-name-d')) || s.getAttribute('data-name') || '';
+      if (!EXIT[i]) { var v = (s.getAttribute('data-exit') || '0.05,0.25').split(','); EXIT[i] = [parseFloat(v[0]) || 0.05, parseFloat(v[1]) || 0.25]; }
+      if (PEEK[i] === undefined) { var pk = parseFloat(s.getAttribute('data-peek')); PEEK[i] = isNaN(pk) ? 1 : pk; }
+    });
+    for (var i = 0; i < N; i++) { GX[i] = (GX[i] || 0) / (cnt[i] || 1); GY[i] = (GY[i] || 0) / (cnt[i] || 1); }   /* camera target = group centre */
+    if (ticksWrap) { ticksWrap.innerHTML = ''; for (var k = 0; k < N; k++) ticksWrap.appendChild(doc.createElement('i')); ticks = $$('i', ticksWrap); }
+    cur = -1;
+  }
+  function planesOf(k) { return planes.filter(function (s, j) { return IDX[j] === k; }); }
+  function idxOf(plane) { var j = planes.indexOf(plane); return j < 0 ? -1 : IDX[j]; }
+  /* the flight needs height AND motion; short windows fall back to the stacked page */
+  var mql = window.matchMedia('(min-width: 360px) and (min-height: 600px) and (prefers-reduced-motion: no-preference)');
+  var HEAD = 72;
+
+  var flying = false, running = false, rafId = 0, inView = true, visible = !doc.hidden, first = true;
+  var M = { top: 0, range: 1, vw: 1, vh: 1 };
+  var z = 0, zPrev = 0, mouseX = 0, mouseY = 0, mx = 0, my = 0, cur = -1, pillState = '', hudO = -1;
+  var D0 = 0.04, D1 = 0.06;   /* dwell at the start / end of the scroll range */
+
+  function measure() {
+    var r = flight.getBoundingClientRect();
+    M.top = r.top + window.scrollY;
+    M.vw = stage.clientWidth; M.vh = stage.clientHeight;
+    M.range = Math.max(1, flight.offsetHeight - M.vh);
+  }
+  /* scroll → camera z. Each station owns one scroll slot (--slot); the camera HOLDS at the
+     station for ~36% of it (18% either side) and travels in the middle 64%. Together with the
+     snap below, a small scroll inside the hold returns to the station (so the Watch button can be
+     clicked), a deliberate flick carries the camera to the next one. */
+  var HOLD = 0.18;
+  function pToZ(p) {
+    var u = clamp((p - D0) / (1 - D0 - D1), 0, 1) * (N - 1);
+    var k = Math.floor(u);
+    if (k >= N - 1) return (N - 1) * STEP;
+    return (k + sstep(HOLD, 1 - HOLD, u - k)) * STEP;
+  }
+  /* scrollY at which station k sits exactly at the camera (centre of its plateau) */
+  function stationScroll(k) { return k <= 0 ? M.top : M.top + (D0 + (k / (N - 1)) * (1 - D0 - D1)) * M.range; }
+  /* d < 0: station ahead of the camera. The NEXT station stays at AHEAD_FLOOR opacity (a smaller,
+     softer card peeking beside the current one), the one after it at ~.18, gone by 2.7 steps —
+     so there is always a visible hint that the flight continues. d > 0: passed (fades out fast).
+     `damp` (0..1) quiets the peek while the camera is still parked at the hero. */
+  function opacityFor(d, i, damp) {
+    if (d < 0) {
+      var a = -d / STEP, o;
+      if (a <= 1) o = 1 - (1 - AHEAD_FLOOR) * sstep(0.3, 1.0, a);
+      else o = AHEAD_FLOOR * (1 - sstep(1.0, 2.7, a));
+      return o * lerp(1, damp, sstep(0.25, 0.6, a));   /* damp only applies while the station is still far */
+    }
+    return 1 - sstep(STEP * EXIT[i][0], STEP * EXIT[i][1], d);
+  }
+  function focusables(root) { return $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', root); }
+  /* station the camera is parked at for the CURRENT scroll position (the rAF loop — and `cur` —
+     pause while the stage is offscreen, so focus handling must not trust `cur`) */
+  function curFromScroll() {
+    var p = clamp((window.scrollY - M.top) / M.range, 0, 1);
+    return clamp(Math.round(pToZ(p) / STEP), 0, N - 1);
+  }
+
+  /* ---- starfield ---- */
+  var stars = [], W = 0, H = 0, F = 720, ZF = 1800, ZN = 40, COUNT = 450;
+  var COLORS = ['rgba(232,166,48,', 'rgba(225,228,245,', 'rgba(111,124,255,'];
+  function sizeCanvas() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = stage.clientWidth; H = stage.clientHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var want = W < 900 ? 220 : 450;
+    if (want !== COUNT || !stars.length) { COUNT = want; initStars(); }
+  }
+  function spawn(s, zz) {
+    var k = zz / F;
+    s.z = zz;
+    s.x = (Math.random() * 2 - 1) * (W / 2) * k * 1.3;
+    s.y = (Math.random() * 2 - 1) * (H / 2) * k * 1.3;
+    s.px = NaN; s.py = NaN;
+  }
+  function initStars() {
+    stars.length = 0;
+    for (var i = 0; i < COUNT; i++) {
+      var r = Math.random();
+      var s = { c: r < 0.3 ? 0 : (r < 0.9 ? 1 : 2), b: 0.35 + Math.random() * 0.65 };
+      spawn(s, ZN + Math.random() * (ZF - ZN));
+      stars.push(s);
+    }
+  }
+  function drawStars(dz, ox, oy) {
+    ctx.clearRect(0, 0, W, H);
+    var speed = clamp(dz * 0.78 + 0.46, -180, 180);  /* scroll velocity + idle drift (+30 %) */
+    var cx = W / 2 + ox, cy = H / 2 + oy;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      s.z -= speed;
+      if (s.z < ZN) spawn(s, ZF - Math.random() * 300);
+      else if (s.z > ZF) spawn(s, ZN + Math.random() * 200);
+      var k = F / s.z, x = cx + s.x * k, y = cy + s.y * k;
+      if (s.px !== s.px) { s.px = x; s.py = y; }
+      if (x < -60 || x > W + 60 || y < -60 || y > H + 60) { s.px = x; s.py = y; continue; }
+      var dx = x - s.px, dy = y - s.py, len = Math.sqrt(dx * dx + dy * dy);
+      var depth = 1 - s.z / ZF;
+      var a = Math.min(1, (0.3 + depth * 0.7) * s.b * (0.7 + Math.min(len, 40) / 40 * 0.6));
+      var col = COLORS[s.c] + a.toFixed(3) + ')';
+      if (len < 1.5) {
+        var r = 0.8 + depth * 1.5;
+        ctx.fillStyle = col; ctx.fillRect(x - r / 2, y - r / 2, r, r);
+      } else {
+        ctx.strokeStyle = col; ctx.lineWidth = 0.6 + depth * 1.4;
+        ctx.beginPath(); ctx.moveTo(s.px, s.py); ctx.lineTo(x, y); ctx.stroke();
+      }
+      s.px = x; s.py = y;
+    }
+  }
+
+  /* ---- stations / HUD ---- */
+  function setCurrent(k) {
+    if (k === cur) return;
+    cur = k;
+    planes.forEach(function (s, j) { s.classList.toggle('is-current', IDX[j] === k); });
+    hudNum.textContent = 'Station 0' + (k + 1) + ' / 0' + N;
+    hudName.textContent = NAMES[k];
+    ticks.forEach(function (t, i) { t.classList.toggle('on', i === k); });
+  }
+
+  function update() {
+    var p = clamp((window.scrollY - M.top) / M.range, 0, 1);
+    var zt = pToZ(p);
+    if (first) { z = zt; zPrev = zt; first = false; }
+    z += (zt - z) * 0.16;
+    if (Math.abs(zt - z) < 0.05) z = zt;
+    mx += (mouseX - mx) * 0.07; my += (mouseY - my) * 0.07;
+
+    /* camera follows the curved path between stations */
+    var t = z / STEP, i0 = clamp(Math.floor(t), 0, N - 2), f = sstep(0, 1, t - i0);
+    var cx = lerp(GX[i0], GX[Math.min(i0 + 1, N - 1)], f);
+    var cy = lerp(GY[i0], GY[Math.min(i0 + 1, N - 1)], f);
+    var px = -cx + mx * 20, py = -cy + my * 14;
+    world.style.setProperty('--cx', px.toFixed(2) + 'px'); world.style.setProperty('--cy', py.toFixed(2) + 'px');
+    world.style.setProperty('--cz', z.toFixed(2) + 'px');
+    world.style.setProperty('--rx', (my * 2.5).toFixed(3) + 'deg'); world.style.setProperty('--ry', (-mx * 2.5).toFixed(3) + 'deg');
+
+    var damp = lerp(PEEK[i0], PEEK[Math.min(i0 + 1, N - 1)], f);   /* the hero keeps the peek quiet */
+    for (var j = 0; j < planes.length; j++) {
+      var s = planes[j], i = IDX[j], d = z - i * STEP, o = opacityFor(d, i, damp);
+      if (i === N - 1) o *= 1 - sstep(0.955, 0.995, p);          /* contact hands over to the document */
+      if (s._o === undefined || Math.abs(o - s._o) > 0.003 || (o === 0) !== (s._o === 0)) {
+        s.style.setProperty('--o', o.toFixed(3)); s._o = o;
+      }
+      var soft = o > 0.1 && o < 0.98 && !(i === N - 1 && p > 0.95); /* blur only mid-fade; the final hand-over stays crisp */
+      if (soft !== s._soft) { s.classList.toggle('is-soft', soft); s._soft = soft; }
+    }
+    setCurrent(clamp(Math.round(t), 0, N - 1));
+
+    var ps = p < 0.02 ? 'start' : (p < 0.12 ? 'keep' : 'off');
+    if (ps !== pillState) { pillState = ps; hudPill.setAttribute('data-state', ps); }
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    var ho = 1 - sstep(0.95, 0.985, p);                           /* HUD leaves with the last station */
+    if (Math.abs(ho - hudO) > 0.01) { hudO = ho; hud.style.opacity = ho.toFixed(3); }
+
+    drawStars(z - zPrev, -cx * 0.12 + mx * 10, -cy * 0.12 + my * 8);
+    zPrev = z;
+  }
+
+  function frame() { rafId = 0; if (!running) return; update(); rafId = requestAnimationFrame(frame); }
+  function startLoop() { if (running || !flying || !inView || !visible) return; running = true; rafId = requestAnimationFrame(frame); }
+  function stopLoop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } }
+
+  function resetStations() {
+    ['--cx', '--cy', '--cz', '--rx', '--ry'].forEach(function (v) { world.style.removeProperty(v); });
+    planes.forEach(function (s) {
+      s.style.removeProperty('--o'); s.classList.remove('is-soft', 'is-current');
+      s._o = undefined; s._soft = undefined;
+    });
+    hud.style.opacity = ''; hudO = -1;
+    cur = -1; pillState = '';
+    ctx.clearRect(0, 0, W, H);
+  }
+
+  /* every station must fit between the fixed header and the HUD, else the sticky stage would clip it */
+  function fits() {
+    var avail = stage.clientHeight - HEAD - 84;
+    for (var j = 0; j < planes.length; j++) if (planes[j].querySelector('.st-inner').offsetHeight > avail) return false;
+    return true;
+  }
+
+  function applyMode() {
+    var want = mql.matches;
+    if (want) {
+      if (!flying) html.classList.add('fly');      /* measure in fly layout */
+      layoutStations();                            /* mode (phone / desktop) may have changed */
+      if (!fits()) { want = false; if (!flying) html.classList.remove('fly'); }
+    }
+    if (want !== flying) {
+      flying = want;
+      html.classList.toggle('fly', flying);
+      if (flying) { measure(); sizeCanvas(); first = true; restK = nearestStation(window.scrollY); userD = 0; update(); startLoop(); }
+      else { stopLoop(); resetStations(); }
+    } else if (flying) {
+      measure(); sizeCanvas(); update();
+    }
+  }
+
+  /* pointer parallax (mouse only) */
+  window.addEventListener('pointermove', function (e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
+  doc.addEventListener('pointerleave', function () { mouseX = 0; mouseY = 0; });
+  /* device orientation only where it is permission-free (Android) */
+  if (window.DeviceOrientationEvent && typeof window.DeviceOrientationEvent.requestPermission !== 'function' && window.matchMedia('(hover: none)').matches) {
+    window.addEventListener('deviceorientation', function (e) {
+      if (e.gamma == null || e.beta == null) return;
+      mouseX = clamp(e.gamma / 30, -1, 1);
+      mouseY = clamp((e.beta - 40) / 30, -1, 1);
+    }, { passive: true });
+  }
+
+  /* keyboard journey: focusing anything inside a non-current station flies the camera there.
+     Focus entering the flight from outside (header / document) lands on the CURRENT station. */
+  /* Mouse: focus the pressed link/button ourselves with preventScroll — the browser's own
+     focus-scroll mis-measures elements inside the sticky 3D stage and jumps the page. */
+  var pointerFocusAt = 0;
+  world.addEventListener('mousedown', function (e) {
+    if (!flying) return;
+    var el = e.target.closest && e.target.closest('a, button');
+    if (!el || !world.contains(el)) return;
+    e.preventDefault();
+    pointerFocusAt = performance.now();
+    el.focus({ preventScroll: true });
+  });
+  /* Keyboard: move focus ourselves (preventScroll) whenever the flight is involved, for the same reason */
+  function tabbable(el) {
+    return el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[inert]');
+  }
+  doc.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || !flying || menu.classList.contains('open')) return;
+    var a = doc.activeElement, aSt = a && a.closest ? a.closest('.station') : null;
+    if (aSt) {                                                   /* focus left behind by scrolling → jump into the current station */
+      measure();
+      var c = curFromScroll();
+      if (idxOf(aSt) !== c) {
+        var cf = [].concat.apply([], planesOf(c).map(focusables));
+        if (cf.length) { e.preventDefault(); cf[e.shiftKey ? cf.length - 1 : 0].focus({ preventScroll: true }); return; }
+      }
+    }
+    var all = focusables(doc).filter(tabbable), idx = all.indexOf(a);
+    var next = idx < 0 ? (e.shiftKey ? null : all[0]) : all[idx + (e.shiftKey ? -1 : 1)];
+    if (!next || (!world.contains(next) && !(a && world.contains(a)))) return;
+    e.preventDefault();
+    next.focus({ preventScroll: true });
+  });
+  function park(i) {                                             /* re-park only if focus-scroll left the plateau */
+    measure();
+    var slot = M.range * (1 - D0 - D1) / (N - 1);
+    if (Math.abs(window.scrollY - stationScroll(i)) > slot * 0.28) window.scrollTo({ top: Math.round(stationScroll(i)), behavior: 'auto' });
+  }
+  world.addEventListener('focusin', function (e) {
+    if (!flying) return;
+    var st = e.target.closest('.station'); if (!st) return;
+    var i = idxOf(st); if (i < 0) return;
+    measure();
+    var c = curFromScroll(), from = e.relatedTarget;
+    if (i !== c && !(from && world.contains(from))) {
+      var f = [].concat.apply([], planesOf(c).map(focusables));
+      var fromBelow = !!(from && (from.compareDocumentPosition(world) & Node.DOCUMENT_POSITION_PRECEDING));
+      if (f.length) { f[fromBelow ? f.length - 1 : 0].focus({ preventScroll: true }); return; }
+    }
+    /* fly to the focused station (also when it is the current one but faded, e.g. at the flight's end) */
+    if (i !== c || !running || (st._o || 0) < 0.6) window.scrollTo({ top: Math.round(stationScroll(i)), behavior: 'auto' });
+    /* keyboard focus: undo the browser's own jump. Not after a mouse press — a click on an in-page
+       link (Full resume, Continue) navigates right after this, and parking would pull it back. */
+    if (performance.now() - pointerFocusAt > 400) requestAnimationFrame(function () { park(i); });
+  });
+
+  /* ---- snap: never rest between stations ----
+     After the wheel / trackpad / touch momentum goes idle, the page is tweened to the nearest
+     station: scroll more than SNAP_COMMIT pixels out of one and the target is the NEXT station,
+     less and it is the station you are in (so a nudge stays put and the Watch button survives).
+     Only inside the flight; the document below scrolls freely. Any new user input cancels the
+     tween — and is then counted towards the next decision, never lost. */
+  var snapTimer = 0, snapRaf = 0, snapY = 0, snapTo = 0, snapT0 = 0, snapPrev = 0, lastY = window.scrollY, touchDown = false, selfY = -1;
+  var snapK = 0, restK = 0;      /* station being flown to / last settled on */
+  var userD = 0;                 /* px of USER scrolling since that station was committed */
+  var SNAP_TAU = 170, SNAP_RAMP = 160, SNAP_MAX = 1800;   /* ms: decay constant, soft start, safety cap */
+  /* How much you must scroll out of a station for the snap to carry you ON to the next one instead
+     of pulling you back. In PIXELS: the fraction-of-a-slot version this replaces also carried the
+     D0 dead zone at the top of the range (the hero needed ~170px), and at 30% of a slot it rewound
+     a single 100px wheel notch faster than the wheel advanced — a wheel turned slower than about
+     5 notches/s could never leave a station at all, and 2000px of wheel left the page at scrollY 0.
+     40px is below one wheel notch in every browser and above any trackpad or touch jitter, so one
+     notch (or one small swipe) always commits, while a stray nudge still returns to the station. */
+  var SNAP_COMMIT = 40;
+  function nearestStation(y) {
+    var best = 0, bd = Infinity;
+    for (var k = 0; k < N; k++) { var d = Math.abs(stationScroll(k) - y); if (d < bd) { bd = d; best = k; } }
+    return best;
+  }
+  /* Where to land: counted in stations from the one we last committed to (restK), using how far the
+     USER has scrolled since then (userD) — not the page's current position. Two reasons for both
+     halves: measuring the distance from the page position would round a phone flick's inertia up
+     and skip a station, and measuring it against the target station would read a notch arriving
+     during the ~1.3s tween tail as movement backwards. A deliberate scroll always advances exactly
+     one station; only a genuinely long throw crosses several. */
+  function snapTarget() {
+    var slot = M.range * (1 - D0 - D1) / (N - 1);
+    var k0 = clamp(restK, 0, N - 1);
+    if (Math.abs(userD) < SNAP_COMMIT) return k0;
+    var steps = Math.max(1, Math.round(Math.abs(userD) / slot));
+    return clamp(k0 + (userD > 0 ? steps : -steps), 0, N - 1);
+  }
+  function cancelSnap() { clearTimeout(snapTimer); snapTimer = 0; if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; } }
+  /* Exponential approach: every frame the remaining distance shrinks by a constant fraction
+     (frame-rate independent: 1 - e^(-dt/τ)), so the speed is proportional to what is left and the
+     landing decelerates asymptotically — no fixed duration, no hard stop. A short smoothstep ramp
+     at the start keeps the first frames from jerking. */
+  function snapStep(now) {
+    var dt = Math.min(now - snapPrev, 50); snapPrev = now;
+    var el = now - snapT0, rate = sstep(0, SNAP_RAMP, el) * (1 - Math.exp(-dt / SNAP_TAU));
+    snapY += (snapTo - snapY) * rate;
+    var done = Math.abs(snapTo - snapY) < 0.5 || el > SNAP_MAX;
+    if (done) snapY = snapTo;
+    var yi = Math.round(snapY);
+    if (yi !== selfY) { selfY = yi; window.scrollTo(0, yi); }   /* remember what WE wrote: a scroll event at that value is ours */
+    if (!done) snapRaf = requestAnimationFrame(snapStep);
+    else { snapRaf = 0; lastY = snapTo; restK = snapK; }
+  }
+  function doSnap() {
+    snapTimer = 0;
+    if (!flying || touchDown || menu.classList.contains('open')) return;
+    measure();
+    var y = window.scrollY, last = stationScroll(N - 1);
+    /* at the top, or past the last station: the document owns the scroll — re-anchor and stay out */
+    if (y <= M.top || y >= last - 1) { restK = nearestStation(y); userD = 0; return; }
+    var k = snapTarget(), target = Math.round(stationScroll(k));
+    if (Math.abs(target - y) < 2) { restK = k; userD = 0; return; }   /* already there — just remember it */
+    /* commit the station NOW, not when the tween finishes: the approach is asymptotic and takes
+       ~1.3s to formally land, and a notch arriving during that tail used to be measured from the
+       station we had already left, which sent it straight back. */
+    snapK = restK = k; userD = 0;
+    snapY = y; snapTo = target; snapT0 = snapPrev = performance.now();
+    snapRaf = requestAnimationFrame(snapStep);
+  }
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY;
+    /* our own tween — not user input. Compared with a tolerance, not by equality: browsers quantise
+       scrollY to physical pixels, so at 125% / 150% Windows scaling (or any browser zoom) a write of
+       1234 reads back as 1234.4 and the tween used to cancel itself every frame and creep. */
+    if (Math.abs(y - selfY) < 2) { lastY = y; return; }
+    if (!flying) { lastY = y; return; }
+    userD += y - lastY;          /* only genuine input reaches here — the tween's own writes returned above */
+    lastY = y;
+    if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; }  /* user took over mid-tween */
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(doSnap, 'onscrollend' in window ? 160 : 120);
+  }, { passive: true });
+  window.addEventListener('wheel', function () { if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; } }, { passive: true });
+  window.addEventListener('touchstart', function () { touchDown = true; cancelSnap(); }, { passive: true });
+  window.addEventListener('touchend', function () { touchDown = false; clearTimeout(snapTimer); snapTimer = setTimeout(doSnap, 140); }, { passive: true });
+  window.addEventListener('touchcancel', function () { touchDown = false; }, { passive: true });
+  /* Keyboard: an arrow press scrolls ~40px, far below the commit threshold, so the snap used to
+     rewind it and the flight was unreachable by keyboard. Step one station per press instead,
+     reusing the same tween; a press during a tween targets one station further, never swallowed. */
+  doc.addEventListener('keydown', function (e) {
+    var nav = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].indexOf(e.key) >= 0;
+    if (!nav) return;
+    cancelSnap();
+    if (!flying || e.key === 'Home' || e.key === 'End' || menu.classList.contains('open')) return;
+    var t = e.target && e.target.closest ? e.target : null;
+    if (t && t.closest('input, textarea, select, [contenteditable]')) return;      /* typing / volume slider */
+    if (e.key === ' ' && t && t.closest('button, a[href]')) return;                /* Space activates the control */
+    var dir = (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) ? -1 : 1;
+    measure();
+    var y = window.scrollY;
+    if (dir > 0 && y >= stationScroll(N - 1) - 1) return;         /* past the last station: the document takes over */
+    if (dir < 0 && y <= M.top + 1) return;
+    e.preventDefault();
+    var k = clamp(nearestStation(snapRaf ? snapTo : y) + dir, 0, N - 1);
+    snapK = restK = k; userD = 0; snapY = y; snapTo = Math.round(stationScroll(k)); snapT0 = snapPrev = performance.now();
+    snapRaf = requestAnimationFrame(snapStep);
+  });
+
+  /* pause when the flight is offscreen or the tab is hidden */
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (en) {
+      inView = en[0].isIntersecting;
+      if (inView) startLoop(); else stopLoop();
+    }).observe(stage);
+  }
+  doc.addEventListener('visibilitychange', function () {
+    visible = !doc.hidden;
+    if (visible) startLoop(); else stopLoop();
+  });
+
+  /* in-page links: station jumps while flying, smooth scroll otherwise */
+  var mqlReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var setHash = function (h) { if (window.history && history.replaceState) history.replaceState(null, '', h); };
+  $$('a[href^="#"]').forEach(function (a) {
+    if (a === burger || a.classList.contains('menu-close')) return;
+    a.addEventListener('click', function (e) {
+      var href = a.getAttribute('href'), id = href.slice(1), st = a.getAttribute('data-station');
+      if (flying && st !== null) {
+        e.preventDefault(); measure(); cancelSnap();
+        window.scrollTo({ top: Math.round(stationScroll(parseInt(st, 10) || 0)), behavior: mqlReduce.matches ? 'auto' : 'smooth' });
+        setHash(href);
+        return;
+      }
+      if (!id || id === 'main') return;                /* skip link keeps native behaviour */
+      var target = doc.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      cancelSnap();
+      /* data-jump="now" (Work): land on the block at once instead of flying the whole way there */
+      var now = a.getAttribute('data-jump') === 'now';
+      target.scrollIntoView({ behavior: (now || mqlReduce.matches) ? 'auto' : 'smooth', block: 'start' });
+      setHash(href);
+    });
+  });
+
+  /* resize / media changes */
+  var rs = 0;
+  window.addEventListener('resize', function () {
+    if (rs) return;
+    rs = requestAnimationFrame(function () {
+      rs = 0;
+      applyMode();
+      if (window.innerWidth > 900 && menu.classList.contains('open')) setMenu(false);
+    });
+  });
+  if (mql.addEventListener) { mql.addEventListener('change', applyMode); mobileQ.addEventListener('change', applyMode); }
+  else if (mql.addListener) { mql.addListener(applyMode); mobileQ.addListener(applyMode); }
+
+  applyMode();
+})();
+</script>
+</body>
+</html>
