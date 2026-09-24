@@ -33,11 +33,27 @@
   <meta name="twitter:image" content="https://alexshu.com/assets/og-card.png" />
   <meta name="twitter:title" content="Alexandr Shulyakovskiy — Creative &amp; Performance Marketing Producer" />
   <meta name="twitter:description" content="Creative Producer &amp; Performance Marketing Video Producer — content production, performance marketing videos, A/B testing, ASO, IP collaborations." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
+    /* self-hosted fonts (SIL OFL 1.1, licences in assets/fonts/): no request to Google Fonts, so no visitor IP leaves this site */
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-cyrillic-normal-400.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-latin-ext-normal-400.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-latin-normal-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-cyrillic-normal-400.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-latin-ext-normal-400.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap;
+      src: url("assets/fonts/jetbrains-mono-latin-normal-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
+      src: url("assets/fonts/manrope-cyrillic-normal-200-800.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
+      src: url("assets/fonts/manrope-latin-ext-normal-200-800.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
+      src: url("assets/fonts/manrope-latin-normal-200-800.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
     /* ============================================================
        0. TOKENS & RESET
        ============================================================ */
@@ -387,8 +403,9 @@
       position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden; overflow: clip;
     }
     html.fly .stars { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
-    /* The camera lives in CSS variables on .world (--cx/--cy = lateral position, --cz = depth,
-       --rx/--ry = pointer tilt) and every plane applies them itself. Perspective sits on .world and
+    /* The camera is applied by JS as an inline transform + opacity on each plane (the rule below is
+       only the first-paint fallback). Writing the camera into inherited custom properties on .world
+       made every frame restyle the whole flight subtree. Perspective sits on .world and
        .world stays FLAT on purpose: with transform-style: preserve-3d Chromium could not hit-test
        links on planes that share one depth (the four work cards), so the Watch buttons were dead. */
     html.fly .world { position: absolute; inset: 0; perspective: 1200px; perspective-origin: 50% 50%; --cx: 0px; --cy: 0px; --cz: 0px; --rx: 0deg; --ry: 0deg; }
@@ -403,8 +420,10 @@
                  translate3d(calc(var(--sx, 0px) + var(--cx, 0px)), calc(var(--sy, 0px) + var(--cam-y) + var(--cy, 0px)), calc(var(--cz, 0px) - var(--i, 0) * var(--step)));
       opacity: var(--o, 0);
       pointer-events: none;
-      will-change: opacity;
+      will-change: opacity;               /* transform only while flying (below): a permanent hint freezes the
+                                             raster scale and leaves the text soft after arrival */
     }
+    html.fly .flight.is-moving .station { will-change: transform, opacity; }   /* no re-raster per frame in flight */
     /* stations stay in the DOM, the tab order and the accessibility tree at opacity 0,
        so keyboard and screen-reader users travel the flight in order; focusing a
        station flies the camera to it (see JS) */
@@ -432,12 +451,9 @@
     .station--contact { --sx: -3vw; --sy: 0px; }
     @media (max-width: 699px) { .station--skills, .station--contact { --sx: 0px; } }
     html.fly .hud { display: block; }
-    /* mid-distance stations get a little blur (.is-soft toggled by JS for .1 < o < .98) — desktop + pointer only */
-    @supports (filter: blur(1px)) {
-      @media (min-width: 1024px) and (hover: hover) {
-        html.fly .station.is-soft .st-inner { filter: blur(calc((1 - var(--o, 0)) * 3px)); }
-      }
-    }
+    /* (no depth blur: a blur radius that changed every frame re-rasterised the fading station on each
+       frame of the flight, which is exactly when frames must be cheap; depth now reads from scale,
+       parallax and opacity alone) */
     /* stations that are not current (the ones peeking ahead) carry a faint gold outline + glow,
        so a half-transparent card still reads as a card against the black — a runway light */
     html.fly .station .card,
@@ -758,14 +774,6 @@
     .res-word { font-weight: 800; font-size: 1.55rem; letter-spacing: -.02em; color: var(--gold); line-height: 1; }
     .res-card p { margin-top: 12px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
 
-    /* 07 learning */
-    .learn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .learn-tile { display: block; padding: 44px 40px; background: var(--panel); border: 1px solid var(--hair-2); text-decoration: none; color: var(--text); transition: background .3s; }
-    .learn-tile:hover { background: var(--panel-hi); }
-    .learn-label { color: var(--gold); margin-bottom: 12px; }
-    .learn-title { font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -.02em; line-height: 1; }
-    .learn-desc { margin-top: 14px; color: var(--muted); font-size: .92rem; max-width: 360px; }
-    .learn-go { margin-top: 30px; color: var(--gold); }
 
     /* footer */
     .foot { border-top: 1px solid var(--hair); padding: 48px var(--pad-x) 40px; }
@@ -776,6 +784,8 @@
     .foot-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; color: var(--muted); font-size: .9rem; }
     .foot-right .mail { color: var(--gold); text-decoration: none; }
     .foot-top { margin-top: 10px; color: var(--text); text-decoration: none; }
+    .foot-privacy { color: var(--muted); font-size: .8rem; text-decoration: none; }
+    .foot-privacy:hover, .foot-privacy:focus-visible { color: var(--text); text-decoration: underline; }
 
     /* ============================================================
        5. RESPONSIVE
@@ -807,14 +817,13 @@
       .card-body { padding: 18px 24px 22px; gap: 10px; }
     }
     @media (max-width: 560px) {
-      .x-grid, .res-grid, .sk-grid, .learn-grid { grid-template-columns: 1fr; }
+      .x-grid, .res-grid, .sk-grid { grid-template-columns: 1fr; }
       .foot-in { flex-direction: column; align-items: flex-start; }
       .foot-right { align-items: flex-start; text-align: left; }
       .lang { grid-template-columns: 86px 1fr auto; gap: 10px; }
       .w-head { flex-wrap: wrap; }
       .w-tag { white-space: normal; line-height: 1.5; }
       .w-line { display: none; }
-      .learn-tile { padding: 36px 26px; }
       .eyebrow::before { width: 22px; }
     }
 
@@ -877,7 +886,6 @@
     <a href="#signature" data-jump="now">Work</a>
     <a href="#about">About</a>
     <a href="#results">Results</a>
-    <a href="#learn">Learn</a>
     <a href="mailto:al.shulyakovskiy@gmail.com">Contact</a>
   </nav>
   <div class="head-actions">
@@ -910,9 +918,8 @@
   <a class="menu-link" href="#signature" style="--k:1" data-jump="now">Work</a>
   <a class="menu-link" href="#about" style="--k:2">About</a>
   <a class="menu-link" href="#results" style="--k:3">Results</a>
-  <a class="menu-link" href="#learn" style="--k:4">Learn</a>
-  <a class="menu-link" href="mailto:al.shulyakovskiy@gmail.com" style="--k:5">Contact</a>
-  <button class="menu-sound mono" type="button" data-sound aria-pressed="false" style="--k:6">
+  <a class="menu-link" href="mailto:al.shulyakovskiy@gmail.com" style="--k:4">Contact</a>
+  <button class="menu-sound mono" type="button" data-sound aria-pressed="false" style="--k:5">
     Sound · <b class="snd-state">off</b>
   </button>
   <p class="menu-foot mono">al.shulyakovskiy@gmail.com · Based in the EU</p>
@@ -1377,7 +1384,7 @@
       </div>
 
     </div>
-    <p class="disclaimer reveal">Publicly released work produced while employed at Wargaming.net. All rights belong to their respective owners; links are provided for portfolio reference only.</p>
+    <p class="disclaimer reveal">Publicly released work produced by Wargaming.net teams while I was employed there; my role was Senior Creative Producer, and credit belongs to the whole team and our partners. Videos, game titles and all other trademarks belong to their respective owners. Links are provided for portfolio reference only; no affiliation with or endorsement by any of them is implied.</p>
   </div>
 </section>
 
@@ -1517,31 +1524,6 @@
   </div>
 </section>
 
-<!-- 07 LEARNING CENTER -->
-<section id="learn" class="sec" aria-label="Learning center">
-  <div class="sec-in">
-    <div class="sec-head reveal">
-      <span class="sec-num mono">07</span>
-      <h2>Learning Center</h2>
-      <span class="sec-line"></span>
-    </div>
-    <div class="learn-grid">
-      <a href="lt/" class="learn-tile hud-box swap-host reveal" style="--d:0">
-        <div class="learn-label mono">Language Tool</div>
-        <h3 class="learn-title">Lithuanian</h3>
-        <p class="learn-desc">Interactive exercises for learning the Lithuanian language from scratch.</p>
-        <div class="learn-go mono"><span class="swap"><span>Open tool →</span><span aria-hidden="true">Open tool →</span></span></div>
-      </a>
-      <a href="tools/cp/" class="learn-tile hud-box swap-host reveal" style="--d:1">
-        <div class="learn-label mono">Performance Marketing</div>
-        <h3 class="learn-title">CP Trainer</h3>
-        <p class="learn-desc">Certification trainer for Creative Producers in casual game UA.</p>
-        <div class="learn-go mono"><span class="swap"><span>Open tool →</span><span aria-hidden="true">Open tool →</span></span></div>
-      </a>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <!-- background music: OFF by default (browsers refuse audible autoplay before a user gesture, so the button
@@ -1559,6 +1541,7 @@
       <a class="mail" href="mailto:al.shulyakovskiy@gmail.com">al.shulyakovskiy@gmail.com</a>
       <span>Open to EU-wide opportunities</span>
       <a class="foot-top mono" href="#hero" data-station="0">Back to top ↑</a>
+      <a class="foot-privacy" href="privacy/">Privacy</a>
     </div>
   </div>
 </footer>
@@ -1616,14 +1599,13 @@
      BACKGROUND MUSIC — OFF by default (browsers refuse audible
      autoplay before a user gesture, so a glowing button invites
      the click instead). Click = on/off, hover = volume slider
-     (starts at 40 %), remembered, fades, pauses in a hidden tab.
+     (starts at 40 %), fades, pauses in a hidden tab. Nothing is stored in the browser: every visit
+     starts silent at the default level.
      ====================================================== */
   (function sound() {
     var audio = $('#bgm'), btns = $$('[data-sound]'), range = $('.vol-range'), val = $('.vol-val'), headBtn = $('.head-actions .snd');
     if (!audio || !btns.length) return;
-    var K_ON = 'orbit-sound', K_VOL = 'orbit-vol';
     var wantOn = false, vol = 40, playing = false, fadeRaf = 0, inviteT = 0;
-    try { wantOn = localStorage.getItem(K_ON) === '1'; var v = parseInt(localStorage.getItem(K_VOL), 10); if (v >= 0 && v <= 100) vol = v; } catch (e) {}
     function level() { return vol / 100; }
     function ui() {
       var on = wantOn && vol > 0;
@@ -1665,7 +1647,6 @@
       invite(false);
       wantOn = !(wantOn && vol > 0);
       if (wantOn && vol === 0) vol = 40;                    /* switching on from a zeroed slider: default level */
-      try { localStorage.setItem(K_ON, wantOn ? '1' : '0'); localStorage.setItem(K_VOL, String(vol)); } catch (e) {}
       ui();
       if (wantOn) play(); else stop();
     }
@@ -1676,8 +1657,7 @@
       ['pointerup', 'pointercancel'].forEach(function (ev) { window.addEventListener(ev, function () { if (soundBox) soundBox.classList.remove('is-dragging'); }); });
       range.addEventListener('input', function () {
         vol = parseInt(range.value, 10) || 0;
-        try { localStorage.setItem(K_VOL, String(vol)); } catch (e) {}
-        if (vol > 0 && !wantOn) { wantOn = true; try { localStorage.setItem(K_ON, '1'); } catch (e) {} }
+        if (vol > 0 && !wantOn) wantOn = true;
         ui();
         if (vol === 0) { if (playing) stop(); return; }
         if (!playing) { invite(false); play(); return; }     /* moving the slider is a gesture: start right away */
@@ -1689,8 +1669,7 @@
       if (doc.hidden) audio.pause(); else { var p = audio.play(); if (p && p.catch) p.catch(function () {}); }
     });
     ui();
-    if (wantOn && vol > 0) play();                           /* a returning listener: resume where the browser allows it */
-    else setTimeout(function () { invite(true); }, 1400);    /* first visit: glow once the header has slid in */
+    setTimeout(function () { invite(true); }, 1400);         /* glow once the header has slid in */
   })();
 
   /* ======================================================
@@ -1700,7 +1679,7 @@
   /* PLANES vs STATIONS. Every <article class="station"> is a plane in 3D space; its logical station
      index comes from data-id (desktop: the four work cards share station 1 and sit side by side) or
      data-im (phones: one card per station). N = number of logical stations in the current mode. */
-  var planes = $$('.station', flight), N = 0, IDX = [], SX = [], SY = [], GX = [], GY = [], NAMES = [], EXIT = [], PEEK = [];
+  var planes = $$('.station', flight), N = 0, IDX = [], SX = [], SY = [], CY = [], GX = [], GY = [], NAMES = [], EXIT = [], PEEK = [];
   var mobileQ = window.matchMedia('(max-width: 699px)');
   var STEP = parseFloat(getComputedStyle(doc.documentElement).getPropertyValue('--step')) || 1100;
   var AHEAD_FLOOR = 0;        /* stations ahead stay hidden; they fade in only as the camera approaches */
@@ -1717,7 +1696,7 @@
   }
   function layoutStations() {
     var mob = mobileQ.matches, cnt = [];
-    N = 0; IDX = []; SX = []; SY = []; GX = []; GY = []; NAMES = []; EXIT = []; PEEK = [];
+    N = 0; IDX = []; SX = []; SY = []; CY = []; GX = []; GY = []; NAMES = []; EXIT = []; PEEK = [];
     planes.forEach(function (s, j) {
       var i = parseInt(s.getAttribute(mob ? 'data-im' : 'data-id'), 10) || 0;
       IDX[j] = i; s.style.setProperty('--i', i); N = Math.max(N, i + 1);
@@ -1725,7 +1704,7 @@
     flight.style.setProperty('--stations', N);
     planes.forEach(function (s, j) {
       var i = IDX[j];
-      SX[j] = cssLen(s, '--sx'); SY[j] = cssLen(s, '--sy');
+      SX[j] = cssLen(s, '--sx'); SY[j] = cssLen(s, '--sy'); CY[j] = cssLen(s, '--cam-y');
       GX[i] = (GX[i] || 0) + SX[j]; GY[i] = (GY[i] || 0) + SY[j]; cnt[i] = (cnt[i] || 0) + 1;
       if (!NAMES[i]) NAMES[i] = (!mob && s.getAttribute('data-name-d')) || s.getAttribute('data-name') || '';
       if (!EXIT[i]) { var v = (s.getAttribute('data-exit') || '0.05,0.25').split(','); EXIT[i] = [parseFloat(v[0]) || 0.05, parseFloat(v[1]) || 0.25]; }
@@ -1743,8 +1722,17 @@
 
   var flying = false, running = false, rafId = 0, inView = true, visible = !doc.hidden, first = true;
   var M = { top: 0, range: 1, vw: 1, vh: 1 };
-  var z = 0, zPrev = 0, mouseX = 0, mouseY = 0, mx = 0, my = 0, cur = -1, pillState = '', hudO = -1;
-  var D0 = 0.04, D1 = 0.06;   /* dwell at the start / end of the scroll range */
+  var z = 0, zv = 0, zPrev = 0, lastT = 0, isMoving = false, mouseX = 0, mouseY = 0, mx = 0, my = 0, cur = -1, pillState = '', hudO = -1;
+  var D0 = 0.012, D1 = 0.06;  /* dwell at the start / end of the scroll range (the start one is tiny: the
+                                 first wheel notch must already move the camera) */
+  /* Camera = critically damped spring toward the scroll-driven target, integrated exactly per frame
+     (frame-rate independent, never overshoots). A wheel notch is a STEP in the target; a first-order
+     chase answered it with a velocity step (a visible kick per notch), the spring ramps up instead. */
+  var CAM_W = 18;             /* rad/s: ~55 ms time constant, settles in ~0.35 s */
+  function spring(x, v, target, w, dt) {
+    var e = Math.exp(-w * dt), d = x - target, c = v + w * d;
+    return [target + (d + c * dt) * e, (v - w * c * dt) * e];
+  }
 
   function measure() {
     var r = flight.getBoundingClientRect();
@@ -1752,16 +1740,17 @@
     M.vw = stage.clientWidth; M.vh = stage.clientHeight;
     M.range = Math.max(1, flight.offsetHeight - M.vh);
   }
-  /* scroll → camera z. Each station owns one scroll slot (--slot); the camera HOLDS at the
-     station for ~36% of it (18% either side) and travels in the middle 64%. Together with the
-     snap below, a small scroll inside the hold returns to the station (so the Watch button can be
-     clicked), a deliberate flick carries the camera to the next one. */
-  var HOLD = 0.18;
+  /* scroll → camera z. Each station owns one scroll slot (--slot). The mapping is linear with a
+     SOFT hold: the camera slows near a station (slope 1 - SOFT) and moves a little faster between
+     stations (1 + SOFT), but it never stops, so every bit of scrolling moves it at once. The old flat
+     hold (camera frozen for 36% of each slot, then a steep smoothstep) read as "nothing, then a
+     lurch". The snap below still guarantees that the camera always comes to rest AT a station. */
+  var SOFT = 0.35;
   function pToZ(p) {
     var u = clamp((p - D0) / (1 - D0 - D1), 0, 1) * (N - 1);
-    var k = Math.floor(u);
+    var k = Math.floor(u), f = u - k;
     if (k >= N - 1) return (N - 1) * STEP;
-    return (k + sstep(HOLD, 1 - HOLD, u - k)) * STEP;
+    return (k + f - SOFT * Math.sin(2 * Math.PI * f) / (2 * Math.PI)) * STEP;
   }
   /* scrollY at which station k sits exactly at the camera (centre of its plateau) */
   function stationScroll(k) { return k <= 0 ? M.top : M.top + (D0 + (k / (N - 1)) * (1 - D0 - D1)) * M.range; }
@@ -1813,9 +1802,9 @@
       stars.push(s);
     }
   }
-  function drawStars(dz, ox, oy) {
+  function drawStars(dz, ox, oy, dt) {
     ctx.clearRect(0, 0, W, H);
-    var speed = clamp(dz * 0.78 + 0.46, -180, 180);  /* scroll velocity + idle drift (+30 %) */
+    var speed = clamp(dz * 0.78 + 0.46 * (dt ? dt * 60 : 1), -180, 180);  /* scroll velocity + idle drift (+30 %), drift per 60 Hz frame */
     var cx = W / 2 + ox, cy = H / 2 + oy;
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
@@ -1850,32 +1839,46 @@
     ticks.forEach(function (t, i) { t.classList.toggle('on', i === k); });
   }
 
-  function update() {
+  function update(now) {
+    now = now || performance.now();
+    var dt = first ? 0 : clamp((now - lastT) / 1000, 0, 0.05); lastT = now;
     var p = clamp((window.scrollY - M.top) / M.range, 0, 1);
     var zt = pToZ(p);
-    if (first) { z = zt; zPrev = zt; first = false; }
-    z += (zt - z) * 0.16;
-    if (Math.abs(zt - z) < 0.05) z = zt;
-    mx += (mouseX - mx) * 0.07; my += (mouseY - my) * 0.07;
+    if (first) { z = zt; zv = 0; zPrev = zt; first = false; }
+    else if (dt > 0) {
+      var sz = spring(z, zv, zt, CAM_W, dt); z = sz[0]; zv = sz[1];
+      if (Math.abs(zt - z) < 0.05 && Math.abs(zv) < 1) { z = zt; zv = 0; }
+    }
+    var moving = Math.abs(zv) > 2 || Math.abs(zt - z) > 0.5;
+    if (moving !== isMoving) { isMoving = moving; flight.classList.toggle('is-moving', moving); }   /* see the CSS: raster once per flight, crisp at rest */
+    var km = 1 - Math.exp(-dt / 0.23);                           /* pointer parallax, same feel at any refresh rate */
+    mx += (mouseX - mx) * km; my += (mouseY - my) * km;
+    flight._z = z;                                               /* read by the smoothness lab; costs no style work */
+
+    /* at rest, park EXACTLY on the station: scroll positions are whole pixels, so the soft mapping
+       leaves ~0.3 px of depth, which scales the plane by 1.0003 and softens its text */
+    var zs = Math.round(z / STEP) * STEP, zr = (Math.abs(zv) < 2 && Math.abs(z - zs) < 2) ? zs : z;
 
     /* camera follows the curved path between stations */
-    var t = z / STEP, i0 = clamp(Math.floor(t), 0, N - 2), f = sstep(0, 1, t - i0);
+    var t = zr / STEP, i0 = clamp(Math.floor(t), 0, N - 2), f = sstep(0, 1, t - i0);
     var cx = lerp(GX[i0], GX[Math.min(i0 + 1, N - 1)], f);
     var cy = lerp(GY[i0], GY[Math.min(i0 + 1, N - 1)], f);
     var px = -cx + mx * 20, py = -cy + my * 14;
-    world.style.setProperty('--cx', px.toFixed(2) + 'px'); world.style.setProperty('--cy', py.toFixed(2) + 'px');
-    world.style.setProperty('--cz', z.toFixed(2) + 'px');
-    world.style.setProperty('--rx', (my * 2.5).toFixed(3) + 'deg'); world.style.setProperty('--ry', (-mx * 2.5).toFixed(3) + 'deg');
+    var tilt = 'rotateX(' + (my * 2.5).toFixed(3) + 'deg) rotateY(' + (-mx * 2.5).toFixed(3) + 'deg) translate3d(';
 
     var damp = lerp(PEEK[i0], PEEK[Math.min(i0 + 1, N - 1)], f);   /* the hero keeps the peek quiet */
     for (var j = 0; j < planes.length; j++) {
-      var s = planes[j], i = IDX[j], d = z - i * STEP, o = opacityFor(d, i, damp);
+      var s = planes[j], i = IDX[j], d = zr - i * STEP, o = opacityFor(d, i, damp);
       if (i === N - 1) o *= 1 - sstep(0.955, 0.995, p);          /* contact hands over to the document */
       if (s._o === undefined || Math.abs(o - s._o) > 0.003 || (o === 0) !== (s._o === 0)) {
-        s.style.setProperty('--o', o.toFixed(3)); s._o = o;
+        s.style.opacity = o.toFixed(3); s._o = o;
       }
-      var soft = o > 0.1 && o < 0.98 && !(i === N - 1 && p > 0.95); /* blur only mid-fade; the final hand-over stays crisp */
-      if (soft !== s._soft) { s.classList.toggle('is-soft', soft); s._soft = soft; }
+      /* transform + opacity straight on the plane: compositor-only work, no subtree restyle.
+         An invisible plane keeps its last transform (nothing to see, nothing to recomposite). */
+      if (o > 0 || s._tf === undefined) {
+        var tf = tilt + (SX[j] + px).toFixed(2) + 'px,' + (SY[j] + CY[j] + py).toFixed(2) + 'px,' + d.toFixed(2) + 'px)';
+        if (tf !== s._tf) { s.style.transform = tf; s._tf = tf; }
+      }
     }
     setCurrent(clamp(Math.round(t), 0, N - 1));
 
@@ -1885,21 +1888,23 @@
     var ho = 1 - sstep(0.95, 0.985, p);                           /* HUD leaves with the last station */
     if (Math.abs(ho - hudO) > 0.01) { hudO = ho; hud.style.opacity = ho.toFixed(3); }
 
-    drawStars(z - zPrev, -cx * 0.12 + mx * 10, -cy * 0.12 + my * 8);
+    drawStars(z - zPrev, -cx * 0.12 + mx * 10, -cy * 0.12 + my * 8, dt);
     zPrev = z;
   }
 
-  function frame() { rafId = 0; if (!running) return; update(); rafId = requestAnimationFrame(frame); }
+  function frame(now) { rafId = 0; if (!running) return; update(now); rafId = requestAnimationFrame(frame); }
   function startLoop() { if (running || !flying || !inView || !visible) return; running = true; rafId = requestAnimationFrame(frame); }
   function stopLoop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } }
 
   function resetStations() {
     ['--cx', '--cy', '--cz', '--rx', '--ry'].forEach(function (v) { world.style.removeProperty(v); });
     planes.forEach(function (s) {
-      s.style.removeProperty('--o'); s.classList.remove('is-soft', 'is-current');
-      s._o = undefined; s._soft = undefined;
+      s.style.removeProperty('--o'); s.style.removeProperty('opacity'); s.style.removeProperty('transform');
+      s.classList.remove('is-soft', 'is-current');
+      s._o = undefined; s._tf = undefined; s._soft = undefined;
     });
     hud.style.opacity = ''; hudO = -1;
+    flight.classList.remove('is-moving'); isMoving = false;
     cur = -1; pillState = '';
     ctx.clearRect(0, 0, W, H);
   }
@@ -2010,7 +2015,8 @@
   var snapTimer = 0, snapRaf = 0, snapY = 0, snapTo = 0, snapT0 = 0, snapPrev = 0, lastY = window.scrollY, touchDown = false, selfY = -1;
   var snapK = 0, restK = 0;      /* station being flown to / last settled on */
   var userD = 0;                 /* px of USER scrolling since that station was committed */
-  var SNAP_TAU = 170, SNAP_RAMP = 160, SNAP_MAX = 1800;   /* ms: decay constant, soft start, safety cap */
+  var snapV = 0;                 /* px/s: velocity of the page tween (kept when a key retargets it mid-flight) */
+  var SNAP_W = 15, SNAP_MAX = 1800;   /* rad/s of the critically damped tween (95% of the way in ~0.3 s); ms safety cap */
   /* How much you must scroll out of a station for the snap to carry you ON to the next one instead
      of pulling you back. In PIXELS: the fraction-of-a-slot version this replaces also carried the
      D0 dead zone at the top of the range (the hero needed ~170px), and at 30% of a slot it rewound
@@ -2037,17 +2043,16 @@
     var steps = Math.max(1, Math.round(Math.abs(userD) / slot));
     return clamp(k0 + (userD > 0 ? steps : -steps), 0, N - 1);
   }
-  function cancelSnap() { clearTimeout(snapTimer); snapTimer = 0; if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; } }
-  /* Exponential approach: every frame the remaining distance shrinks by a constant fraction
-     (frame-rate independent: 1 - e^(-dt/τ)), so the speed is proportional to what is left and the
-     landing decelerates asymptotically — no fixed duration, no hard stop. A short smoothstep ramp
-     at the start keeps the first frames from jerking. */
+  function cancelSnap() { clearTimeout(snapTimer); snapTimer = 0; snapV = 0; if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; } }
+  /* Critically damped spring on the page position, integrated exactly per frame (frame-rate
+     independent). From rest its speed starts at zero and builds up smoothly, so no start ramp is
+     needed; it lands without overshoot. A key press mid-flight retargets it and keeps the speed. */
   function snapStep(now) {
-    var dt = Math.min(now - snapPrev, 50); snapPrev = now;
-    var el = now - snapT0, rate = sstep(0, SNAP_RAMP, el) * (1 - Math.exp(-dt / SNAP_TAU));
-    snapY += (snapTo - snapY) * rate;
-    var done = Math.abs(snapTo - snapY) < 0.5 || el > SNAP_MAX;
-    if (done) snapY = snapTo;
+    var dt = clamp(now - snapPrev, 0, 50) / 1000; snapPrev = now;
+    var st = spring(snapY, snapV, snapTo, SNAP_W, dt); snapY = st[0]; snapV = st[1];
+    var el = now - snapT0;
+    var done = (Math.abs(snapTo - snapY) < 0.5 && Math.abs(snapV) < 8) || el > SNAP_MAX;
+    if (done) { snapY = snapTo; snapV = 0; }
     var yi = Math.round(snapY);
     if (yi !== selfY) { selfY = yi; window.scrollTo(0, yi); }   /* remember what WE wrote: a scroll event at that value is ours */
     if (!done) snapRaf = requestAnimationFrame(snapStep);
@@ -2066,7 +2071,7 @@
        ~1.3s to formally land, and a notch arriving during that tail used to be measured from the
        station we had already left, which sent it straight back. */
     snapK = restK = k; userD = 0;
-    snapY = y; snapTo = target; snapT0 = snapPrev = performance.now();
+    snapY = y; snapV = 0; snapTo = target; snapT0 = snapPrev = performance.now();
     snapRaf = requestAnimationFrame(snapStep);
   }
   window.addEventListener('scroll', function () {
@@ -2080,9 +2085,9 @@
     lastY = y;
     if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; }  /* user took over mid-tween */
     clearTimeout(snapTimer);
-    snapTimer = setTimeout(doSnap, 'onscrollend' in window ? 160 : 120);
+    snapTimer = setTimeout(doSnap, 110);   /* input idle: fires after wheel / momentum scroll events stop */
   }, { passive: true });
-  window.addEventListener('wheel', function () { if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; } }, { passive: true });
+  window.addEventListener('wheel', function () { if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = 0; snapV = 0; } }, { passive: true });
   window.addEventListener('touchstart', function () { touchDown = true; cancelSnap(); }, { passive: true });
   window.addEventListener('touchend', function () { touchDown = false; clearTimeout(snapTimer); snapTimer = setTimeout(doSnap, 140); }, { passive: true });
   window.addEventListener('touchcancel', function () { touchDown = false; }, { passive: true });
@@ -2092,6 +2097,7 @@
   doc.addEventListener('keydown', function (e) {
     var nav = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].indexOf(e.key) >= 0;
     if (!nav) return;
+    var tweening = !!snapRaf, keepY = snapY, keepV = snapV, keepTo = snapTo;   /* a press mid-flight keeps its speed */
     cancelSnap();
     if (!flying || e.key === 'Home' || e.key === 'End' || menu.classList.contains('open')) return;
     var t = e.target && e.target.closest ? e.target : null;
@@ -2103,8 +2109,10 @@
     if (dir > 0 && y >= stationScroll(N - 1) - 1) return;         /* past the last station: the document takes over */
     if (dir < 0 && y <= M.top + 1) return;
     e.preventDefault();
-    var k = clamp(nearestStation(snapRaf ? snapTo : y) + dir, 0, N - 1);
-    snapK = restK = k; userD = 0; snapY = y; snapTo = Math.round(stationScroll(k)); snapT0 = snapPrev = performance.now();
+    var k = clamp(nearestStation(tweening ? keepTo : y) + dir, 0, N - 1);
+    snapK = restK = k; userD = 0;
+    snapY = tweening ? keepY : y; snapV = tweening ? keepV : 0;
+    snapTo = Math.round(stationScroll(k)); snapT0 = snapPrev = performance.now();
     snapRaf = requestAnimationFrame(snapStep);
   });
 
