@@ -544,6 +544,12 @@
     @media (min-width: 700px) and (max-height: 820px) and (max-width: 1179px) {
       html.fly .station--work .card-desc { display: none; }    /* 2×2 on a short laptop: drop the blurb so the grid fits */
     }
+    /* station 1 foot: "Full resume" under the four work cards, placed by JS (desktop flight only) */
+    .station--foot { --w: 520px; }
+    html.fly .station--foot .st-inner { text-align: center; }
+    html.fly .station--foot .continue { margin-top: 0; }
+    html.fly .station--foot.is-off { visibility: hidden; }   /* no room above the HUD: the page scroll still leads on */
+    @media (max-width: 699px) { .station--foot { display: none; } }
 
     /* ---- station 2 (desktop) / 5 (mobile): WHAT I DID & WHAT I CAN DO ---- */
     .st-kicker { color: var(--gold); margin-bottom: 12px; }
@@ -1076,6 +1082,15 @@
           </div>
         </div>
       </article>
+
+      <!-- STATION 1 FOOT: the way down from the four work cards (desktop flight; on phones "What I do" carries it).
+           An auxiliary plane (data-aux): it shares station 1, JS places it under the lowest card and leaves it out
+           of the camera's framing, so the cards keep their position. -->
+      <div class="station station--foot" data-id="1" data-im="4" data-aux data-name="Signature Works">
+        <div class="st-inner">
+          <a class="continue mono" href="#expertise" data-jump="now"><span>Full resume <b aria-hidden="true">↓</b></span><small>What I bring · all work · experience</small></a>
+        </div>
+      </div>
 
       <!-- STATION 5 — KEY RESULTS CONSTELLATION -->
       <article class="station station--skills" style="--w:1040px" data-id="2" data-im="5" data-name="What I do" data-peek="0.35">
@@ -1705,12 +1720,27 @@
     planes.forEach(function (s, j) {
       var i = IDX[j];
       SX[j] = cssLen(s, '--sx'); SY[j] = cssLen(s, '--sy'); CY[j] = cssLen(s, '--cam-y');
-      GX[i] = (GX[i] || 0) + SX[j]; GY[i] = (GY[i] || 0) + SY[j]; cnt[i] = (cnt[i] || 0) + 1;
+      if (!s.hasAttribute('data-aux')) { GX[i] = (GX[i] || 0) + SX[j]; GY[i] = (GY[i] || 0) + SY[j]; cnt[i] = (cnt[i] || 0) + 1; }
       if (!NAMES[i]) NAMES[i] = (!mob && s.getAttribute('data-name-d')) || s.getAttribute('data-name') || '';
       if (!EXIT[i]) { var v = (s.getAttribute('data-exit') || '0.05,0.25').split(','); EXIT[i] = [parseFloat(v[0]) || 0.05, parseFloat(v[1]) || 0.25]; }
       if (PEEK[i] === undefined) { var pk = parseFloat(s.getAttribute('data-peek')); PEEK[i] = isNaN(pk) ? 1 : pk; }
     });
     for (var i = 0; i < N; i++) { GX[i] = (GX[i] || 0) / (cnt[i] || 1); GY[i] = (GY[i] || 0) / (cnt[i] || 1); }   /* camera target = group centre */
+    /* auxiliary planes (the "Full resume" foot) sit under the lowest plane of their station; when that would run
+       into the HUD they stay hidden (.is-off) and the page scroll still leads on */
+    var half = stage.clientHeight / 2, hudRow = $('.hud-station', flight);
+    var limit = hudRow ? hudRow.getBoundingClientRect().top - stage.getBoundingClientRect().top - half - 12 : half - 88;   /* keep clear of the HUD row */
+    planes.forEach(function (s, j) {
+      if (!s.hasAttribute('data-aux')) return;
+      var i = IDX[j], low = -Infinity, inner = s.querySelector('.st-inner'), h = inner ? inner.offsetHeight : 0;
+      planes.forEach(function (o, k) {
+        var oi = o.querySelector('.st-inner');
+        if (k !== j && IDX[k] === i && !o.hasAttribute('data-aux') && oi) low = Math.max(low, SY[k] + oi.offsetHeight / 2);
+      });
+      if (low === -Infinity) return;
+      SY[j] = low + 26 + h / 2;
+      s.classList.toggle('is-off', !h || SY[j] + CY[j] - GY[i] + h / 2 > limit);
+    });
     if (ticksWrap) { ticksWrap.innerHTML = ''; for (var k = 0; k < N; k++) ticksWrap.appendChild(doc.createElement('i')); ticks = $$('i', ticksWrap); }
     cur = -1;
   }
