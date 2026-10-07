@@ -1,0 +1,5 @@
+# Local-only backups — never commit
+_backup/
+
+# macOS noise
+.DS_Store
