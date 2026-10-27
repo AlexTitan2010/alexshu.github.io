@@ -11,171 +11,202 @@ window.LT_DATA.push({
    "rule": "<div class=\"table-wrap\"><table lang=\"lt\"><tr><th>Мужской род (jis)</th><th>Женский род (ji)</th></tr><tr><td>-as: stalas, Tomas</td><td>-a: knyga, Lietuva</td></tr><tr><td>-is: automobilis</td><td>-ė: gatvė, kavinė</td></tr><tr><td>-ys: traukinys</td><td>-is (часть слов): stotis, naktis, moteris, šalis</td></tr><tr><td>-us, -ius: sūnus, muziejus</td><td></td></tr></table></div><p>Слова «оно» нет: каждая вещь — <i lang=\"lt\">jis</i> или <i lang=\"lt\">ji</i>. Исключения: <i lang=\"lt\">kolega</i> и <i lang=\"lt\">dėdė</i> — мужского рода.</p><p>Во множественном: <i lang=\"lt\">jie</i> — мужчины или смешанная группа, <i lang=\"lt\">jos</i> — только женщины. <i lang=\"lt\">aš ir tu</i> → <i lang=\"lt\">mes</i>, <i lang=\"lt\">tu ir Tomas</i> → <i lang=\"lt\">jūs</i>.</p>",
    "items": [
     {
-     "q": "knyga → ___",
+     "q": "knyga",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "knyga: окончание -a — женский род, местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "stalas → ___",
+     "q": "stalas",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "stalas: окончание -as — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "kavinė → ___",
+     "q": "kavinė",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "kavinė: окончание -ė — женский род, местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "automobilis → ___",
+     "q": "automobilis",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "automobilis: окончание -is — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "stotis → ___",
+     "q": "stotis",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "note": "stotis — женского рода, хотя на -is.",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "stotis — женский род, хотя на -is. Местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "naktis → ___",
+     "q": "naktis",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "note": "naktis — женского рода.",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "naktis — женский род, хотя на -is. Местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "moteris → ___",
+     "q": "moteris",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "moteris — женский род, хотя на -is. Местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "kolega → ___",
+     "q": "kolega",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "note": "kolega — мужского рода, хотя на -a.",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "kolega — мужской род, хотя на -a. Местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "dėdė → ___",
+     "q": "dėdė",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "note": "dėdė — мужского рода, хотя на -ė.",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "dėdė — мужской род, хотя на -ė. Местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "traukinys → ___",
+     "q": "traukinys",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "traukinys: окончание -ys — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "sūnus → ___",
+     "q": "sūnus",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "sūnus: окончание -us — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "šalis → ___",
+     "q": "šalis",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "note": "šalis — женского рода.",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "šalis — женский род, хотя на -is. Местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "gatvė → ___",
+     "q": "gatvė",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "gatvė: окончание -ė — женский род, местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "muziejus → ___",
+     "q": "muziejus",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "muziejus: окончание -us — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "pamoka → ___",
+     "q": "pamoka",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "pamoka: окончание -a — женский род, местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "žmogus → ___",
+     "q": "žmogus",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "žmogus: окончание -us — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "Lietuva → ___",
+     "q": "Lietuva",
      "options": [
-      "ji",
-      "jis"
+      "женский",
+      "мужской"
      ],
-     "answer": "ji",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "женский",
+     "note": "Lietuva: окончание -a — женский род, местоимение ji.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
-     "q": "Vilnius → ___",
+     "q": "Vilnius",
      "options": [
-      "jis",
-      "ji"
+      "мужской",
+      "женский"
      ],
-     "answer": "jis",
-     "prompt": "Замени местоимением: jis или ji?"
+     "answer": "мужской",
+     "note": "Vilnius: окончание -ius — мужской род, местоимение jis.",
+     "prompt": "Какого рода это слово?",
+     "optLang": "ru"
     },
     {
      "q": "Tomas ir Jonas → ___",

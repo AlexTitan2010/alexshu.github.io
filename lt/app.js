@@ -4,11 +4,13 @@
   var STORE_KEY = 'lt-trainer-v1';
   var app = document.getElementById('app');
 
+  var SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true" focusable="false" ';
   var ICONS = {
-    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" ' +
-      'stroke-linejoin="round" focusable="false"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>',
-    bad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" ' +
-      'focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+    ok: SVG + 'stroke-width="2.2"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>',
+    bad: SVG + 'stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    skip: SVG + 'stroke-width="2"><path d="M5 5l10 7-10 7z"/><path d="M19 5v14"/></svg>',
+    reset: SVG + 'stroke-width="2"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3 8"/><path d="M3 3.5V8h4.5"/></svg>'
   };
   var ORBITS = '<svg viewBox="0 0 800 400" focusable="false">' +
     '<g fill="none" stroke="currentColor" stroke-width="1.2">' +
@@ -46,10 +48,11 @@
   var keyHandler = null;
   var hintSection = null;
   var hint = buildHintDialog();
+  var confirmBox = buildConfirmDialog();
 
   document.addEventListener('keydown', function (e) {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (hint.dialog.open) return;
+    if (hint.dialog.open || confirmBox.dialog.open) return;
     if (e.key === '?' && hintSection) {
       e.preventDefault();
       openHint(hintSection);
@@ -140,7 +143,8 @@
   function clear(title) {
     keyHandler = null;
     hintSection = null;
-    if (hint.dialog.open) closeHint();
+    closeDialog(hint.dialog);
+    closeDialog(confirmBox.dialog);
     app.textContent = '';
     document.title = title ? title + ' — тренажёр литовского' : 'Тренажёр литовского языка';
     window.scrollTo(0, 0);
@@ -166,18 +170,67 @@
     return { dialog: dialog, title: title, body: body, back: back };
   }
 
+  function buildConfirmDialog() {
+    var dialog = el('dialog', { class: 'hint confirm', 'aria-labelledby': 'confirm-title', 'aria-describedby': 'confirm-text' });
+    var stats = el('p', { class: 'confirm-stats label' });
+    var cancel = el('button', { class: 'btn', type: 'button', text: 'Отмена' });
+    var ok = el('button', { class: 'btn danger', type: 'button', text: 'Сбросить' });
+    dialog.appendChild(el('div', { class: 'hint-inner' }, [
+      el('div', { class: 'hint-titles' }, [
+        el('span', { class: 'label', text: 'Сброс данных' }),
+        el('h2', { id: 'confirm-title', text: 'Сбросить данные?' })
+      ]),
+      el('p', {
+        id: 'confirm-text',
+        class: 'confirm-text',
+        text: 'Сотрутся результаты пройденных тем и список «Работа над ошибками». Отменить сброс нельзя.'
+      }),
+      stats,
+      el('div', { class: 'confirm-actions' }, [cancel, ok])
+    ]));
+    cancel.addEventListener('click', function () { closeDialog(dialog); });
+    ok.addEventListener('click', resetData);
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) closeDialog(dialog);
+    });
+    document.body.appendChild(dialog);
+    return { dialog: dialog, stats: stats, cancel: cancel };
+  }
+
+  function openDialog(dialog) {
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  }
+
+  function closeDialog(dialog) {
+    if (typeof dialog.close !== 'function') dialog.removeAttribute('open');
+    else if (dialog.open) dialog.close();
+  }
+
   function openHint(section) {
     hint.title.textContent = section.title;
     hint.body.innerHTML = section.rule || '<p>Для этого задания правила нет.</p>';
-    if (typeof hint.dialog.showModal === 'function') hint.dialog.showModal();
-    else hint.dialog.setAttribute('open', '');
+    openDialog(hint.dialog);
     hint.dialog.querySelector('.hint-inner').scrollTop = 0;
     hint.back.focus({ preventScroll: true });
   }
 
   function closeHint() {
-    if (typeof hint.dialog.close === 'function' && hint.dialog.open) hint.dialog.close();
-    else hint.dialog.removeAttribute('open');
+    closeDialog(hint.dialog);
+  }
+
+  function askReset() {
+    confirmBox.stats.textContent = 'Тем с результатом: ' + Object.keys(store.last).length +
+      ' · Ошибок: ' + mistakeItems().length;
+    openDialog(confirmBox.dialog);
+    confirmBox.cancel.focus({ preventScroll: true });
+  }
+
+  function resetData() {
+    store = { last: {}, mistakes: {} };
+    writeStore();
+    home('Данные сброшены');
+    app.focus({ preventScroll: true });
   }
 
   function mistakeItems() {
@@ -215,7 +268,7 @@
     return home();
   }
 
-  function home() {
+  function home(notice) {
     clear();
     var orbits = el('div', { class: 'orbits', 'aria-hidden': 'true' });
     orbits.innerHTML = ORBITS;
@@ -223,21 +276,35 @@
     app.appendChild(el('div', { class: 'hero' }, [
       el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' }),
       el('h1', { class: 'title', lang: 'lt' }, [el('span', { text: 'Lietuvių' }), el('span', { class: 'accent', text: 'kalba' })]),
-      el('p', {
-        class: 'lead',
-        text: 'Выбери тему — тест начнётся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
-          '«? Подсказка» в любой момент покажет правило, «Стоп» закончит тест и покажет ошибки.'
-      })
+      el('p', { class: 'lead' }, [
+        'Выбери тему — тест начнётся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
+          'В задании: «?» — правило, ',
+        el('span', { class: 'inline-ic', 'aria-hidden': 'true', html: ICONS.skip }),
+        el('span', { class: 'sr', text: 'кнопка пропуска' }),
+        ' — другой вопрос, «Стоп» — итог и ошибки.'
+      ])
     ]));
     var mist = mistakeItems();
-    if (mist.length) {
-      app.appendChild(el('a', { class: 'alert', href: '#/t/mistakes' }, [
-        el('span', { class: 'alert-text' }, [
-          el('span', { class: 'label', text: 'Работа над ошибками' }),
-          el('span', { text: countTasks(mist.length) + ' ' + plural(mist.length, 'ждёт', 'ждут', 'ждут') + ' повторения' })
-        ]),
-        el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })
-      ]));
+    var stored = Object.keys(store.last).length + Object.keys(store.mistakes).length;
+    if (notice) app.appendChild(el('p', { class: 'notice label', role: 'status', text: notice }));
+    if (mist.length || stored) {
+      var tools = el('div', { class: 'tools' + (mist.length ? '' : ' solo') });
+      if (mist.length) {
+        tools.appendChild(el('a', { class: 'alert', href: '#/t/mistakes' }, [
+          el('span', { class: 'alert-text' }, [
+            el('span', { class: 'label', text: 'Работа над ошибками' }),
+            el('span', { text: countTasks(mist.length) + ' ' + plural(mist.length, 'ждёт', 'ждут', 'ждут') + ' повторения' })
+          ]),
+          el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })
+        ]));
+      }
+      var reset = el('button', { class: 'reset', type: 'button' }, [
+        el('span', { class: 'ic', 'aria-hidden': 'true', html: ICONS.reset }),
+        el('span', { class: 'txt', text: 'Сброс данных' })
+      ]);
+      reset.addEventListener('click', askReset);
+      tools.appendChild(reset);
+      app.appendChild(tools);
     }
     groups.forEach(function (g) {
       var list = (g.tests || []).filter(function (t) { return t.items.length; });
@@ -275,16 +342,31 @@
     var total = state.queue.length;
     clear(testLabel(t));
     hintSection = item.section && item.section.rule ? item.section : null;
-    var top = el('div', { class: 'quiz-top' }, [el('a', { class: 'back', href: '#/', text: '← Все темы' })]);
+    var actions = el('div', { class: 'quiz-actions' });
+    var skip = null;
+    if (total - state.index > 1) {
+      skip = el('button', {
+        class: 'icon-btn',
+        type: 'button',
+        title: 'Пропустить: другой вопрос',
+        'aria-label': 'Пропустить вопрос и показать другой',
+        html: ICONS.skip
+      });
+      skip.addEventListener('click', function () {
+        state.queue.push(state.queue.splice(state.index, 1)[0]);
+        step(state);
+      });
+      actions.appendChild(skip);
+    }
     if (hintSection) {
       var hintBtn = el('button', { class: 'hint-btn', type: 'button', 'aria-label': 'Подсказка: правило к заданию' }, [
         el('span', { class: 'q', 'aria-hidden': 'true', text: '?' }),
         el('span', { text: 'Подсказка' })
       ]);
       hintBtn.addEventListener('click', function () { openHint(hintSection); });
-      top.appendChild(hintBtn);
+      actions.appendChild(hintBtn);
     }
-    app.appendChild(top);
+    app.appendChild(el('div', { class: 'quiz-top' }, [el('a', { class: 'back', href: '#/', text: '← Все темы' }), actions]));
     app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
     var fill = el('i');
     fill.style.transform = 'scaleX(' + (state.index / total) + ')';
@@ -296,6 +378,7 @@
     var stopRow = el('div', { class: 'stop-row' });
     var render = item.type === 'match' ? renderMatch : renderChoice;
     var card = render(item, function (ok) {
+      if (skip) skip.hidden = true;
       record(item, ok);
       state.answered++;
       if (ok) state.correct++;
@@ -365,7 +448,8 @@
     if (item.tr) card.appendChild(el('p', { class: 'tr', lang: 'ru', text: item.tr }));
     var options = item.fixed ? item.options.slice() : shuffle(item.options.slice());
     var short = options.every(function (o) { return o.length <= 14; });
-    var list = el('div', { class: 'options' + (short && options.length === 3 ? ' cols' : '') });
+    var cols = short && (options.length === 2 || options.length === 3);
+    var list = el('div', { class: 'options' + (cols ? ' cols' : '') + (cols && options.length === 2 ? ' two' : '') });
     var answered = false;
     var buttons = options.map(function (o, i) {
       var b = el('button', { class: 'opt', type: 'button', lang: item.optLang || 'lt' }, [
