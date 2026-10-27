@@ -4,6 +4,19 @@
   var STORE_KEY = 'lt-trainer-v1';
   var app = document.getElementById('app');
 
+  var ICONS = {
+    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" ' +
+      'stroke-linejoin="round" focusable="false"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>',
+    bad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" ' +
+      'focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+  };
+  var ORBITS = '<svg viewBox="0 0 800 400" focusable="false">' +
+    '<g fill="none" stroke="currentColor" stroke-width="1.2">' +
+    '<ellipse cx="400" cy="200" rx="380" ry="118" stroke-opacity=".45"/>' +
+    '<ellipse cx="400" cy="200" rx="300" ry="164" stroke-opacity=".3" transform="rotate(-14 400 200)"/>' +
+    '<circle cx="400" cy="200" r="196" stroke-opacity=".2"/>' +
+    '</g><circle cx="780" cy="200" r="3.5" fill="currentColor"/><circle class="cool" cx="560" cy="88" r="2.5"/></svg>';
+
   var groups = (window.LT_DATA || []).slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
   var sections = {};
   var tests = {};
@@ -116,6 +129,14 @@
     return n + ' ' + plural(n, 'задание', 'задания', 'заданий');
   }
 
+  function pad(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function testLabel(t) {
+    return t.code ? t.code + ' · ' + t.title : t.title;
+  }
+
   function clear(title) {
     keyHandler = null;
     hintSection = null;
@@ -131,7 +152,11 @@
     var close = el('button', { class: 'hint-close', type: 'button', 'aria-label': 'Закрыть подсказку', text: '×' });
     var body = el('div', { class: 'rule' });
     var back = el('button', { class: 'btn primary hint-back', type: 'button', text: 'Вернуться к заданию' });
-    dialog.appendChild(el('div', { class: 'hint-inner' }, [el('div', { class: 'hint-head' }, [title, close]), body, back]));
+    var head = el('div', { class: 'hint-head' }, [
+      el('div', { class: 'hint-titles' }, [el('span', { class: 'label', text: 'Подсказка · правило' }), title]),
+      close
+    ]);
+    dialog.appendChild(el('div', { class: 'hint-inner' }, [head, body, back]));
     close.addEventListener('click', closeHint);
     back.addEventListener('click', closeHint);
     dialog.addEventListener('click', function (e) {
@@ -190,45 +215,53 @@
     return home();
   }
 
-  function lastText(t) {
-    var last = store.last[t.id];
-    return last ? 'прошлый раз: ' + last.correct + ' из ' + last.answered : '';
-  }
-
   function home() {
     clear();
-    app.appendChild(el('h1', { text: 'Тренажёр литовского языка' }));
-    app.appendChild(el('p', {
-      class: 'lead',
-      text: 'Выбери тему — тест начнётся сразу. Кнопка «? Подсказка» в любой момент покажет правило к заданию, ' +
-        '«Стоп. Оценить результат» закончит тест и покажет ошибки.'
-    }));
+    var orbits = el('div', { class: 'orbits', 'aria-hidden': 'true' });
+    orbits.innerHTML = ORBITS;
+    app.appendChild(orbits);
+    app.appendChild(el('div', { class: 'hero' }, [
+      el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' }),
+      el('h1', { class: 'title', lang: 'lt' }, [el('span', { text: 'Lietuvių' }), el('span', { class: 'accent', text: 'kalba' })]),
+      el('p', {
+        class: 'lead',
+        text: 'Выбери тему — тест начнётся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
+          '«? Подсказка» в любой момент покажет правило, «Стоп» закончит тест и покажет ошибки.'
+      })
+    ]));
     var mist = mistakeItems();
     if (mist.length) {
-      app.appendChild(el('div', { class: 'grid' }, [
-        el('a', { class: 'tile alert', href: '#/t/mistakes' }, [
-          el('b', { text: 'Работа над ошибками' }),
-          el('small', { text: 'Задания, в которых были ошибки. Правильный ответ убирает задание из списка.' }),
-          el('span', { class: 'meta' }, [el('span', { text: countTasks(mist.length) })])
-        ])
+      app.appendChild(el('a', { class: 'alert', href: '#/t/mistakes' }, [
+        el('span', { class: 'alert-text' }, [
+          el('span', { class: 'label', text: 'Работа над ошибками' }),
+          el('span', { text: countTasks(mist.length) + ' ' + plural(mist.length, 'ждёт', 'ждут', 'ждут') + ' повторения' })
+        ]),
+        el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })
       ]));
     }
     groups.forEach(function (g) {
       var list = (g.tests || []).filter(function (t) { return t.items.length; });
       if (!list.length) return;
-      app.appendChild(el('h2', { text: g.title }));
-      var grid = el('div', { class: 'grid' });
+      var box = el('section', { class: 'group' }, [el('h2', { text: g.title })]);
       list.forEach(function (t) {
-        var meta = [el('span', { text: countTasks(t.items.length) })];
-        var last = lastText(t);
-        if (last) meta.push(el('span', { class: 'badge', text: last }));
-        grid.appendChild(el('a', { class: 'tile', href: '#/t/' + t.id }, [
-          el('b', { text: t.title }),
-          t.subtitle ? el('small', { text: t.subtitle }) : null,
-          el('span', { class: 'meta' }, meta)
+        var n = t.items.length;
+        var last = store.last[t.id];
+        box.appendChild(el('a', { class: 'row', href: '#/t/' + t.id }, [
+          t.code ? el('span', { class: 'code', text: t.code }) : el('span', { class: 'code none', 'aria-hidden': 'true' }),
+          el('span', { class: 'row-main' }, [
+            el('span', { class: 'row-title', text: t.title }),
+            t.subtitle ? el('span', { class: 'row-sub', text: t.subtitle }) : null
+          ]),
+          el('span', { class: 'row-meta' }, [
+            el('span', null, [String(n), el('span', { class: 'sr', text: ' ' + plural(n, 'задание', 'задания', 'заданий') })]),
+            last ? el('span', { class: 'row-last', title: 'Прошлый раз: ' + last.correct + ' из ' + last.answered }, [
+              el('span', { class: 'sr', text: 'прошлый раз: ' }),
+              last.correct + ' / ' + last.answered
+            ]) : null
+          ])
         ]));
       });
-      app.appendChild(grid);
+      app.appendChild(box);
     });
   }
 
@@ -239,7 +272,8 @@
   function step(state) {
     var t = state.test;
     var item = state.queue[state.index];
-    clear(t.title);
+    var total = state.queue.length;
+    clear(testLabel(t));
     hintSection = item.section && item.section.rule ? item.section : null;
     var top = el('div', { class: 'quiz-top' }, [el('a', { class: 'back', href: '#/', text: '← Все темы' })]);
     if (hintSection) {
@@ -251,34 +285,40 @@
       top.appendChild(hintBtn);
     }
     app.appendChild(top);
-    app.appendChild(el('p', { class: 'kicker', text: t.title }));
+    app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
     var fill = el('i');
-    fill.style.transform = 'scaleX(' + (state.index / state.queue.length) + ')';
+    fill.style.transform = 'scaleX(' + (state.index / total) + ')';
     app.appendChild(el('div', { class: 'progress' }, [
-      el('span', { text: (state.index + 1) + ' из ' + state.queue.length }),
+      el('span', { class: 'sr', text: 'Задание ' + (state.index + 1) + ' из ' + total }),
+      el('span', { 'aria-hidden': 'true', text: pad(state.index + 1) + ' / ' + pad(total) }),
       el('div', { class: 'bar' }, [fill])
     ]));
+    var stopRow = el('div', { class: 'stop-row' });
     var render = item.type === 'match' ? renderMatch : renderChoice;
     var card = render(item, function (ok) {
       record(item, ok);
       state.answered++;
       if (ok) state.correct++;
       else state.wrong.push(item);
-      var last = state.index + 1 >= state.queue.length;
-      var next = el('button', { class: 'btn primary next', type: 'button', text: last ? 'Результат' : 'Дальше' });
+      var last = state.index + 1 >= total;
+      var next = el('button', { class: 'btn primary next', type: 'button' }, [
+        last ? 'Результат' : 'Дальше',
+        el('span', { 'aria-hidden': 'true', text: '→' })
+      ]);
       next.addEventListener('click', function () {
         state.index++;
-        if (state.index >= state.queue.length) finish(state);
+        if (state.index >= total) finish(state);
         else step(state);
       });
-      card.appendChild(next);
+      app.insertBefore(next, stopRow);
       next.focus({ preventScroll: true });
       next.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
     app.appendChild(card);
     var stop = el('button', { class: 'btn stop', type: 'button', text: 'Стоп. Оценить результат' });
     stop.addEventListener('click', function () { finish(state); });
-    app.appendChild(el('div', { class: 'stop-row' }, [stop]));
+    stopRow.appendChild(stop);
+    app.appendChild(stopRow);
   }
 
   function record(item, ok) {
@@ -294,12 +334,26 @@
     var gap = null;
     parts.forEach(function (part, i) {
       if (i > 0) {
-        gap = el('span', { class: 'gap', text: ' ' });
+        gap = el('span', { class: 'gap', text: ' ' });
         p.appendChild(gap);
       }
       p.appendChild(document.createTextNode(part));
     });
     return { node: p, gap: gap };
+  }
+
+  function feedback(ok, label, parts, note) {
+    var text = el('p', { class: 'fb-text' }, parts);
+    if (note) text.appendChild(document.createTextNode(' ' + note));
+    return el('div', { class: 'feedback ' + (ok ? 'ok' : 'bad'), role: 'status' }, [
+      el('span', { class: 'label', lang: 'lt', text: label }),
+      text
+    ]);
+  }
+
+  function mark(button, kind) {
+    button.classList.add(kind);
+    button.querySelector('.ic').innerHTML = ICONS[kind];
   }
 
   function renderChoice(item, done) {
@@ -315,8 +369,9 @@
     var answered = false;
     var buttons = options.map(function (o, i) {
       var b = el('button', { class: 'opt', type: 'button', lang: item.optLang || 'lt' }, [
-        el('span', { class: 'k', 'aria-hidden': 'true', text: String(i + 1) }),
-        el('span', { text: o })
+        el('span', { class: 'k', 'aria-hidden': 'true', text: pad(i + 1) }),
+        el('span', { text: o }),
+        el('span', { class: 'ic', 'aria-hidden': 'true' })
       ]);
       b.addEventListener('click', function () { choose(o, b); });
       list.appendChild(b);
@@ -338,18 +393,20 @@
       var ok = o === item.answer;
       buttons.forEach(function (x, i) {
         x.disabled = true;
-        if (options[i] === item.answer) x.classList.add('ok');
+        if (options[i] === item.answer) mark(x, 'ok');
       });
-      if (!ok) b.classList.add('bad');
+      if (!ok) mark(b, 'bad');
       if (sent.gap) {
         sent.gap.textContent = item.answer;
         sent.gap.classList.add(ok ? 'ok' : 'bad');
       }
-      var fb = el('div', { class: 'feedback ' + (ok ? 'ok' : 'bad'), role: 'status' }, [
-        el('b', { text: ok ? 'Teisingai! Правильно.' : 'Neteisingai. Правильный ответ: ' + item.answer })
-      ]);
-      if (item.note) fb.appendChild(el('p', { class: 'note', text: item.note }));
-      card.appendChild(fb);
+      card.appendChild(ok
+        ? feedback(true, 'Teisingai', ['Правильно.'], item.note)
+        : feedback(false, 'Neteisingai', [
+          'Правильный ответ: ',
+          el('b', { class: 'ans', lang: item.optLang || 'lt', text: item.answer }),
+          '.'
+        ], item.note));
       done(ok);
     }
     return card;
@@ -418,11 +475,9 @@
     function complete() {
       finished = true;
       var ok = mistakes === 0;
-      var fb = el('div', { class: 'feedback ' + (ok ? 'ok' : 'bad'), role: 'status' }, [
-        el('b', { text: ok ? 'Teisingai! Все пары без ошибок.' : 'Все пары собраны. Ошибок: ' + mistakes + '.' })
-      ]);
-      if (item.note) fb.appendChild(el('p', { class: 'note', text: item.note }));
-      card.appendChild(fb);
+      card.appendChild(ok
+        ? feedback(true, 'Teisingai', ['Все пары без ошибок.'], item.note)
+        : feedback(false, 'Su klaidomis', ['Все пары собраны. Ошибок: ' + mistakes + '.'], item.note));
       done(ok);
     }
     return card;
@@ -458,7 +513,10 @@
     if (item.tr) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.tr }));
     if (item.note) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.note }));
     if (item.section && item.section.rule) {
-      var link = el('button', { class: 'linkbtn', type: 'button', text: '? Правило: ' + item.section.title });
+      var link = el('button', { class: 'linkbtn', type: 'button', lang: 'ru' }, [
+        el('span', { class: 'q-mini', 'aria-hidden': 'true', text: '?' }),
+        'Правило: ' + item.section.title
+      ]);
       link.addEventListener('click', function () { openHint(item.section); });
       li.appendChild(link);
     }
@@ -474,17 +532,17 @@
       store.last[t.id] = { correct: correct, answered: answered, total: total };
       writeStore();
     }
-    clear(t.title);
-    app.appendChild(el('a', { class: 'back', href: '#/', text: '← Все темы' }));
-    app.appendChild(el('p', { class: 'kicker', text: t.title }));
-    app.appendChild(el('h1', { text: 'Результат' }));
+    clear(testLabel(t));
+    app.appendChild(el('div', { class: 'quiz-top' }, [el('a', { class: 'back', href: '#/', text: '← Все темы' })]));
+    app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
+    app.appendChild(el('h1', { class: 'result-title', text: 'Результат' }));
     if (answered === 0) {
       app.appendChild(el('p', { class: 'lead', text: 'Ответов пока нет: тест остановлен до первого ответа.' }));
     } else {
-      app.appendChild(el('p', { class: 'score', text: correct + ' из ' + answered }));
+      app.appendChild(el('p', { class: 'score' }, [String(correct), ' ', el('small', { text: 'из ' + answered })]));
       app.appendChild(el('p', {
         class: 'meta-line',
-        text: answered < total ? 'Отвечено ' + answered + ' из ' + total + '.' : 'Тема пройдена полностью: ' + total + ' из ' + total + '.'
+        text: answered < total ? 'Отвечено ' + answered + ' из ' + total : 'Тема пройдена полностью: ' + total + ' из ' + total
       }));
       app.appendChild(el('p', { class: 'lead', text: verdict(correct, answered) }));
     }
@@ -502,7 +560,7 @@
     acts.appendChild(el('a', { class: 'btn', href: '#/', text: 'Все темы' }));
     app.appendChild(acts);
     if (state.wrong.length) {
-      app.appendChild(el('h2', { text: 'Ошибки: ' + state.wrong.length }));
+      app.appendChild(el('h2', { class: 'list-title', text: 'Ошибки: ' + state.wrong.length }));
       app.appendChild(el('ul', { class: 'mist' }, state.wrong.map(mistakeNode)));
     }
   }

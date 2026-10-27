@@ -1660,7 +1660,8 @@ window.LT_DATA.push({
  "tests": [
   {
    "id": "t-11s",
-   "title": "1.1 · Kas tu? Повторение A1.1",
+   "code": "1.1",
+   "title": "Kas tu? Повторение A1.1",
    "subtitle": "Будущее время и условное наклонение, вежливые просьбы.",
    "from": [
     "b11-atei"
@@ -1668,7 +1669,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-11a",
-   "title": "1.1A · Kas buvo, tas pražuvo",
+   "code": "1.1A",
+   "title": "Kas buvo, tas pražuvo",
    "subtitle": "Прошедшее время, неправильные глаголы, prieš, годы, прилагательные.",
    "from": [
     "b11-praeit",
@@ -1680,7 +1682,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-11b",
-   "title": "1.1B · Gyvenimo įvykiai",
+   "code": "1.1B",
+   "title": "Gyvenimo įvykiai",
    "subtitle": "События жизни, nuo / iki / po / tarp, порядок событий.",
    "from": [
     "b11-ivyk"
@@ -1688,7 +1691,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-11c",
-   "title": "1.1C · Darbo patirtis",
+   "code": "1.1C",
+   "title": "Darbo patirtis",
    "subtitle": "Месяцы и даты, офис, опыт работы.",
    "from": [
     "b11-datos",
@@ -1697,7 +1701,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-11d",
-   "title": "1.1D · Trys kartos — повторение",
+   "code": "1.1D",
+   "title": "Trys kartos — повторение",
    "subtitle": "Все задания блока 1.1 вперемешку.",
    "from": [
     "b11-atei",

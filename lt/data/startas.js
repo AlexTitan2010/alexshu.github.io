@@ -513,7 +513,7 @@ window.LT_DATA.push({
  "tests": [
   {
    "id": "t-startas",
-   "title": "Startas · первые шаги",
+   "title": "Startas — первые шаги",
    "subtitle": "Род и местоимения, приветствия и прощания, koks / kokia.",
    "from": [
     "st-rod",

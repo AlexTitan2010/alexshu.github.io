@@ -2536,7 +2536,8 @@ window.LT_DATA.push({
  "tests": [
   {
    "id": "t-2a",
-   "title": "2A · Šeima",
+   "code": "2A",
+   "title": "Šeima",
    "subtitle": "Семья и родственники, винительный и родительный падежи.",
    "from": [
     "u2-seima",
@@ -2546,7 +2547,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-2b",
-   "title": "2B · Kai buvau mažas",
+   "code": "2B",
+   "title": "Kai buvau mažas",
    "subtitle": "Звательный падеж, прилагательные, būti в прошедшем, повелительное наклонение.",
    "from": [
     "u2-sauks",
@@ -2557,7 +2559,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-2c",
-   "title": "2C · Profesijos",
+   "code": "2C",
+   "title": "Profesijos",
    "subtitle": "Профессии, место работы, творительный падеж.",
    "from": [
     "u2-prof",
@@ -2566,7 +2569,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-2d",
-   "title": "2D · Svarbiausi dalykai — повторение",
+   "code": "2D",
+   "title": "Svarbiausi dalykai — повторение",
    "subtitle": "Все задания 2A–2C вперемешку.",
    "from": [
     "u2-seima",

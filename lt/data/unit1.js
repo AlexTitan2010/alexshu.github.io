@@ -3291,7 +3291,8 @@ window.LT_DATA.push({
  "tests": [
   {
    "id": "t-1a",
-   "title": "1A · Aš naujas darbuotojas",
+   "code": "1A",
+   "title": "Aš naujas darbuotojas",
    "subtitle": "Знакомство, числа и дни недели, man patinka, koks / kokia, офис.",
    "from": [
     "u1-frazes",
@@ -3302,7 +3303,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-1b",
-   "title": "1B · Kas yra tavo mieste?",
+   "code": "1B",
+   "title": "Kas yra tavo mieste?",
    "subtitle": "Город, местный падеж, настоящее время, būti и местоимения.",
    "from": [
     "u1-miestas",
@@ -3313,7 +3315,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-1c",
-   "title": "1C · Iš kur jūs esate?",
+   "code": "1C",
+   "title": "Iš kur jūs esate?",
    "subtitle": "Родительный падеж, страны и языки, союзы и вопросы.",
    "from": [
     "u1-kil",
@@ -3323,7 +3326,8 @@ window.LT_DATA.push({
   },
   {
    "id": "t-1d",
-   "title": "1D · Mano asmeninė informacija",
+   "code": "1D",
+   "title": "Mano asmeninė informacija",
    "subtitle": "Возраст, анкета.",
    "from": [
     "u1-amzius"

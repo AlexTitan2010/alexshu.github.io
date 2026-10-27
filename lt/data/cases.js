@@ -1698,7 +1698,7 @@ window.LT_DATA.push({
  "tests": [
   {
    "id": "t-cases",
-   "title": "Все падежи",
+   "title": "Visi linksniai — все падежи",
    "subtitle": "150 предложений: винительный, родительный, дательный, творительный и местный падежи.",
    "from": [
     "case-gal",
