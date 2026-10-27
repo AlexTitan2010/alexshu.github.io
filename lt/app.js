@@ -171,7 +171,7 @@
       return a;
     }));
     dialog.appendChild(el('div', { class: 'nav-inner' }, [
-      el('div', { class: 'nav-head' }, [close, el('span', { class: 'label', text: 'alexshu.com' })]),
+      el('div', { class: 'nav-head' }, [el('span', { class: 'label', text: 'alexshu.com' }), close]),
       list
     ]));
     close.addEventListener('click', function () { closeDialog(dialog); });
@@ -190,15 +190,15 @@
   function openSiteNav(button) {
     var r = button.getBoundingClientRect();
     siteNav.opener = button;
-    siteNav.dialog.style.left = Math.max(8, Math.round(r.left) - 12) + 'px';
+    siteNav.dialog.style.right = Math.max(8, document.documentElement.clientWidth - Math.round(r.right) - 12) + 'px';
     siteNav.dialog.style.top = Math.max(8, Math.round(r.top) - 12) + 'px';
     button.setAttribute('aria-expanded', 'true');
     openDialog(siteNav.dialog);
     siteNav.list.querySelector('a').focus({ preventScroll: true });
   }
 
-  function backRow() {
-    return el('div', { class: 'quiz-nav' }, [siteMenu(), el('a', { class: 'back', href: '#/', text: '← Все темы' })]);
+  function backLink() {
+    return el('a', { class: 'back', href: '#/', text: '← Все темы' });
   }
 
   function clear(title) {
@@ -336,7 +336,7 @@
     orbits.innerHTML = ORBITS;
     app.appendChild(orbits);
     app.appendChild(el('div', { class: 'hero' }, [
-      el('div', { class: 'hero-top' }, [siteMenu(), el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' })]),
+      el('div', { class: 'hero-top' }, [el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' }), siteMenu()]),
       el('h1', { class: 'title', lang: 'lt' }, [el('span', { text: 'Lietuvių' }), el('span', { class: 'accent', text: 'kalba' })]),
       el('p', { class: 'lead' }, [
         'Выбери тему — тест начнётся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
@@ -428,7 +428,9 @@
       hintBtn.addEventListener('click', function () { openHint(hintSection); });
       actions.appendChild(hintBtn);
     }
-    app.appendChild(el('div', { class: 'quiz-top' }, [backRow(), actions]));
+    var menuBtn = siteMenu();
+    if (menuBtn) actions.appendChild(menuBtn);
+    app.appendChild(el('div', { class: 'quiz-top' }, [backLink(), actions]));
     app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
     var fill = el('i');
     fill.style.transform = 'scaleX(' + (state.index / total) + ')';
@@ -679,7 +681,7 @@
       writeStore();
     }
     clear(testLabel(t));
-    app.appendChild(el('div', { class: 'quiz-top' }, [backRow()]));
+    app.appendChild(el('div', { class: 'quiz-top' }, [backLink(), siteMenu()]));
     app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
     app.appendChild(el('h1', { class: 'result-title', text: 'Результат' }));
     if (answered === 0) {
