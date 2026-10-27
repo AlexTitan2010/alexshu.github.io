@@ -4,6 +4,15 @@
   var STORE_KEY = 'lt-trainer-v1';
   var app = document.getElementById('app');
   var onSite = /^https?:$/.test(location.protocol);
+  var SITE_LINKS = [
+    ['Home', '/'],
+    ['Expertise', '/#expertise'],
+    ['Work', '/#signature'],
+    ['About', '/#about'],
+    ['Results', '/#results'],
+    ['Lithuanian trainer', '#/'],
+    ['Contact', 'mailto:al.shulyakovskiy@gmail.com']
+  ];
 
   var SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" ' +
     'aria-hidden="true" focusable="false" ';
@@ -50,10 +59,11 @@
   var hintSection = null;
   var hint = buildHintDialog();
   var confirmBox = buildConfirmDialog();
+  var siteNav = onSite ? buildSiteNav() : null;
 
   document.addEventListener('keydown', function (e) {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (hint.dialog.open || confirmBox.dialog.open) return;
+    if (hint.dialog.open || confirmBox.dialog.open || (siteNav && siteNav.dialog.open)) return;
     if (e.key === '?' && hintSection) {
       e.preventDefault();
       openHint(hintSection);
@@ -137,12 +147,54 @@
   }
 
   function siteMenu() {
-    if (!onSite) return null;
-    return el('a', { class: 'site-menu', href: '/', title: 'alexshu.com — главная', 'aria-label': 'Меню: на главную alexshu.com' }, [
-      el('span'),
-      el('span'),
-      el('span')
-    ]);
+    if (!siteNav) return null;
+    var button = el('button', {
+      class: 'site-menu',
+      type: 'button',
+      'aria-label': 'Меню alexshu.com',
+      'aria-haspopup': 'dialog',
+      'aria-expanded': 'false'
+    }, [el('span'), el('span'), el('span')]);
+    button.addEventListener('click', function () { openSiteNav(button); });
+    return button;
+  }
+
+  function buildSiteNav() {
+    var dialog = el('dialog', { class: 'site-nav', 'aria-label': 'Меню alexshu.com' });
+    var close = el('button', { class: 'nav-close', type: 'button', 'aria-label': 'Закрыть меню', text: '×' });
+    var list = el('nav', { class: 'nav-list' }, SITE_LINKS.map(function (link, i) {
+      var a = el('a', { href: link[1], style: '--k:' + i, 'aria-current': link[1] === '#/' ? 'page' : null }, [
+        el('span', { class: 'k', 'aria-hidden': 'true', text: pad(i + 1) }),
+        link[0]
+      ]);
+      a.addEventListener('click', function () { closeDialog(dialog); });
+      return a;
+    }));
+    dialog.appendChild(el('div', { class: 'nav-inner' }, [
+      el('div', { class: 'nav-head' }, [close, el('span', { class: 'label', text: 'alexshu.com' })]),
+      list
+    ]));
+    close.addEventListener('click', function () { closeDialog(dialog); });
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) closeDialog(dialog);
+    });
+    dialog.addEventListener('close', function () {
+      if (!siteNav.opener) return;
+      siteNav.opener.setAttribute('aria-expanded', 'false');
+      siteNav.opener.focus({ preventScroll: true });
+    });
+    document.body.appendChild(dialog);
+    return { dialog: dialog, list: list, opener: null };
+  }
+
+  function openSiteNav(button) {
+    var r = button.getBoundingClientRect();
+    siteNav.opener = button;
+    siteNav.dialog.style.left = Math.max(8, Math.round(r.left) - 12) + 'px';
+    siteNav.dialog.style.top = Math.max(8, Math.round(r.top) - 12) + 'px';
+    button.setAttribute('aria-expanded', 'true');
+    openDialog(siteNav.dialog);
+    siteNav.list.querySelector('a').focus({ preventScroll: true });
   }
 
   function backRow() {
@@ -154,6 +206,7 @@
     hintSection = null;
     closeDialog(hint.dialog);
     closeDialog(confirmBox.dialog);
+    if (siteNav) closeDialog(siteNav.dialog);
     app.textContent = '';
     document.title = title ? title + ' — тренажёр литовского' : 'Тренажёр литовского языка';
     window.scrollTo(0, 0);

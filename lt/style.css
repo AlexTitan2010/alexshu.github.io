@@ -68,22 +68,68 @@ button { font: inherit; color: inherit; }
 
 main { max-width: 760px; margin: 0 auto; padding: 20px 20px 40px; outline: none; }
 
-.site-menu {
+.site-menu,
+.nav-close {
   display: inline-flex;
   flex: none;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
   width: 44px;
   height: 44px;
+  padding: 0;
   border: 1px solid var(--hair);
   border-radius: 11px;
   background: var(--card);
+  cursor: pointer;
   transition: border-color .15s;
 }
+.site-menu { flex-direction: column; gap: 5px; }
 .site-menu span { display: block; width: 18px; height: 1.5px; background: var(--text); }
-.site-menu:hover { border-color: var(--gold); }
+.nav-close { font-size: 22px; line-height: 1; }
+.site-menu:hover,
+.nav-close:hover { border-color: var(--gold); }
+
+dialog.site-nav {
+  --corner: 14px;
+  position: fixed;
+  inset: auto;
+  width: min(360px, calc(100vw - 16px));
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 30px 80px rgba(18, 18, 30, .25);
+}
+dialog.site-nav::backdrop { background: rgba(18, 18, 30, .42); }
+.nav-inner { max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; padding: 11px 11px 14px; }
+.nav-head { display: flex; align-items: center; gap: 14px; }
+.nav-head .label { color: var(--gold-ink); }
+.nav-list { display: grid; margin-top: 8px; padding: 0 9px; }
+.nav-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--hair-soft);
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  transition: color .15s;
+}
+.nav-list a:last-child { border-bottom: 0; }
+.nav-list a:hover,
+.nav-list a[aria-current] { color: var(--gold-ink); }
+.nav-list .k { flex: none; width: 20px; color: var(--muted); font: 400 11px/1 var(--mono); letter-spacing: .08em; }
+dialog.site-nav[open] .nav-list a { animation: nav-in .45s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(40ms + var(--k) * 35ms); }
+@keyframes nav-in { from { opacity: 0; transform: translateY(10px); } }
 
 .orbits {
   position: absolute;
@@ -278,7 +324,8 @@ main { max-width: 760px; margin: 0 auto; padding: 20px 20px 40px; outline: none;
 .bar i { display: block; height: 100%; background: var(--gold); transform-origin: left; transform: scaleX(0); transition: transform .3s; }
 
 .card::before,
-dialog.hint::before {
+dialog.hint::before,
+dialog.site-nav::before {
   content: "";
   position: absolute;
   top: -1px;
