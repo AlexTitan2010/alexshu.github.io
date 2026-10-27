@@ -1655,21 +1655,60 @@ window.LT_DATA.push({
      "tr": "Было бы здорово, если бы ты пришёл."
     }
    ]
+  }
+ ],
+ "tests": [
+  {
+   "id": "t-11s",
+   "title": "1.1 · Kas tu? Повторение A1.1",
+   "subtitle": "Будущее время и условное наклонение, вежливые просьбы.",
+   "from": [
+    "b11-atei"
+   ]
   },
   {
-   "id": "b11-mix",
-   "title": "Повторение блока 1.1",
-   "subtitle": "Все задания блока 1.1 вперемешку.",
+   "id": "t-11a",
+   "title": "1.1A · Kas buvo, tas pražuvo",
+   "subtitle": "Прошедшее время, неправильные глаголы, prieš, годы, прилагательные.",
    "from": [
     "b11-praeit",
     "b11-netais",
     "b11-pries",
     "b11-metai",
+    "b11-budv"
+   ]
+  },
+  {
+   "id": "t-11b",
+   "title": "1.1B · Gyvenimo įvykiai",
+   "subtitle": "События жизни, nuo / iki / po / tarp, порядок событий.",
+   "from": [
+    "b11-ivyk"
+   ]
+  },
+  {
+   "id": "t-11c",
+   "title": "1.1C · Darbo patirtis",
+   "subtitle": "Месяцы и даты, офис, опыт работы.",
+   "from": [
     "b11-datos",
-    "b11-ivyk",
-    "b11-darbas",
+    "b11-darbas"
+   ]
+  },
+  {
+   "id": "t-11d",
+   "title": "1.1D · Trys kartos — повторение",
+   "subtitle": "Все задания блока 1.1 вперемешку.",
+   "from": [
+    "b11-atei",
+    "b11-praeit",
+    "b11-netais",
+    "b11-pries",
+    "b11-metai",
     "b11-budv",
-    "b11-atei"
+    "b11-ivyk",
+    "b11-datos",
+    "b11-darbas"
    ]
   }
  ]

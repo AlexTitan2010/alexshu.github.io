@@ -1,39 +1,48 @@
 (function () {
   'use strict';
 
-  var ROUND_SIZE = 10;
   var STORE_KEY = 'lt-trainer-v1';
   var app = document.getElementById('app');
 
   var groups = (window.LT_DATA || []).slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
   var sections = {};
+  var tests = {};
   var itemsByKey = {};
 
   groups.forEach(function (g) {
-    g.sections.forEach(function (s) {
-      s.group = g;
+    (g.sections || []).forEach(function (s) {
       sections[s.id] = s;
       (s.items || []).forEach(function (it, i) {
         it.key = s.id + ':' + i;
+        it.section = s;
         itemsByKey[it.key] = it;
       });
     });
   });
   groups.forEach(function (g) {
-    g.sections.forEach(function (s) {
-      if (!s.from) return;
-      s.items = [];
-      s.from.forEach(function (id) {
-        if (sections[id] && !sections[id].from) s.items = s.items.concat(sections[id].items);
+    (g.tests || []).forEach(function (t) {
+      t.items = [];
+      t.from.forEach(function (id) {
+        if (sections[id]) t.items = t.items.concat(sections[id].items);
       });
+      tests[t.id] = t;
     });
   });
 
   var store = readStore();
   var keyHandler = null;
+  var hintSection = null;
+  var hint = buildHintDialog();
 
   document.addEventListener('keydown', function (e) {
-    if (keyHandler && !e.altKey && !e.ctrlKey && !e.metaKey) keyHandler(e);
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (hint.dialog.open) return;
+    if (e.key === '?' && hintSection) {
+      e.preventDefault();
+      openHint(hintSection);
+      return;
+    }
+    if (keyHandler) keyHandler(e);
   });
   window.addEventListener('hashchange', route);
 
@@ -48,14 +57,14 @@
       var raw = window.localStorage.getItem(STORE_KEY);
       var data = raw ? JSON.parse(raw) : null;
       if (data && typeof data === 'object') {
-        data.best = data.best || {};
+        data.last = data.last || {};
         data.mistakes = data.mistakes || {};
         return data;
       }
     } catch (e) {
-      return { best: {}, mistakes: {} };
+      return { last: {}, mistakes: {} };
     }
-    return { best: {}, mistakes: {} };
+    return { last: {}, mistakes: {} };
   }
 
   function writeStore() {
@@ -109,9 +118,41 @@
 
   function clear(title) {
     keyHandler = null;
+    hintSection = null;
+    if (hint.dialog.open) closeHint();
     app.textContent = '';
     document.title = title ? title + ' — тренажёр литовского' : 'Тренажёр литовского языка';
     window.scrollTo(0, 0);
+  }
+
+  function buildHintDialog() {
+    var dialog = el('dialog', { class: 'hint', 'aria-labelledby': 'hint-title' });
+    var title = el('h2', { id: 'hint-title' });
+    var close = el('button', { class: 'hint-close', type: 'button', 'aria-label': 'Закрыть подсказку', text: '×' });
+    var body = el('div', { class: 'rule' });
+    var back = el('button', { class: 'btn primary hint-back', type: 'button', text: 'Вернуться к заданию' });
+    dialog.appendChild(el('div', { class: 'hint-inner' }, [el('div', { class: 'hint-head' }, [title, close]), body, back]));
+    close.addEventListener('click', closeHint);
+    back.addEventListener('click', closeHint);
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) closeHint();
+    });
+    document.body.appendChild(dialog);
+    return { dialog: dialog, title: title, body: body, back: back };
+  }
+
+  function openHint(section) {
+    hint.title.textContent = section.title;
+    hint.body.innerHTML = section.rule || '<p>Для этого задания правила нет.</p>';
+    if (typeof hint.dialog.showModal === 'function') hint.dialog.showModal();
+    else hint.dialog.setAttribute('open', '');
+    hint.dialog.querySelector('.hint-inner').scrollTop = 0;
+    hint.back.focus({ preventScroll: true });
+  }
+
+  function closeHint() {
+    if (typeof hint.dialog.close === 'function' && hint.dialog.open) hint.dialog.close();
+    else hint.dialog.removeAttribute('open');
   }
 
   function mistakeItems() {
@@ -120,24 +161,38 @@
       .filter(Boolean);
   }
 
+  function testOfSection(id) {
+    var found = null;
+    groups.forEach(function (g) {
+      (g.tests || []).forEach(function (t) {
+        if (!found && t.from.indexOf(id) >= 0) found = t;
+      });
+    });
+    return found;
+  }
+
   function route() {
     var parts = location.hash.replace(/^#\/?/, '').split('/');
     var id = parts[1];
-    if (parts[0] === 's' && id === 'mistakes') {
+    if (parts[0] === 't' && id === 'mistakes') {
       var items = mistakeItems();
-      if (items.length) return play({ id: 'mistakes', title: 'Работа над ошибками', items: items }, false);
+      if (items.length) return start({ id: 'mistakes', title: 'Работа над ошибками', items: items });
       return home();
     }
-    if (parts[0] === 's' && sections[id] && sections[id].items.length) {
-      if (parts[2] === 'play') return play(sections[id], parts[3] === 'all');
-      return showSection(sections[id]);
+    if (parts[0] === 't' && tests[id] && tests[id].items.length) return start(tests[id]);
+    if (parts[0] === 's' && sections[id]) {
+      var t = testOfSection(id);
+      if (t) {
+        location.replace('#/t/' + t.id);
+        return undefined;
+      }
     }
     return home();
   }
 
-  function bestText(s) {
-    var best = store.best[s.id];
-    return best ? 'лучший результат: ' + best.score + ' из ' + best.total : '';
+  function lastText(t) {
+    var last = store.last[t.id];
+    return last ? 'прошлый раз: ' + last.correct + ' из ' + last.answered : '';
   }
 
   function home() {
@@ -145,12 +200,13 @@
     app.appendChild(el('h1', { text: 'Тренажёр литовского языка' }));
     app.appendChild(el('p', {
       class: 'lead',
-      text: 'Выбери раздел. В раунде ' + ROUND_SIZE + ' заданий; во всех заданиях ответ выбирается из вариантов.'
+      text: 'Выбери тему — тест начнётся сразу. Кнопка «? Подсказка» в любой момент покажет правило к заданию, ' +
+        '«Стоп. Оценить результат» закончит тест и покажет ошибки.'
     }));
     var mist = mistakeItems();
     if (mist.length) {
       app.appendChild(el('div', { class: 'grid' }, [
-        el('a', { class: 'tile alert', href: '#/s/mistakes' }, [
+        el('a', { class: 'tile alert', href: '#/t/mistakes' }, [
           el('b', { text: 'Работа над ошибками' }),
           el('small', { text: 'Задания, в которых были ошибки. Правильный ответ убирает задание из списка.' }),
           el('span', { class: 'meta' }, [el('span', { text: countTasks(mist.length) })])
@@ -158,17 +214,17 @@
       ]));
     }
     groups.forEach(function (g) {
+      var list = (g.tests || []).filter(function (t) { return t.items.length; });
+      if (!list.length) return;
       app.appendChild(el('h2', { text: g.title }));
-      if (g.subtitle) app.appendChild(el('p', { class: 'lead', text: g.subtitle }));
       var grid = el('div', { class: 'grid' });
-      g.sections.forEach(function (s) {
-        if (!s.items.length) return;
-        var meta = [el('span', { text: countTasks(s.items.length) })];
-        var best = bestText(s);
-        if (best) meta.push(el('span', { class: 'badge', text: best }));
-        grid.appendChild(el('a', { class: 'tile', href: '#/s/' + s.id }, [
-          el('b', { text: s.title }),
-          s.subtitle ? el('small', { text: s.subtitle }) : null,
+      list.forEach(function (t) {
+        var meta = [el('span', { text: countTasks(t.items.length) })];
+        var last = lastText(t);
+        if (last) meta.push(el('span', { class: 'badge', text: last }));
+        grid.appendChild(el('a', { class: 'tile', href: '#/t/' + t.id }, [
+          el('b', { text: t.title }),
+          t.subtitle ? el('small', { text: t.subtitle }) : null,
           el('span', { class: 'meta' }, meta)
         ]));
       });
@@ -176,43 +232,26 @@
     });
   }
 
-  function showSection(s) {
-    clear(s.title);
-    var n = s.items.length;
-    var best = bestText(s);
-    app.appendChild(el('a', { class: 'back', href: '#/', text: '← Все разделы' }));
-    app.appendChild(el('p', { class: 'kicker', text: s.group.title }));
-    app.appendChild(el('h1', { text: s.title }));
-    if (s.subtitle) app.appendChild(el('p', { class: 'lead', text: s.subtitle }));
-    app.appendChild(el('p', { class: 'meta-line', text: countTasks(n) + (best ? ' · ' + best : '') }));
-    var acts = el('div', { class: 'actions' });
-    acts.appendChild(el('a', {
-      class: 'btn primary',
-      href: '#/s/' + s.id + '/play',
-      text: n > ROUND_SIZE ? 'Начать раунд' : 'Начать'
-    }));
-    if (n > ROUND_SIZE) {
-      acts.appendChild(el('a', { class: 'btn', href: '#/s/' + s.id + '/play/all', text: 'Все задания подряд' }));
-    }
-    app.appendChild(acts);
-    if (s.rule) {
-      app.appendChild(el('h2', { text: 'Правило' }));
-      app.appendChild(el('div', { class: 'card rule', html: s.rule }));
-    }
-  }
-
-  function play(section, all) {
-    var pool = shuffle(section.items.slice());
-    var queue = all ? pool : pool.slice(0, ROUND_SIZE);
-    step({ section: section, queue: queue, index: 0, correct: 0, wrong: [], all: all });
+  function start(test) {
+    step({ test: test, queue: shuffle(test.items.slice()), index: 0, answered: 0, correct: 0, wrong: [] });
   }
 
   function step(state) {
-    var s = state.section;
+    var t = state.test;
     var item = state.queue[state.index];
-    clear(s.title);
-    var backHref = s.id === 'mistakes' ? '#/' : '#/s/' + s.id;
-    app.appendChild(el('a', { class: 'back', href: backHref, text: '← ' + (s.id === 'mistakes' ? 'Все разделы' : s.title) }));
+    clear(t.title);
+    hintSection = item.section && item.section.rule ? item.section : null;
+    var top = el('div', { class: 'quiz-top' }, [el('a', { class: 'back', href: '#/', text: '← Все темы' })]);
+    if (hintSection) {
+      var hintBtn = el('button', { class: 'hint-btn', type: 'button', 'aria-label': 'Подсказка: правило к заданию' }, [
+        el('span', { class: 'q', 'aria-hidden': 'true', text: '?' }),
+        el('span', { text: 'Подсказка' })
+      ]);
+      hintBtn.addEventListener('click', function () { openHint(hintSection); });
+      top.appendChild(hintBtn);
+    }
+    app.appendChild(top);
+    app.appendChild(el('p', { class: 'kicker', text: t.title }));
     var fill = el('i');
     fill.style.transform = 'scaleX(' + (state.index / state.queue.length) + ')';
     app.appendChild(el('div', { class: 'progress' }, [
@@ -222,6 +261,7 @@
     var render = item.type === 'match' ? renderMatch : renderChoice;
     var card = render(item, function (ok) {
       record(item, ok);
+      state.answered++;
       if (ok) state.correct++;
       else state.wrong.push(item);
       var last = state.index + 1 >= state.queue.length;
@@ -236,6 +276,9 @@
       next.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
     app.appendChild(card);
+    var stop = el('button', { class: 'btn stop', type: 'button', text: 'Стоп. Оценить результат' });
+    stop.addEventListener('click', function () { finish(state); });
+    app.appendChild(el('div', { class: 'stop-row' }, [stop]));
   }
 
   function record(item, ok) {
@@ -245,13 +288,13 @@
     writeStore();
   }
 
-  function sentenceNode(text, answer, ok) {
+  function sentenceNode(text) {
     var p = el('p', { class: 'sentence', lang: 'lt' });
     var parts = String(text).split('___');
     var gap = null;
     parts.forEach(function (part, i) {
       if (i > 0) {
-        gap = el('span', { class: 'gap' + (answer ? (ok ? ' ok' : ' bad') : '') , text: answer || ' ' });
+        gap = el('span', { class: 'gap', text: ' ' });
         p.appendChild(gap);
       }
       p.appendChild(document.createTextNode(part));
@@ -390,7 +433,7 @@
     if (r === 1) return 'Puiku! Без единой ошибки.';
     if (r >= 0.8) return 'Labai gerai! Почти всё верно.';
     if (r >= 0.5) return 'Neblogai. Посмотри ошибки ниже и попробуй ещё раз.';
-    return 'Стоит перечитать правило раздела и пройти раунд снова.';
+    return 'Стоит открыть подсказки к ошибкам ниже и пройти тему снова.';
   }
 
   function mistakeNode(item) {
@@ -413,41 +456,53 @@
       li.appendChild(el('span', { class: 'ans', lang: item.optLang || 'lt', text: item.answer }));
     }
     if (item.tr) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.tr }));
+    if (item.note) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.note }));
+    if (item.section && item.section.rule) {
+      var link = el('button', { class: 'linkbtn', type: 'button', text: '? Правило: ' + item.section.title });
+      link.addEventListener('click', function () { openHint(item.section); });
+      li.appendChild(link);
+    }
     return li;
   }
 
   function finish(state) {
-    var s = state.section;
+    var t = state.test;
     var total = state.queue.length;
-    var score = state.correct;
-    if (s.id !== 'mistakes') {
-      var prev = store.best[s.id];
-      var better = !prev || score / total > prev.score / prev.total ||
-        (score / total === prev.score / prev.total && total > prev.total);
-      if (better) store.best[s.id] = { score: score, total: total };
+    var answered = state.answered;
+    var correct = state.correct;
+    if (t.id !== 'mistakes' && answered > 0) {
+      store.last[t.id] = { correct: correct, answered: answered, total: total };
       writeStore();
     }
-    clear(s.title);
-    var backHref = s.id === 'mistakes' ? '#/' : '#/s/' + s.id;
-    app.appendChild(el('a', { class: 'back', href: backHref, text: '← ' + (s.id === 'mistakes' ? 'Все разделы' : s.title) }));
+    clear(t.title);
+    app.appendChild(el('a', { class: 'back', href: '#/', text: '← Все темы' }));
+    app.appendChild(el('p', { class: 'kicker', text: t.title }));
     app.appendChild(el('h1', { text: 'Результат' }));
-    app.appendChild(el('p', { class: 'score', text: score + ' из ' + total }));
-    app.appendChild(el('p', { class: 'lead', text: verdict(score, total) }));
-    var again = el('button', { class: 'btn primary', type: 'button', text: s.id === 'mistakes' ? 'Ещё раз' : 'Ещё раунд' });
+    if (answered === 0) {
+      app.appendChild(el('p', { class: 'lead', text: 'Ответов пока нет: тест остановлен до первого ответа.' }));
+    } else {
+      app.appendChild(el('p', { class: 'score', text: correct + ' из ' + answered }));
+      app.appendChild(el('p', {
+        class: 'meta-line',
+        text: answered < total ? 'Отвечено ' + answered + ' из ' + total + '.' : 'Тема пройдена полностью: ' + total + ' из ' + total + '.'
+      }));
+      app.appendChild(el('p', { class: 'lead', text: verdict(correct, answered) }));
+    }
+    var again = el('button', { class: 'btn primary', type: 'button', text: t.id === 'mistakes' ? 'Ещё раз' : 'Пройти заново' });
     again.addEventListener('click', function () {
-      if (s.id === 'mistakes') {
+      if (t.id === 'mistakes') {
         var items = mistakeItems();
-        if (items.length) play({ id: 'mistakes', title: s.title, items: items }, false);
+        if (items.length) start({ id: 'mistakes', title: t.title, items: items });
         else home();
       } else {
-        play(s, state.all);
+        start(t);
       }
     });
     var acts = el('div', { class: 'actions' }, [again]);
-    acts.appendChild(el('a', { class: 'btn', href: '#/', text: 'Все разделы' }));
+    acts.appendChild(el('a', { class: 'btn', href: '#/', text: 'Все темы' }));
     app.appendChild(acts);
     if (state.wrong.length) {
-      app.appendChild(el('h2', { text: 'Ошибки' }));
+      app.appendChild(el('h2', { text: 'Ошибки: ' + state.wrong.length }));
       app.appendChild(el('ul', { class: 'mist' }, state.wrong.map(mistakeNode)));
     }
   }

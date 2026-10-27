@@ -1,7 +1,7 @@
 window.LT_DATA = window.LT_DATA || [];
 window.LT_DATA.push({
  "order": 10,
- "title": "Startas · первые шаги",
+ "title": "Startas · вводный урок",
  "subtitle": "Род существительных, местоимения, приветствия и прощания, koks / kokia.",
  "sections": [
   {
@@ -507,6 +507,18 @@ window.LT_DATA.push({
      "answer": "linksmi",
      "tr": "Эти студенты очень весёлые."
     }
+   ]
+  }
+ ],
+ "tests": [
+  {
+   "id": "t-startas",
+   "title": "Startas · первые шаги",
+   "subtitle": "Род и местоимения, приветствия и прощания, koks / kokia.",
+   "from": [
+    "st-rod",
+    "st-sveiki",
+    "st-koks"
    ]
   }
  ]

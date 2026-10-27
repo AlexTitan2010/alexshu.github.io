@@ -3286,23 +3286,46 @@ window.LT_DATA.push({
      "tr": "Какая у вас электронная почта?"
     }
    ]
-  },
+  }
+ ],
+ "tests": [
   {
-   "id": "u1-mix",
-   "title": "Повторение: знакомство и город",
-   "subtitle": "Все задания блока 1A–1D вперемешку.",
+   "id": "t-1a",
+   "title": "1A · Aš naujas darbuotojas",
+   "subtitle": "Знакомство, числа и дни недели, man patinka, koks / kokia, офис.",
    "from": [
     "u1-frazes",
     "u1-skaiciai",
     "u1-patinka",
-    "u1-biuras",
+    "u1-biuras"
+   ]
+  },
+  {
+   "id": "t-1b",
+   "title": "1B · Kas yra tavo mieste?",
+   "subtitle": "Город, местный падеж, настоящее время, būti и местоимения.",
+   "from": [
     "u1-miestas",
     "u1-vie",
     "u1-esam",
-    "u1-buti",
+    "u1-buti"
+   ]
+  },
+  {
+   "id": "t-1c",
+   "title": "1C · Iš kur jūs esate?",
+   "subtitle": "Родительный падеж, страны и языки, союзы и вопросы.",
+   "from": [
     "u1-kil",
     "u1-salys",
-    "u1-jung",
+    "u1-jung"
+   ]
+  },
+  {
+   "id": "t-1d",
+   "title": "1D · Mano asmeninė informacija",
+   "subtitle": "Возраст, анкета.",
+   "from": [
     "u1-amzius"
    ]
   }

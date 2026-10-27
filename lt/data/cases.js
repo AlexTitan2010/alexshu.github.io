@@ -1,7 +1,7 @@
 window.LT_DATA = window.LT_DATA || [];
 window.LT_DATA.push({
  "order": 90,
- "title": "Падежи: 150 предложений",
+ "title": "Падежи",
  "subtitle": "Выбери форму слова, которая подходит в предложение.",
  "sections": [
   {
@@ -1693,11 +1693,13 @@ window.LT_DATA.push({
      "note": "puodas → puode. Kur? — где? Место → vietininkas."
     }
    ]
-  },
+  }
+ ],
+ "tests": [
   {
-   "id": "case-mix",
-   "title": "Все падежи вперемешку",
-   "subtitle": "Все 150 предложений пяти разделов в случайном порядке.",
+   "id": "t-cases",
+   "title": "Все падежи",
+   "subtitle": "150 предложений: винительный, родительный, дательный, творительный и местный падежи.",
    "from": [
     "case-gal",
     "case-kil",

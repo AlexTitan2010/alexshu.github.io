@@ -2531,11 +2531,43 @@ window.LT_DATA.push({
      "tr": "Он стал хорошим специалистом."
     }
    ]
+  }
+ ],
+ "tests": [
+  {
+   "id": "t-2a",
+   "title": "2A · Šeima",
+   "subtitle": "Семья и родственники, винительный и родительный падежи.",
+   "from": [
+    "u2-seima",
+    "u2-gal",
+    "u2-kil"
+   ]
   },
   {
-   "id": "u2-mix",
-   "title": "Повторение: семья и работа",
-   "subtitle": "Все задания блока 2A–2D вперемешку.",
+   "id": "t-2b",
+   "title": "2B · Kai buvau mažas",
+   "subtitle": "Звательный падеж, прилагательные, būti в прошедшем, повелительное наклонение.",
+   "from": [
+    "u2-sauks",
+    "u2-koks",
+    "u2-buvau",
+    "u2-liep"
+   ]
+  },
+  {
+   "id": "t-2c",
+   "title": "2C · Profesijos",
+   "subtitle": "Профессии, место работы, творительный падеж.",
+   "from": [
+    "u2-prof",
+    "u2-ina"
+   ]
+  },
+  {
+   "id": "t-2d",
+   "title": "2D · Svarbiausi dalykai — повторение",
+   "subtitle": "Все задания 2A–2C вперемешку.",
    "from": [
     "u2-seima",
     "u2-gal",
