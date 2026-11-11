@@ -1,7 +1,27 @@
 (function () {
   'use strict';
 
-  var STORE_KEY = 'lt-trainer-v1';
+  var MAIN_GUARD = 250;
+  var FADE_OUT = 90;
+  var FOLD = 180;
+  var MISS_FLASH = 450;
+  var TRACK_LINE = 40;
+  var TRACK_DENSE = 50;
+  var TRACK_SOLID = 110;
+  var FILE_LIMIT = 2097152;
+  var URL_LIFE = 40000;
+  var GAP = '___';
+  var HOW = [
+    'Выбери урок — задания начнутся сразу. Ответ выбирается касанием, печатать по-литовски не нужно.',
+    'Урок идёт подходами по 20 заданий. Новая тема сначала идёт шестью заданиями подряд, потом вперемешку с остальными.',
+    'Ошибка возвращается через три задания, на следующий день и ещё раз через три дня. ' +
+      'После двух верных ответов в разные дни она закрыта.',
+    'Пройденная тема возвращается шестью заданиями через 1, 3, 7, 16, 35 и 70 дней. ' +
+      'В повторении варианты открываются по нажатию: сначала вспомни форму сам.',
+    'В задании: «?» — правило, кнопка со стрелкой — другой вопрос, «Стоп» — итог и ошибки. ' +
+      'Ответ с подсказкой засчитывается, но тему не подтверждает.',
+    'Всё хранится только в этом браузере. Прогресс можно сохранить в файл и загрузить на другом устройстве.'
+  ];
   var app = document.getElementById('app');
   var onSite = /^https?:$/.test(location.protocol);
   var SITE_LINKS = [
@@ -29,72 +49,65 @@
     '<circle cx="400" cy="200" r="196" stroke-opacity=".2"/>' +
     '</g><circle cx="780" cy="200" r="3.5" fill="currentColor"/><circle class="cool" cx="560" cy="88" r="2.5"/></svg>';
 
-  var groups = (window.LT_DATA || []).slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
-  var sections = {};
-  var tests = {};
-  var itemsByKey = {};
-
-  groups.forEach(function (g) {
-    (g.sections || []).forEach(function (s) {
-      sections[s.id] = s;
-      (s.items || []).forEach(function (it, i) {
-        it.key = s.id + ':' + i;
-        it.section = s;
-        itemsByKey[it.key] = it;
-      });
-    });
+  var engine = window.LTEngine.create({
+    data: window.LT_DATA || [],
+    storage: readStorage(),
+    now: function () { return Date.now(); },
+    random: Math.random,
+    tzOffset: function (ms) { return new Date(ms).getTimezoneOffset(); }
   });
-  groups.forEach(function (g) {
-    (g.tests || []).forEach(function (t) {
-      t.items = [];
-      t.from.forEach(function (id) {
-        if (sections[id]) t.items = t.items.concat(sections[id].items);
-      });
-      tests[t.id] = t;
-    });
-  });
-
-  var store = readStore();
-  var keyHandler = null;
-  var hintSection = null;
+  var session = null;
+  var stage = null;
+  var shown = '';
+  var homeDay = 0;
+  var flash = '';
+  var quiet = 0;
+  var boards = {};
+  var fromHome = false;
+  var kept = false;
+  var stale = false;
   var hint = buildHintDialog();
   var confirmBox = buildConfirmDialog();
+  var filePick = buildFilePick();
   var siteNav = onSite ? buildSiteNav() : null;
 
-  document.addEventListener('keydown', function (e) {
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (hint.dialog.open || confirmBox.dialog.open || (siteNav && siteNav.dialog.open)) return;
-    if (e.key === '?' && hintSection) {
-      e.preventDefault();
-      openHint(hintSection);
-      return;
-    }
-    if (keyHandler) keyHandler(e);
-  });
+  buildFootLinks();
+  app.addEventListener('click', swallow, true);
+  document.addEventListener('keydown', onKey);
   window.addEventListener('hashchange', route);
+  window.addEventListener('storage', function (e) {
+    if (e.key !== null && e.key !== window.LTEngine.constants.KEY_V2) return;
+    refreshHome();
+  });
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) refreshHome();
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) refreshHome();
+  });
   route();
 
-  function readStore() {
+  function readStorage() {
     try {
-      var raw = window.localStorage.getItem(STORE_KEY);
-      var data = raw ? JSON.parse(raw) : null;
-      if (data && typeof data === 'object') {
-        data.last = data.last || {};
-        data.mistakes = data.mistakes || {};
-        return data;
-      }
+      return window.localStorage;
     } catch (e) {
-      return { last: {}, mistakes: {} };
+      return null;
     }
-    return { last: {}, mistakes: {} };
   }
 
-  function writeStore() {
-    try {
-      window.localStorage.setItem(STORE_KEY, JSON.stringify(store));
-    } catch (e) {
-      return;
-    }
+  function refreshHome() {
+    var changed = engine.reload();
+    if (shown !== 'home' || !(changed || engine.today() !== homeDay)) return;
+    if (dialogOpen()) stale = true;
+    else home();
+  }
+
+  function dialogOpen() {
+    return hint.dialog.open || confirmBox.dialog.open || (!!siteNav && siteNav.dialog.open);
+  }
+
+  function settleHome() {
+    if (stale && shown === 'home' && !dialogOpen()) home();
   }
 
   function el(tag, attrs, children) {
@@ -116,34 +129,31 @@
     return node;
   }
 
-  function shuffle(list) {
-    for (var i = list.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = list[i];
-      list[i] = list[j];
-      list[j] = t;
-    }
-    return list;
-  }
-
-  function plural(n, one, few, many) {
-    var m10 = n % 10;
-    var m100 = n % 100;
-    if (m10 === 1 && m100 !== 11) return one;
-    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
-    return many;
-  }
-
-  function countTasks(n) {
-    return n + ' ' + plural(n, 'задание', 'задания', 'заданий');
-  }
-
   function pad(n) {
     return n < 10 ? '0' + n : String(n);
   }
 
-  function testLabel(t) {
-    return t.code ? t.code + ' · ' + t.title : t.title;
+  function langOf(text) {
+    return /[а-яё]/i.test(text) ? null : 'lt';
+  }
+
+  function tooSoon(since) {
+    var age = Date.now() - since;
+    return age >= 0 && age < MAIN_GUARD;
+  }
+
+  function hush() {
+    quiet = Date.now();
+  }
+
+  function swallow(e) {
+    if (!tooSoon(quiet)) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function reducedMotion() {
+    return !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   function siteMenu() {
@@ -167,7 +177,10 @@
         el('span', { class: 'k', 'aria-hidden': 'true', text: pad(i + 1) }),
         link[0]
       ]);
-      a.addEventListener('click', function () { closeDialog(dialog); });
+      a.addEventListener('click', function (e) {
+        closeDialog(dialog);
+        if (link[1] === '#/' && shown !== 'home') leave(e);
+      });
       return a;
     }));
     dialog.appendChild(el('div', { class: 'nav-inner' }, [
@@ -179,9 +192,11 @@
       if (e.target === dialog) closeDialog(dialog);
     });
     dialog.addEventListener('close', function () {
-      if (!siteNav.opener) return;
-      siteNav.opener.setAttribute('aria-expanded', 'false');
-      siteNav.opener.focus({ preventScroll: true });
+      if (siteNav.opener) {
+        siteNav.opener.setAttribute('aria-expanded', 'false');
+        siteNav.opener.focus({ preventScroll: true });
+      }
+      settleHome();
     });
     document.body.appendChild(dialog);
     return { dialog: dialog, list: list, opener: null };
@@ -198,518 +213,1099 @@
   }
 
   function backLink() {
-    return el('a', { class: 'back', href: '#/', text: '← Все темы' });
+    var a = el('a', { class: 'back', href: '#/', text: '← Все уроки' });
+    a.addEventListener('click', leave);
+    return a;
+  }
+
+  function leave(e) {
+    if (e.button || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    e.preventDefault();
+    goHome();
+  }
+
+  function dropStage() {
+    if (stage && stage.timer) clearTimeout(stage.timer);
+    stage = null;
   }
 
   function clear(title) {
-    keyHandler = null;
-    hintSection = null;
+    dropStage();
+    hush();
+    shown = '';
     closeDialog(hint.dialog);
     closeDialog(confirmBox.dialog);
     if (siteNav) closeDialog(siteNav.dialog);
     app.textContent = '';
+    document.body.classList.remove('in-session');
     document.title = title ? title + ' — тренажёр литовского' : 'Тренажёр литовского языка';
     window.scrollTo(0, 0);
   }
 
   function buildHintDialog() {
     var dialog = el('dialog', { class: 'hint', 'aria-labelledby': 'hint-title' });
+    var label = el('span', { class: 'label' });
     var title = el('h2', { id: 'hint-title' });
-    var close = el('button', { class: 'hint-close', type: 'button', 'aria-label': 'Закрыть подсказку', text: '×' });
+    var close = el('button', { class: 'hint-close', type: 'button', 'aria-label': 'Закрыть', text: '×' });
+    var taskText = el('span', { class: 'hint-task-text' });
+    var task = el('div', { class: 'hint-task' }, [el('span', { class: 'label', text: 'Задание' }), taskText]);
     var body = el('div', { class: 'rule' });
-    var back = el('button', { class: 'btn primary hint-back', type: 'button', text: 'Вернуться к заданию' });
-    var head = el('div', { class: 'hint-head' }, [
-      el('div', { class: 'hint-titles' }, [el('span', { class: 'label', text: 'Подсказка · правило' }), title]),
-      close
-    ]);
-    dialog.appendChild(el('div', { class: 'hint-inner' }, [head, body, back]));
-    close.addEventListener('click', closeHint);
-    back.addEventListener('click', closeHint);
-    dialog.addEventListener('click', function (e) {
-      if (e.target === dialog) closeHint();
+    var back = el('button', { class: 'btn primary hint-back', type: 'button' });
+    var head = el('div', { class: 'hint-head' }, [el('div', { class: 'hint-titles' }, [label, title]), close]);
+    var scroll = el('div', { class: 'sheet-scroll' }, [head, task, body]);
+    var box = {
+      dialog: dialog,
+      label: label,
+      title: title,
+      task: task,
+      taskText: taskText,
+      body: body,
+      scroll: scroll,
+      back: back,
+      since: 0
+    };
+    dialog.appendChild(el('div', { class: 'sheet' }, [scroll, el('div', { class: 'sheet-foot' }, [back])]));
+    close.addEventListener('click', function () { shut(box); });
+    back.addEventListener('click', function () { shut(box); });
+    closeOutside(box);
+    dialog.addEventListener('close', function () {
+      var s = stage;
+      settleHome();
+      if (!s) return;
+      if (!s.main.hidden) s.main.focus({ preventScroll: true });
+      else s.card.focus({ preventScroll: true });
     });
     document.body.appendChild(dialog);
-    return { dialog: dialog, title: title, body: body, back: back };
+    return box;
   }
 
   function buildConfirmDialog() {
     var dialog = el('dialog', { class: 'hint confirm', 'aria-labelledby': 'confirm-title', 'aria-describedby': 'confirm-text' });
-    var stats = el('p', { class: 'confirm-stats label' });
-    var cancel = el('button', { class: 'btn', type: 'button', text: 'Отмена' });
-    var ok = el('button', { class: 'btn danger', type: 'button', text: 'Сбросить' });
+    var box = {
+      dialog: dialog,
+      label: el('span', { class: 'label' }),
+      title: el('h2', { id: 'confirm-title' }),
+      text: el('p', { id: 'confirm-text', class: 'confirm-text' }),
+      stats: el('p', { class: 'confirm-stats label' }),
+      cancel: el('button', { class: 'btn', type: 'button' }),
+      ok: el('button', { class: 'btn danger', type: 'button' }),
+      run: null,
+      since: 0
+    };
     dialog.appendChild(el('div', { class: 'hint-inner' }, [
-      el('div', { class: 'hint-titles' }, [
-        el('span', { class: 'label', text: 'Сброс данных' }),
-        el('h2', { id: 'confirm-title', text: 'Сбросить данные?' })
-      ]),
-      el('p', {
-        id: 'confirm-text',
-        class: 'confirm-text',
-        text: 'Сотрутся результаты пройденных тем и список «Работа над ошибками». Отменить сброс нельзя.'
-      }),
-      stats,
-      el('div', { class: 'confirm-actions' }, [cancel, ok])
+      el('div', { class: 'hint-titles' }, [box.label, box.title]),
+      box.text,
+      box.stats,
+      el('div', { class: 'confirm-actions' }, [box.cancel, box.ok])
     ]));
-    cancel.addEventListener('click', function () { closeDialog(dialog); });
-    ok.addEventListener('click', resetData);
-    dialog.addEventListener('click', function (e) {
-      if (e.target === dialog) closeDialog(dialog);
+    box.cancel.addEventListener('click', function () { shut(box); });
+    box.ok.addEventListener('click', function () {
+      var run = box.run;
+      if (tooSoon(box.since)) return;
+      closeDialog(dialog);
+      if (run) run();
     });
+    closeOutside(box);
+    dialog.addEventListener('close', settleHome);
     document.body.appendChild(dialog);
-    return { dialog: dialog, stats: stats, cancel: cancel };
+    return box;
+  }
+
+  function closeOutside(box) {
+    box.dialog.addEventListener('click', function (e) {
+      if (e.target === box.dialog) shut(box);
+    });
+  }
+
+  function shut(box) {
+    if (!tooSoon(box.since)) closeDialog(box.dialog);
   }
 
   function openDialog(dialog) {
+    if (dialog.open) return;
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
   }
 
   function closeDialog(dialog) {
+    var open = dialog.open || dialog.hasAttribute('open');
     if (typeof dialog.close !== 'function') dialog.removeAttribute('open');
     else if (dialog.open) dialog.close();
+    if (open) hush();
+    settleHome();
   }
 
-  function openHint(section) {
-    hint.title.textContent = section.title;
-    hint.body.innerHTML = section.rule || '<p>Для этого задания правила нет.</p>';
+  function openSheet(o) {
+    hint.dialog.classList.toggle('rule-sheet', !!o.rule);
+    hint.label.textContent = o.label;
+    hint.title.textContent = o.title;
+    hint.task.hidden = !o.task;
+    hint.taskText.textContent = o.task || '';
+    hint.taskText.setAttribute('lang', o.lang || 'lt');
+    hint.back.textContent = o.back;
+    hint.since = Date.now();
     openDialog(hint.dialog);
-    hint.dialog.querySelector('.hint-inner').scrollTop = 0;
+    hint.scroll.scrollTop = 0;
     hint.back.focus({ preventScroll: true });
   }
 
-  function closeHint() {
-    closeDialog(hint.dialog);
+  function openHint(section, task, back, lang) {
+    hint.body.innerHTML = section.rule;
+    openSheet({ rule: true, label: 'Подсказка · правило', title: section.title, task: task, lang: lang, back: back });
   }
 
-  function askReset() {
-    confirmBox.stats.textContent = 'Тем с результатом: ' + Object.keys(store.last).length +
-      ' · Ошибок: ' + mistakeItems().length;
+  function openTaskHint() {
+    var card = stage && !stage.timer && stage.view ? stage.view.card : null;
+    if (!session || !card || !card.section.rule) return;
+    session.hint();
+    openHint(card.section, card.type === 'match' ? '' : card.item.q, 'Вернуться к заданию', card.item.lang);
+  }
+
+  function openRule(section) {
+    openHint(section, '', 'Закрыть');
+  }
+
+  function openHow() {
+    hint.body.textContent = '';
+    HOW.forEach(function (text) {
+      hint.body.appendChild(el('p', { text: text }));
+    });
+    openSheet({ rule: false, label: 'Тренажёр · A1–A2', title: 'Как устроен тренажёр', task: '', back: 'Закрыть' });
+  }
+
+  function ask(o) {
+    confirmBox.label.textContent = o.label;
+    confirmBox.title.textContent = o.title;
+    confirmBox.text.textContent = o.text || '';
+    confirmBox.text.hidden = !o.text;
+    confirmBox.stats.textContent = o.stats || '';
+    confirmBox.stats.hidden = !o.stats;
+    confirmBox.cancel.textContent = o.cancel;
+    confirmBox.ok.textContent = o.ok || '';
+    confirmBox.ok.hidden = !o.ok;
+    confirmBox.run = o.run || null;
+    confirmBox.since = Date.now();
     openDialog(confirmBox.dialog);
     confirmBox.cancel.focus({ preventScroll: true });
   }
 
-  function resetData() {
-    store = { last: {}, mistakes: {} };
-    writeStore();
-    home('Данные сброшены');
-    app.focus({ preventScroll: true });
-  }
-
-  function mistakeItems() {
-    return Object.keys(store.mistakes)
-      .map(function (k) { return itemsByKey[k]; })
-      .filter(Boolean);
-  }
-
-  function testOfSection(id) {
-    var found = null;
-    groups.forEach(function (g) {
-      (g.tests || []).forEach(function (t) {
-        if (!found && t.from.indexOf(id) >= 0) found = t;
-      });
+  function askReset() {
+    ask({
+      label: 'Сброс данных',
+      title: 'Сбросить данные?',
+      text: 'Сотрутся ответы по всем заданиям, расписание повторений и список «Работа над ошибками». Отменить сброс нельзя.',
+      stats: engine.stats().text,
+      cancel: 'Отмена',
+      ok: 'Сбросить',
+      run: resetData
     });
-    return found;
+  }
+
+  function resetData() {
+    engine.reset();
+    goHome('Данные сброшены');
+  }
+
+  function buildFilePick() {
+    var input = el('input', { class: 'sr', type: 'file', accept: '.json,application/json', tabindex: '-1', 'aria-hidden': 'true' });
+    input.addEventListener('change', function () {
+      var file = input.files && input.files[0];
+      var reader = null;
+      if (!file) return;
+      if (file.size > FILE_LIMIT || typeof window.FileReader !== 'function') {
+        askFile('');
+        return;
+      }
+      reader = new window.FileReader();
+      reader.onload = function () { askFile(typeof reader.result === 'string' ? reader.result : ''); };
+      reader.onerror = function () { askFile(''); };
+      reader.readAsText(file);
+    });
+    document.body.appendChild(input);
+    return input;
+  }
+
+  function buildFootLinks() {
+    var foot = document.querySelector('.foot');
+    var links = [
+      ['Как устроен тренажёр', openHow],
+      ['Сохранить прогресс в файл', saveFile],
+      ['Загрузить из файла', pickFile]
+    ];
+    if (!foot) return;
+    foot.addEventListener('click', swallow, true);
+    foot.appendChild(el('div', { class: 'foot-links' }, links.map(function (link) {
+      var b = el('button', { class: 'linkbtn', type: 'button', text: link[0] });
+      b.addEventListener('click', link[1]);
+      return b;
+    })));
+  }
+
+  function saveFile() {
+    var text = '';
+    var url = '';
+    var a = null;
+    refreshHome();
+    text = engine.exportText();
+    try {
+      url = window.URL.createObjectURL(new window.Blob([text], { type: 'application/json' }));
+    } catch (e) {
+      url = 'data:application/json;charset=utf-8,' + encodeURIComponent(text);
+    }
+    a = el('a', { href: url, download: engine.fileName, hidden: true });
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    if (url.indexOf('blob:') === 0) setTimeout(function () { window.URL.revokeObjectURL(url); }, URL_LIFE);
+  }
+
+  function pickFile() {
+    filePick.value = '';
+    filePick.click();
+  }
+
+  function askFile(text) {
+    var info = engine.importInfo(text);
+    if (!info.ok) {
+      ask({ label: 'Загрузить из файла', title: info.message, cancel: 'Закрыть' });
+      return;
+    }
+    ask({
+      label: 'Загрузить из файла',
+      title: 'Заменить прогресс?',
+      text: info.message,
+      cancel: 'Отмена',
+      ok: 'Заменить',
+      run: function () { loadFile(text); }
+    });
+  }
+
+  function loadFile(text) {
+    var info = engine.importApply(text);
+    if (info.ok) goHome('Прогресс загружен из файла');
+    else askFile('');
   }
 
   function route() {
     var parts = location.hash.replace(/^#\/?/, '').split('/');
-    var id = parts[1];
-    if (parts[0] === 't' && id === 'mistakes') {
-      var items = mistakeItems();
-      if (items.length) return start({ id: 'mistakes', title: 'Работа над ошибками', items: items });
-      return home();
+    var id = parts[1] || '';
+    var target = null;
+    var same = kept;
+    kept = false;
+    if (parts[0] === 't' && id) {
+      boards = {};
+      session = engine.start(id);
+      if (session) {
+        markEntry(same);
+        dropStage();
+        show(session.view(), 'card');
+        return;
+      }
+      location.replace('#/');
+      return;
     }
-    if (parts[0] === 't' && tests[id] && tests[id].items.length) return start(tests[id]);
-    if (parts[0] === 's' && sections[id]) {
-      var t = testOfSection(id);
-      if (t) {
-        location.replace('#/t/' + t.id);
-        return undefined;
+    if (parts[0] === 's' && id) {
+      target = engine.testOfSection(id);
+      if (target) {
+        location.replace('#/t/' + target);
+        return;
       }
     }
-    return home();
+    home();
   }
 
-  function home(notice) {
-    clear();
-    var orbits = el('div', { class: 'orbits', 'aria-hidden': 'true' });
-    orbits.innerHTML = ORBITS;
-    app.appendChild(orbits);
-    app.appendChild(el('div', { class: 'hero' }, [
-      el('div', { class: 'hero-top' }, [el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' }), siteMenu()]),
-      el('h1', { class: 'title', lang: 'lt' }, [el('span', { text: 'Lietuvių' }), el('span', { class: 'accent', text: 'kalba' })]),
-      el('p', { class: 'lead' }, [
-        'Выбери тему — тест начнётся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
-          'В задании: «?» — правило, ',
-        el('span', { class: 'inline-ic', 'aria-hidden': 'true', html: ICONS.skip }),
-        el('span', { class: 'sr', text: 'кнопка пропуска' }),
-        ' — другой вопрос, «Стоп» — итог и ошибки.'
-      ])
-    ]));
-    var mist = mistakeItems();
-    var stored = Object.keys(store.last).length + Object.keys(store.mistakes).length;
-    if (notice) app.appendChild(el('p', { class: 'notice label', role: 'status', text: notice }));
-    if (mist.length || stored) {
-      var tools = el('div', { class: 'tools' + (mist.length ? '' : ' solo') });
-      if (mist.length) {
-        tools.appendChild(el('a', { class: 'alert', href: '#/t/mistakes' }, [
-          el('span', { class: 'alert-text' }, [
-            el('span', { class: 'label', text: 'Работа над ошибками' }),
-            el('span', { text: countTasks(mist.length) + ' ' + plural(mist.length, 'ждёт', 'ждут', 'ждут') + ' повторения' })
-          ]),
-          el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })
-        ]));
+  function markEntry(same) {
+    var state = null;
+    try {
+      state = window.history.state;
+      if (state && state.lt) {
+        fromHome = !!state.home;
+        return;
       }
-      var reset = el('button', { class: 'reset', type: 'button' }, [
+      fromHome = same ? fromHome : shown === 'home';
+      window.history.replaceState({ lt: 1, home: fromHome }, '');
+    } catch (e) {
+      fromHome = false;
+    }
+  }
+
+  function goHome(note) {
+    flash = note || '';
+    if (shown === 'home' || location.hash === '#/') home();
+    else if (fromHome) window.history.back();
+    else location.replace('#/');
+  }
+
+  function act(b) {
+    var hash = '';
+    if (!b) return;
+    if (b.action === 'home') {
+      goHome();
+      return;
+    }
+    if (b.action === 'start') {
+      hash = '#/t/' + b.target;
+      kept = shown === 'result';
+      if (location.hash === hash) route();
+      else if (kept) location.replace(hash);
+      else location.hash = hash;
+      return;
+    }
+    if (!session || typeof session[b.action] !== 'function') return;
+    show(session[b.action](), b.action === 'reveal' ? 'reveal' : 'card');
+  }
+
+  function setLabel(node, b) {
+    node.textContent = '';
+    node.appendChild(document.createTextNode(b.label));
+    if (b.arrow) node.appendChild(el('span', { 'aria-hidden': 'true', text: '→' }));
+  }
+
+  function actionButton(b) {
+    var node = el('button', { class: 'btn' + (b.primary ? ' primary' : ''), type: 'button' });
+    setLabel(node, b);
+    node.addEventListener('click', function () { act(b); });
+    return node;
+  }
+
+  function ruleButton(label, name) {
+    return el('button', { class: 'linkbtn', type: 'button', 'aria-label': name || null }, [
+      el('span', { class: 'q-mini', 'aria-hidden': 'true', text: '?' }),
+      label
+    ]);
+  }
+
+  function barNode(name, parts) {
+    return el('span', { class: name, 'aria-hidden': 'true' }, parts.map(function (p) {
+      return el('i', { class: p[0], style: 'flex-grow:' + p[1] });
+    }));
+  }
+
+  function todayCard(t) {
+    var box = el('section', { class: 'card today' + (t.state === 'plan' ? '' : ' calm'), 'aria-label': 'Сегодня' }, [
+      el('span', { class: 'label today-label', text: t.label })
+    ]);
+    if (t.heading) box.appendChild(el('h2', { class: 'today-heading', text: t.heading }));
+    if (t.text) box.appendChild(el('p', { class: 'today-text', text: t.text }));
+    t.lines.forEach(function (l) {
+      box.appendChild(el('div', { class: 'plan-line' }, [
+        el('span', { class: 'plan-main' }, [
+          el('span', { class: 'plan-title', text: l.title }),
+          l.sub ? el('span', { class: 'plan-sub', lang: langOf(l.sub), text: l.sub }) : null
+        ]),
+        el('span', { class: 'plan-count', text: String(l.count) })
+      ]));
+    });
+    if (t.button) box.appendChild(actionButton(t.button));
+    if (t.hint) box.appendChild(el('p', { class: 'today-hint', text: t.hint }));
+    return box;
+  }
+
+  function toolsRow(data) {
+    var tools = el('div', { class: 'tools' + (data.mistakes ? '' : ' solo') });
+    var reset = null;
+    if (data.mistakes) {
+      tools.appendChild(el('a', { class: 'alert', href: '#/t/' + data.mistakes.target }, [
+        el('span', { class: 'alert-text' }, [
+          el('span', { class: 'label', text: data.mistakes.label }),
+          el('span', { text: data.mistakes.text })
+        ]),
+        el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })
+      ]));
+    }
+    if (data.reset) {
+      reset = el('button', { class: 'reset', type: 'button' }, [
         el('span', { class: 'ic', 'aria-hidden': 'true', html: ICONS.reset }),
         el('span', { class: 'txt', text: 'Сброс данных' })
       ]);
       reset.addEventListener('click', askReset);
       tools.appendChild(reset);
-      app.appendChild(tools);
     }
-    groups.forEach(function (g) {
-      var list = (g.tests || []).filter(function (t) { return t.items.length; });
-      if (!list.length) return;
-      var box = el('section', { class: 'group' }, [el('h2', { text: g.title })]);
-      list.forEach(function (t) {
-        var n = t.items.length;
-        var last = store.last[t.id];
-        box.appendChild(el('a', { class: 'row', href: '#/t/' + t.id }, [
-          t.code ? el('span', { class: 'code', text: t.code }) : el('span', { class: 'code none', 'aria-hidden': 'true' }),
-          el('span', { class: 'row-main' }, [
-            el('span', { class: 'row-title', text: t.title }),
-            t.subtitle ? el('span', { class: 'row-sub', text: t.subtitle }) : null
-          ]),
-          el('span', { class: 'row-meta' }, [
-            el('span', null, [String(n), el('span', { class: 'sr', text: ' ' + plural(n, 'задание', 'задания', 'заданий') })]),
-            last ? el('span', { class: 'row-last', title: 'Прошлый раз: ' + last.correct + ' из ' + last.answered }, [
-              el('span', { class: 'sr', text: 'прошлый раз: ' }),
-              last.correct + ' / ' + last.answered
-            ]) : null
-          ])
-        ]));
-      });
-      app.appendChild(box);
-    });
+    return tools;
   }
 
-  function start(test) {
-    step({ test: test, queue: shuffle(test.items.slice()), index: 0, answered: 0, correct: 0, wrong: [] });
-  }
-
-  function step(state) {
-    var t = state.test;
-    var item = state.queue[state.index];
-    var total = state.queue.length;
-    clear(testLabel(t));
-    hintSection = item.section && item.section.rule ? item.section : null;
-    var actions = el('div', { class: 'quiz-actions' });
-    var skip = null;
-    if (total - state.index > 1) {
-      skip = el('button', {
-        class: 'icon-btn',
-        type: 'button',
-        title: 'Пропустить: другой вопрос',
-        'aria-label': 'Пропустить вопрос и показать другой',
-        html: ICONS.skip
-      });
-      skip.addEventListener('click', function () {
-        state.queue.push(state.queue.splice(state.index, 1)[0]);
-        step(state);
-      });
-      actions.appendChild(skip);
-    }
-    if (hintSection) {
-      var hintBtn = el('button', { class: 'hint-btn', type: 'button', 'aria-label': 'Подсказка: правило к заданию' }, [
-        el('span', { class: 'q', 'aria-hidden': 'true', text: '?' }),
-        el('span', { class: 'hint-text', text: 'Подсказка' })
-      ]);
-      hintBtn.addEventListener('click', function () { openHint(hintSection); });
-      actions.appendChild(hintBtn);
-    }
-    var menuBtn = siteMenu();
-    if (menuBtn) actions.appendChild(menuBtn);
-    app.appendChild(el('div', { class: 'quiz-top' }, [backLink(), actions]));
-    app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
-    var fill = el('i');
-    fill.style.transform = 'scaleX(' + (state.index / total) + ')';
-    app.appendChild(el('div', { class: 'progress' }, [
-      el('span', { class: 'sr', text: 'Задание ' + (state.index + 1) + ' из ' + total }),
-      el('span', { 'aria-hidden': 'true', text: pad(state.index + 1) + ' / ' + pad(total) }),
-      el('div', { class: 'bar' }, [fill])
-    ]));
-    var stopRow = el('div', { class: 'stop-row' });
-    var render = item.type === 'match' ? renderMatch : renderChoice;
-    var card = render(item, function (ok) {
-      if (skip) skip.hidden = true;
-      record(item, ok);
-      state.answered++;
-      if (ok) state.correct++;
-      else state.wrong.push(item);
-      var last = state.index + 1 >= total;
-      var next = el('button', { class: 'btn primary next', type: 'button' }, [
-        last ? 'Результат' : 'Дальше',
-        el('span', { 'aria-hidden': 'true', text: '→' })
-      ]);
-      next.addEventListener('click', function () {
-        state.index++;
-        if (state.index >= total) finish(state);
-        else step(state);
-      });
-      app.insertBefore(next, stopRow);
-      next.focus({ preventScroll: true });
-      next.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    });
-    app.appendChild(card);
-    var stop = el('button', { class: 'btn stop', type: 'button', text: 'Стоп. Оценить результат' });
-    stop.addEventListener('click', function () { finish(state); });
-    stopRow.appendChild(stop);
-    app.appendChild(stopRow);
-  }
-
-  function record(item, ok) {
-    if (!item.key) return;
-    if (ok) delete store.mistakes[item.key];
-    else store.mistakes[item.key] = 1;
-    writeStore();
-  }
-
-  function sentenceNode(text) {
-    var p = el('p', { class: 'sentence', lang: 'lt' });
-    var parts = String(text).split('___');
-    var gap = null;
-    parts.forEach(function (part, i) {
-      if (i > 0) {
-        gap = el('span', { class: 'gap', text: ' ' });
-        p.appendChild(gap);
-      }
-      p.appendChild(document.createTextNode(part));
-    });
-    return { node: p, gap: gap };
-  }
-
-  function feedback(ok, label, parts, note) {
-    var text = el('p', { class: 'fb-text' }, parts);
-    if (note) text.appendChild(document.createTextNode(' ' + note));
-    return el('div', { class: 'feedback ' + (ok ? 'ok' : 'bad'), role: 'status' }, [
-      el('span', { class: 'label', lang: 'lt', text: label }),
-      text
+  function lessonRow(r) {
+    return el('a', { class: 'row', href: '#/t/' + r.id }, [
+      r.code ? el('span', { class: 'code', text: r.code }) : el('span', { class: 'code none', 'aria-hidden': 'true' }),
+      el('span', { class: 'row-main' }, [
+        el('span', { class: 'row-title', text: r.title }),
+        r.chip ? el('span', { class: 'chip gold', text: r.chip }) : null,
+        r.subtitle ? el('span', { class: 'row-sub', text: r.subtitle }) : null,
+        r.bar ? barNode('row-bar', [['is-ok', r.bar.green], ['is-gold', r.bar.gold], [null, r.bar.rest]]) : null
+      ]),
+      el('span', { class: 'row-meta' }, [
+        el('span', null, [
+          el('span', { 'aria-hidden': 'true', text: r.count }),
+          el('span', { class: 'sr', text: r.sr })
+        ]),
+        r.mistakesText ? el('span', { class: 'row-mist', text: r.mistakesText }) : null
+      ])
     ]);
   }
 
-  function mark(button, kind) {
-    button.classList.add(kind);
-    button.querySelector('.ic').innerHTML = ICONS[kind];
-  }
-
-  function renderChoice(item, done) {
-    var card = el('div', { class: 'card' });
-    if (item.prompt) card.appendChild(el('p', { class: 'prompt', text: item.prompt }));
-    var sent = sentenceNode(item.q);
-    if (item.lang) sent.node.setAttribute('lang', item.lang);
-    card.appendChild(sent.node);
-    if (item.tr) card.appendChild(el('p', { class: 'tr', lang: 'ru', text: item.tr }));
-    var options = item.fixed ? item.options.slice() : shuffle(item.options.slice());
-    var short = options.every(function (o) { return o.length <= 14; });
-    var cols = short && (options.length === 2 || options.length === 3);
-    var list = el('div', { class: 'options' + (cols ? ' cols' : '') + (cols && options.length === 2 ? ' two' : '') });
-    var answered = false;
-    var buttons = options.map(function (o, i) {
-      var b = el('button', { class: 'opt', type: 'button', lang: item.optLang || 'lt' }, [
-        el('span', { class: 'k', 'aria-hidden': 'true', text: pad(i + 1) }),
-        el('span', { text: o }),
-        el('span', { class: 'ic', 'aria-hidden': 'true' })
-      ]);
-      b.addEventListener('click', function () { choose(o, b); });
-      list.appendChild(b);
-      return b;
+  function home() {
+    var data = null;
+    var notice = flash;
+    var orbits = el('div', { class: 'orbits', 'aria-hidden': 'true' });
+    clear();
+    session = null;
+    shown = 'home';
+    stale = false;
+    flash = '';
+    data = engine.home();
+    homeDay = data.day;
+    orbits.innerHTML = ORBITS;
+    app.appendChild(orbits);
+    app.appendChild(el('div', { class: 'hero' + (data.first ? '' : ' short') }, [
+      el('div', { class: 'hero-top' }, [el('p', { class: 'eyebrow label', text: 'Тренажёр · A1–A2' }), siteMenu()]),
+      el('h1', { class: 'title', lang: 'lt' }, [el('span', { text: 'Lietuvių' }), el('span', { class: 'accent', text: 'kalba' })]),
+      data.first ? el('p', { class: 'lead' }, [
+        'Выбери урок — задания начнутся сразу. Ответ выбирается из вариантов, печатать по-литовски не нужно. ' +
+          'В задании: «?» — правило, ',
+        el('span', { class: 'inline-ic', 'aria-hidden': 'true', html: ICONS.skip }),
+        el('span', { class: 'sr', text: 'кнопка пропуска' }),
+        ' — другой вопрос, «Стоп» — итог и ошибки.'
+      ]) : null
+    ]));
+    [notice, engine.notice()].forEach(function (text) {
+      if (text) app.appendChild(el('p', { class: 'notice label', role: 'status', text: text }));
     });
-    card.appendChild(list);
-    keyHandler = function (e) {
-      var n = parseInt(e.key, 10);
-      if (n >= 1 && n <= buttons.length) {
-        e.preventDefault();
-        buttons[n - 1].click();
-      }
-    };
-
-    function choose(o, b) {
-      if (answered) return;
-      answered = true;
-      keyHandler = null;
-      var ok = o === item.answer;
-      buttons.forEach(function (x, i) {
-        x.disabled = true;
-        if (options[i] === item.answer) mark(x, 'ok');
-      });
-      if (!ok) mark(b, 'bad');
-      if (sent.gap) {
-        sent.gap.textContent = item.answer;
-        sent.gap.classList.add(ok ? 'ok' : 'bad');
-      }
-      card.appendChild(ok
-        ? feedback(true, 'Teisingai', ['Правильно.'], item.note)
-        : feedback(false, 'Neteisingai', [
-          'Правильный ответ: ',
-          el('b', { class: 'ans', lang: item.optLang || 'lt', text: item.answer }),
-          '.'
-        ], item.note));
-      done(ok);
-    }
-    return card;
+    if (data.today) app.appendChild(todayCard(data.today));
+    if (data.mistakes || data.reset) app.appendChild(toolsRow(data));
+    data.groups.forEach(function (g) {
+      app.appendChild(el('section', { class: 'group' }, [el('h2', { text: g.title })].concat(g.rows.map(lessonRow))));
+    });
+    if (notice) app.focus({ preventScroll: true });
   }
 
-  function renderMatch(item, done) {
-    var card = el('div', { class: 'card' });
-    card.appendChild(el('p', { class: 'prompt', text: item.prompt || 'Соедини пары: нажми слово слева, потом его пару справа.' }));
-    var pairs = item.pairs;
-    var left = shuffle(pairs.map(function (p, i) { return { t: p[0], i: i }; }));
-    var right = shuffle(pairs.map(function (p, i) { return { t: p[1], i: i }; }));
-    var selected = null;
-    var matched = 0;
-    var mistakes = 0;
-    var finished = false;
+  function show(view, how) {
+    if (!view) return;
+    if (view.screen === 'result') {
+      renderResult(view);
+      return;
+    }
+    if (!stage) buildStage(view);
+    paint(view, how);
+  }
+
+  function buildStage(view) {
+    var s = { view: null, next: null, timer: null, live: null, mainButton: null, mainSig: '', mainSince: 0 };
+    clear(view.title);
+    shown = 'stage';
+    document.body.classList.add('in-session');
+    s.eyebrow = el('p', { class: 'stage-eyebrow label' });
+    s.stop = el('button', { class: 'stop', type: 'button', text: 'Стоп. Оценить результат' });
+    s.sr = el('span', { class: 'sr' });
+    s.counter = el('span', { 'aria-hidden': 'true' });
+    s.track = el('div', { class: 'track', 'aria-hidden': 'true' });
+    s.body = el('div', { class: 'card-body' });
+    s.card = el('div', { class: 'card stage-card', tabindex: '-1' }, [s.body]);
+    s.skip = el('button', {
+      class: 'icon-btn dock-skip',
+      type: 'button',
+      title: 'Пропустить: другой вопрос',
+      'aria-label': 'Пропустить вопрос и показать другой',
+      html: ICONS.skip
+    });
+    s.hint = el('button', { class: 'hint-btn dock-hint', type: 'button', 'aria-label': 'Подсказка: правило к заданию' }, [
+      el('span', { class: 'q', 'aria-hidden': 'true', text: '?' }),
+      el('span', { class: 'hint-text', text: 'Подсказка' })
+    ]);
+    s.side = el('button', { class: 'btn dock-side', type: 'button' });
+    s.main = el('button', { class: 'btn primary dock-main', type: 'button' });
+    s.keys = el('p', { class: 'keys label' });
+    s.stop.addEventListener('click', function () { act({ action: 'stop' }); });
+    s.skip.addEventListener('click', skipTask);
+    s.hint.addEventListener('click', openTaskHint);
+    s.side.addEventListener('click', function () {
+      if (stage && stage.view) act(stage.view.side);
+    });
+    s.main.addEventListener('click', pressMain);
+    app.appendChild(el('div', { class: 'stage' }, [
+      el('div', { class: 'stage-top' }, [backLink(), siteMenu()]),
+      el('div', { class: 'stage-head' }, [s.eyebrow, s.stop]),
+      el('div', { class: 'stage-progress' }, [s.sr, s.counter, s.track]),
+      s.card,
+      el('div', { class: 'dock' }, [s.skip, s.hint, s.side, s.main]),
+      s.keys
+    ]));
+    stage = s;
+  }
+
+  function paint(view, how) {
+    var s = stage;
+    hush();
+    s.view = view;
+    s.eyebrow.textContent = view.eyebrow;
+    s.sr.textContent = view.sr;
+    s.counter.textContent = view.counter;
+    drawTrack(s.track, view.track);
+    paintDock(view);
+    if (how === 'answer' && s.live && view.card && view.card.feedback) {
+      s.live.answered(view.card.feedback);
+      if (!s.main.hidden) s.main.focus({ preventScroll: true });
+      return;
+    }
+    if (how === 'reveal' && s.live && view.card && !view.card.hidden) {
+      s.live.reveal(view.card);
+      s.card.focus({ preventScroll: true });
+      return;
+    }
+    swapCard(view);
+  }
+
+  function drawTrack(box, cells) {
+    var n = cells.length;
+    box.textContent = '';
+    box.className = 'track' + (n > TRACK_SOLID ? ' solid' : n > TRACK_DENSE ? ' dense' : '');
+    cells.forEach(function (c) {
+      box.appendChild(el('i', { class: 'is-' + c.state + (c.gap ? ' sep' : '') }));
+    });
+  }
+
+  function trackNode(cells) {
+    var box = el('div', { class: 'track', 'aria-hidden': 'true' });
+    drawTrack(box, cells);
+    return box;
+  }
+
+  function resultTrack(cells) {
+    var lines = [];
+    var line = null;
+    var width = 0;
+    if (cells.length <= TRACK_LINE) return trackNode(cells);
+    cells.forEach(function (c) {
+      if (!line || c.gap || line.length >= TRACK_LINE) {
+        line = [];
+        lines.push(line);
+      }
+      line.push({ state: c.state, gap: false });
+    });
+    lines.forEach(function (l) { width = Math.max(width, l.length); });
+    lines.forEach(function (l) {
+      while (l.length < width) l.push({ state: 'none', gap: false });
+    });
+    return el('div', { class: 'tracks', 'aria-hidden': 'true' }, lines.map(trackNode));
+  }
+
+  function legend(view) {
+    var card = view.card;
+    var parts = [];
+    if (view.screen === 'task' && card) {
+      if (card.hidden) {
+        parts.push('Enter — показать варианты');
+      } else {
+        if (card.type !== 'match') parts.push('1–' + card.options.length + ' — ответ');
+        parts.push('Enter — дальше');
+      }
+      if (card.section.rule) parts.push('H — правило');
+      parts.push('S — пропустить');
+    } else {
+      parts.push('Enter — дальше');
+    }
+    return parts.join(' · ');
+  }
+
+  function paintDock(view) {
+    var s = stage;
+    var card = view.screen === 'task' ? view.card : null;
+    var b = view.main;
+    var sig = '';
+    s.skip.hidden = !card || !view.canSkip;
+    s.hint.hidden = !card || !card.section.rule;
+    s.hint.classList.toggle('round', !!b);
+    s.side.hidden = !view.side;
+    if (view.side) setLabel(s.side, view.side);
+    s.keys.textContent = legend(view);
+    if (!b) {
+      if (document.activeElement === s.main) s.main.blur();
+      s.main.hidden = true;
+      s.mainButton = null;
+      s.mainSig = '';
+      return;
+    }
+    sig = [view.screen, card ? card.key : '', card && card.isReturn ? 'r' : '', b.action, b.label].join('|');
+    if (sig !== s.mainSig) {
+      s.mainSig = sig;
+      s.mainSince = Date.now();
+      setLabel(s.main, b);
+    }
+    s.mainButton = b;
+    s.main.hidden = false;
+  }
+
+  function pressMain() {
+    var s = stage;
+    if (!s || !s.mainButton || s.main.hidden) return;
+    if (tooSoon(s.mainSince)) return;
+    act(s.mainButton);
+  }
+
+  function skipTask() {
+    if (!session || !stage || stage.timer || !stage.view || !stage.view.canSkip) return;
+    show(session.skip(), 'card');
+  }
+
+  function swapCard(view) {
+    var s = stage;
+    if (s.live) s.live.close();
+    s.live = null;
+    s.next = view;
+    if (s.timer) return;
+    if (!s.body.firstChild || reducedMotion()) {
+      fillCard();
+      return;
+    }
+    s.body.classList.add('out');
+    s.timer = setTimeout(fillCard, FADE_OUT);
+  }
+
+  function fillCard() {
+    var s = stage;
+    var view = s.next;
+    var body = s.body;
+    var active = document.activeElement;
+    hush();
+    s.timer = null;
+    s.next = null;
+    body.textContent = '';
+    body.className = 'card-body';
+    if (view.screen === 'checkpoint') s.live = fillCheckpoint(body, view.checkpoint);
+    else if (view.card.type === 'match') s.live = fillMatch(body, view.card);
+    else s.live = fillChoice(body, view.card);
+    void body.offsetWidth;
+    body.classList.add('in');
+    if (!active || active === document.body || active === s.main || active === s.skip || s.card.contains(active)) {
+      s.card.focus({ preventScroll: true });
+    }
+  }
+
+  function labelRow(card) {
+    if (!card.chip && !card.topicTitle) return null;
+    return el('div', { class: 'card-labels' }, [
+      card.chip ? el('span', { class: 'chip ' + card.chip.kind, text: card.chip.text }) : null,
+      card.topicLabel ? el('span', { class: 'label topic-label', text: card.topicLabel }) : null,
+      card.topicTitle ? el('span', { class: 'topic-title', text: card.topicTitle }) : null
+    ]);
+  }
+
+  function sentenceNode(text, base) {
+    var p = el('p', { class: 'sentence', lang: 'lt' });
+    var gaps = [];
+    String(text).split(GAP).forEach(function (part, i) {
+      var gap = null;
+      if (i > 0) {
+        gap = el('span', { class: 'gap', text: ' ' });
+        gaps.push(gap);
+        p.appendChild(gap);
+        if (base && i === 1) {
+          p.appendChild(document.createTextNode(' '));
+          p.appendChild(el('span', { class: 'base', text: '(' + base + ')' }));
+        }
+      }
+      p.appendChild(document.createTextNode(part));
+    });
+    return { node: p, gaps: gaps };
+  }
+
+  function wordNode(bits, word, lang) {
+    if (bits && bits.stem) {
+      return el('span', { class: 'word', lang: lang }, [
+        el('span', { class: 'stem', text: bits.stem }),
+        el('span', { class: 'tail', text: bits.tail })
+      ]);
+    }
+    return el('span', { class: 'word', lang: lang }, [el('span', { class: 'whole', text: word })]);
+  }
+
+  function feedbackNode(fb) {
+    var text = [fb.text, fb.note].filter(Boolean).join(' ');
+    var rule = null;
+    var box = el('div', { class: 'feedback ' + fb.kind, role: 'status' }, [
+      el('span', { class: 'label', lang: langOf(fb.label), text: fb.label })
+    ]);
+    if (text) box.appendChild(el('p', { class: 'fb-text', text: text }));
+    if (fb.sr) box.appendChild(el('span', { class: 'sr', text: fb.sr }));
+    if (fb.rule && fb.rule.section.rule) {
+      rule = ruleButton(fb.rule.label);
+      rule.addEventListener('click', openTaskHint);
+      box.appendChild(rule);
+    }
+    if (fb.mono) box.appendChild(el('span', { class: 'fb-mono', text: fb.mono }));
+    return box;
+  }
+
+  function fold(node, instant) {
+    if (instant || reducedMotion()) {
+      node.hidden = true;
+      return;
+    }
+    node.style.height = node.offsetHeight + 'px';
+    void node.offsetHeight;
+    node.classList.add('fold');
+    node.style.height = '0px';
+    setTimeout(function () { node.hidden = true; }, FOLD + 20);
+  }
+
+  function fillChoice(body, card) {
+    var item = card.item;
+    var lang = item.optLang || 'lt';
+    var sent = sentenceNode(item.q, card.base);
+    var answer = el('div', { class: 'answer' });
+    var labels = labelRow(card);
+    var short = card.options.every(function (o) { return o.length <= 14; });
+    var cols = short && (card.options.length === 2 || card.options.length === 3);
+    var layout = 'options' + (cols ? ' cols' : '') + (cols && card.options.length === 2 ? ' two' : '');
+    var list = null;
+    var buttons = [];
+    var closed = false;
+
+    function choose(i) {
+      var view = null;
+      if (closed || !session) return;
+      view = session.answer(i);
+      if (view) show(view, 'answer');
+    }
+
+    function options(fresh) {
+      list = el('div', { class: layout + (fresh ? ' fresh' : '') });
+      buttons = card.options.map(function (o, i) {
+        var b = el('button', { class: 'opt', type: 'button', lang: lang }, [
+          el('span', { class: 'k', 'aria-hidden': 'true', text: pad(i + 1) }),
+          el('span', { class: 'opt-text', text: o }),
+          el('span', { class: 'ic', 'aria-hidden': 'true' })
+        ]);
+        b.addEventListener('click', function () { choose(i); });
+        list.appendChild(b);
+        return b;
+      });
+      answer.appendChild(list);
+    }
+
+    function placeholders() {
+      var middle = Math.floor((card.placeholders - 1) / 2);
+      var box = el('div', { class: layout });
+      var i = 0;
+      for (i = 0; i < card.placeholders; i++) {
+        box.appendChild(i === middle
+          ? el('span', { class: 'ph', text: card.caption })
+          : el('span', { class: 'ph', 'aria-hidden': 'true' }));
+      }
+      answer.appendChild(box);
+    }
+
+    function answered(fb, instant) {
+      var keep = {};
+      var stacked = window.getComputedStyle(list).display !== 'grid';
+      closed = true;
+      fb.rows.forEach(function (r) { keep[r.index] = r; });
+      buttons.forEach(function (b, i) {
+        var r = keep[i];
+        var text = b.querySelector('.opt-text');
+        if (document.activeElement === b) b.blur();
+        b.disabled = true;
+        if (!r) {
+          if (stacked) fold(b, instant);
+          return;
+        }
+        b.classList.add(r.state);
+        b.querySelector('.ic').innerHTML = ICONS[r.state];
+        text.textContent = '';
+        text.appendChild(wordNode(r, r.option, lang));
+      });
+      sent.gaps.forEach(function (gap) {
+        gap.textContent = fb.answer;
+        gap.classList.add('ok');
+      });
+      answer.appendChild(feedbackNode(fb));
+    }
+
+    if (labels) body.appendChild(labels);
+    if (item.prompt) body.appendChild(el('p', { class: 'prompt', text: item.prompt }));
+    if (item.lang) sent.node.setAttribute('lang', item.lang);
+    body.appendChild(sent.node);
+    if (item.tr) body.appendChild(el('p', { class: 'tr', lang: 'ru', text: item.tr }));
+    body.appendChild(answer);
+    if (card.hidden) placeholders();
+    else options(false);
+    if (card.feedback && list) answered(card.feedback, true);
+
+    return {
+      pick: function (n) {
+        if (n >= 1 && n <= buttons.length) choose(n - 1);
+      },
+      reveal: function (now) {
+        card = now;
+        answer.textContent = '';
+        options(true);
+      },
+      answered: function (fb) { answered(fb, false); },
+      close: function () { closed = true; }
+    };
+  }
+
+  function fillMatch(body, card) {
+    var item = card.item;
+    var total = item.pairs.length;
     var colL = el('div', { class: 'col' });
     var colR = el('div', { class: 'col' });
+    var box = el('div', { class: 'match' }, [colL, colR]);
+    var answer = el('div', { class: 'answer' }, [box]);
+    var labels = labelRow(card);
+    var prompt = el('p', {
+      class: 'prompt',
+      text: item.prompt || 'Соедини пары: нажми слово слева, потом его пару справа.'
+    });
+    var keep = boards[card.key] || (boards[card.key] = { solved: [], wrong: [] });
+    var tiles = { L: [], R: [] };
+    var selected = null;
+    var solved = keep.solved;
+    var wrong = keep.wrong;
+    var closed = false;
 
     function tile(entry, side, col) {
       var lang = side === 'L' ? (item.leftLang || 'lt') : (item.rightLang || 'ru');
-      var b = el('button', { class: 'tilebtn', type: 'button', lang: lang, text: entry.t });
-      b.addEventListener('click', function () { pick({ b: b, i: entry.i, side: side }); });
+      var b = el('button', { class: 'tilebtn', type: 'button', lang: lang, text: entry.text });
+      tiles[side][entry.pair] = b;
+      b.addEventListener('click', function () { pick({ b: b, pair: entry.pair, side: side }); });
       col.appendChild(b);
     }
-    left.forEach(function (e) { tile(e, 'L', colL); });
-    right.forEach(function (e) { tile(e, 'R', colR); });
-    card.appendChild(el('div', { class: 'match' }, [colL, colR]));
+
+    function settle(b) {
+      if (document.activeElement === b) b.blur();
+      b.classList.remove('sel');
+      b.classList.remove('miss');
+      b.classList.add('done');
+      b.disabled = true;
+    }
+
+    function finish() {
+      var view = session ? session.answer({ wrong: wrong }) : null;
+      closed = true;
+      if (view) show(view, 'answer');
+    }
 
     function pick(p) {
-      if (finished || p.b.disabled) return;
-      if (!selected) {
+      var a = selected;
+      if (closed || p.b.disabled) return;
+      if (!a) {
         selected = p;
         p.b.classList.add('sel');
         return;
       }
-      if (selected.b === p.b) {
+      if (a.b === p.b) {
         p.b.classList.remove('sel');
         selected = null;
         return;
       }
-      if (selected.side === p.side) {
-        selected.b.classList.remove('sel');
+      if (a.side === p.side) {
+        a.b.classList.remove('sel');
         selected = p;
         p.b.classList.add('sel');
         return;
       }
-      var a = selected;
       selected = null;
       a.b.classList.remove('sel');
-      if (a.i === p.i) {
-        [a.b, p.b].forEach(function (x) {
-          x.classList.add('done');
-          x.disabled = true;
-        });
-        matched++;
-        if (matched === pairs.length) complete();
+      if (a.pair === p.pair) {
+        settle(a.b);
+        settle(p.b);
+        solved.push(p.pair);
+        if (solved.length === total) finish();
         return;
       }
-      mistakes++;
+      wrong.push(a.side === 'L' ? [a.pair, p.pair] : [p.pair, a.pair]);
       [a.b, p.b].forEach(function (x) {
         x.classList.add('miss');
-        setTimeout(function () { x.classList.remove('miss'); }, 450);
+        setTimeout(function () { x.classList.remove('miss'); }, MISS_FLASH);
       });
     }
 
-    function complete() {
-      finished = true;
-      var ok = mistakes === 0;
-      card.appendChild(ok
-        ? feedback(true, 'Teisingai', ['Все пары без ошибок.'], item.note)
-        : feedback(false, 'Su klaidomis', ['Все пары собраны. Ошибок: ' + mistakes + '.'], item.note));
-      done(ok);
+    function answered(fb) {
+      closed = true;
+      prompt.hidden = true;
+      box.textContent = '';
+      box.className = 'match solved';
+      solved.forEach(function (i) {
+        box.appendChild(tiles.L[i]);
+        box.appendChild(tiles.R[i]);
+      });
+      answer.appendChild(feedbackNode(fb));
     }
-    return card;
+
+    if (labels) body.appendChild(labels);
+    body.appendChild(prompt);
+    body.appendChild(answer);
+    card.left.forEach(function (e) { tile(e, 'L', colL); });
+    card.right.forEach(function (e) { tile(e, 'R', colR); });
+    if (card.feedback) {
+      item.pairs.forEach(function (p, i) {
+        if (solved.indexOf(i) < 0) solved.push(i);
+      });
+    }
+    solved.forEach(function (i) {
+      settle(tiles.L[i]);
+      settle(tiles.R[i]);
+    });
+    if (card.feedback) answered(card.feedback);
+
+    return {
+      pick: null,
+      reveal: null,
+      answered: answered,
+      close: function () { closed = true; }
+    };
   }
 
-  function verdict(score, total) {
-    var r = score / total;
-    if (r === 1) return 'Puiku! Без единой ошибки.';
-    if (r >= 0.8) return 'Labai gerai! Почти всё верно.';
-    if (r >= 0.5) return 'Neblogai. Посмотри ошибки ниже и попробуй ещё раз.';
-    return 'Стоит открыть подсказки к ошибкам ниже и пройти тему снова.';
+  function fillCheckpoint(body, c) {
+    body.classList.add('checkpoint');
+    body.appendChild(el('span', { class: 'label checkpoint-label', text: c.label }));
+    body.appendChild(el('p', { class: 'score' }, [c.score, ' ', el('small', { text: c.of })]));
+    if (c.mono) body.appendChild(el('p', { class: 'meta-line', text: c.mono }));
+    body.appendChild(el('p', { class: 'lead', text: c.line }));
+    return null;
   }
 
-  function mistakeNode(item) {
-    if (item.type === 'match') {
-      return el('li', null, [
-        el('span', { text: item.prompt || 'Пары' }),
-        el('span', { class: 'sub', text: item.pairs.map(function (p) { return p[0] + ' — ' + p[1]; }).join(' · ') })
-      ]);
+  function onKey(e) {
+    var s = stage;
+    var enter = e.key === 'Enter' || e.key === ' ' || e.code === 'Space';
+    var n = 0;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (dialogOpen()) return;
+    if (!s || !s.view) return;
+    if (e.repeat) {
+      if (enter) e.preventDefault();
+      return;
     }
-    var q = String(item.q);
-    var li = el('li', { lang: item.lang || 'lt' });
-    if (q.indexOf('___') >= 0) {
-      var parts = q.split('___');
-      parts.forEach(function (part, i) {
-        if (i > 0) li.appendChild(el('span', { class: 'ans', lang: item.optLang || 'lt', text: item.answer }));
-        li.appendChild(document.createTextNode(part));
+    if (enter) {
+      if (e.target && e.target.closest && e.target.closest('button, a, input, select, textarea')) return;
+      e.preventDefault();
+      pressMain();
+      return;
+    }
+    if (e.code === 'KeyH' || e.key === '?' || (e.code === 'Slash' && e.shiftKey)) {
+      e.preventDefault();
+      openTaskHint();
+      return;
+    }
+    if (e.code === 'KeyS') {
+      e.preventDefault();
+      skipTask();
+      return;
+    }
+    n = parseInt(e.key, 10);
+    if (n >= 1 && s.live && s.live.pick && !s.timer) {
+      e.preventDefault();
+      s.live.pick(n);
+    }
+  }
+
+  function verdictNode(r) {
+    var text = r.verdict;
+    var title = '';
+    var at = -1;
+    r.topics.forEach(function (t) {
+      var i = text.indexOf(t.title);
+      if (i >= 0 && t.title.length > title.length) {
+        title = t.title;
+        at = i;
+      }
+    });
+    if (at < 0) return el('p', { class: 'lead', text: text });
+    return el('p', { class: 'lead' }, [text.slice(0, at), el('b', { text: title }), text.slice(at + title.length)]);
+  }
+
+  function topicRow(t) {
+    var rule = null;
+    var row = el('div', { class: 'topic' }, [
+      el('div', { class: 'topic-top' }, [
+        el('span', { class: 'topic-name', text: t.title }),
+        el('span', { class: 'topic-count', text: t.text })
+      ]),
+      barNode('topic-bar', [['is-ok', t.right], ['is-bad', t.wrong]])
+    ]);
+    if (t.rule && t.section.rule) {
+      rule = ruleButton('Правило', 'Правило: ' + t.title);
+      rule.addEventListener('click', function () { openRule(t.section); });
+      row.appendChild(rule);
+    }
+    if (t.sub) row.appendChild(el('span', { class: 'fb-mono', text: t.sub }));
+    return row;
+  }
+
+  function mistakeNode(m) {
+    var item = m.item;
+    var lang = item.optLang || 'lt';
+    var li = el('li');
+    var q = null;
+    var cut = [];
+    if (m.board) {
+      li.appendChild(el('span', { class: 'mist-q', text: m.text }));
+      if (m.note) li.appendChild(el('span', { class: 'sub', text: m.note }));
+      return li;
+    }
+    q = el('span', { class: 'mist-q', lang: item.lang || 'lt' });
+    cut = String(item.q).split(GAP);
+    if (cut.length > 1) {
+      cut.forEach(function (part, i) {
+        if (i > 0) q.appendChild(el('span', { class: 'ans', lang: lang, text: m.answer }));
+        q.appendChild(document.createTextNode(part));
       });
     } else {
-      li.appendChild(document.createTextNode(q + ' → '));
-      li.appendChild(el('span', { class: 'ans', lang: item.optLang || 'lt', text: item.answer }));
+      q.appendChild(document.createTextNode(item.q + ' → '));
+      q.appendChild(el('span', { class: 'ans', lang: lang, text: m.answer }));
     }
-    if (item.tr) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.tr }));
-    if (item.note) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: item.note }));
-    if (item.section && item.section.rule) {
-      var link = el('button', { class: 'linkbtn', type: 'button', lang: 'ru' }, [
-        el('span', { class: 'q-mini', 'aria-hidden': 'true', text: '?' }),
-        'Правило: ' + item.section.title
-      ]);
-      link.addEventListener('click', function () { openHint(item.section); });
-      li.appendChild(link);
-    }
+    li.appendChild(q);
+    li.appendChild(el('span', { class: 'mist-yours' }, ['Твой ответ: ', wordNode(m.parts, m.chosen, lang)]));
+    if (m.tr) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: m.tr }));
+    if (m.note) li.appendChild(el('span', { class: 'sub', lang: 'ru', text: m.note }));
     return li;
   }
 
-  function finish(state) {
-    var t = state.test;
-    var total = state.queue.length;
-    var answered = state.answered;
-    var correct = state.correct;
-    if (t.id !== 'mistakes' && answered > 0) {
-      store.last[t.id] = { correct: correct, answered: answered, total: total };
-      writeStore();
+  function mistakeGroup(g) {
+    var rule = null;
+    var head = el('div', { class: 'mist-head' }, [el('h3', { class: 'mist-title', text: g.title })]);
+    if (g.section.rule) {
+      rule = el('button', { class: 'linkbtn', type: 'button', 'aria-label': 'Правило: ' + g.title, text: '? Правило' });
+      rule.addEventListener('click', function () { openRule(g.section); });
+      head.appendChild(rule);
     }
-    clear(testLabel(t));
-    app.appendChild(el('div', { class: 'quiz-top' }, [backLink(), siteMenu()]));
-    app.appendChild(el('p', { class: 'eyebrow label', text: testLabel(t) }));
-    app.appendChild(el('h1', { class: 'result-title', text: 'Результат' }));
-    if (answered === 0) {
-      app.appendChild(el('p', { class: 'lead', text: 'Ответов пока нет: тест остановлен до первого ответа.' }));
-    } else {
-      app.appendChild(el('p', { class: 'score' }, [String(correct), ' ', el('small', { text: 'из ' + answered })]));
-      app.appendChild(el('p', {
-        class: 'meta-line',
-        text: answered < total ? 'Отвечено ' + answered + ' из ' + total : 'Тема пройдена полностью: ' + total + ' из ' + total
-      }));
-      app.appendChild(el('p', { class: 'lead', text: verdict(correct, answered) }));
+    return el('section', { class: 'mist-group' }, [head, el('ul', { class: 'mist' }, g.items.map(mistakeNode))]);
+  }
+
+  function renderResult(view) {
+    var r = view.result;
+    var page = el('div', { class: 'result' });
+    var acts = el('div', { class: 'actions' });
+    clear(view.title);
+    shown = 'result';
+    page.appendChild(el('div', { class: 'quiz-top' }, [backLink(), siteMenu()]));
+    page.appendChild(el('p', { class: 'eyebrow label', text: view.eyebrow }));
+    page.appendChild(el('h1', { class: 'result-title', text: r.title }));
+    if (r.next.primary) acts.appendChild(actionButton(r.next.primary));
+    if (r.next.secondary) acts.appendChild(actionButton(r.next.secondary));
+    if (r.empty) {
+      page.appendChild(el('p', { class: 'lead', text: r.next.line }));
+      page.appendChild(acts);
+      app.appendChild(page);
+      app.focus({ preventScroll: true });
+      return;
     }
-    var again = el('button', { class: 'btn primary', type: 'button', text: t.id === 'mistakes' ? 'Ещё раз' : 'Пройти заново' });
-    again.addEventListener('click', function () {
-      if (t.id === 'mistakes') {
-        var items = mistakeItems();
-        if (items.length) start({ id: 'mistakes', title: t.title, items: items });
-        else home();
-      } else {
-        start(t);
-      }
-    });
-    var acts = el('div', { class: 'actions' }, [again]);
-    acts.appendChild(el('a', { class: 'btn', href: '#/', text: 'Все темы' }));
-    app.appendChild(acts);
-    if (state.wrong.length) {
-      app.appendChild(el('h2', { class: 'list-title', text: 'Ошибки: ' + state.wrong.length }));
-      app.appendChild(el('ul', { class: 'mist' }, state.wrong.map(mistakeNode)));
+    page.appendChild(el('p', { class: 'score' }, [r.score, ' ', el('small', { text: r.of })]));
+    page.appendChild(resultTrack(r.track));
+    if (r.mono) page.appendChild(el('p', { class: 'meta-line', text: r.mono }));
+    if (r.verdict) page.appendChild(verdictNode(r));
+    page.appendChild(el('h2', { class: 'list-title', text: 'Что дальше' }));
+    if (acts.firstChild) page.appendChild(acts);
+    if (r.next.line) page.appendChild(el('p', { class: 'next-line', text: r.next.line }));
+    if (r.topics.length) {
+      page.appendChild(el('h2', { class: 'list-title', text: 'По темам' }));
+      page.appendChild(el('div', { class: 'topics' }, r.topics.map(topicRow)));
     }
+    if (r.mistakesTitle) {
+      page.appendChild(el('h2', { class: 'list-title', text: r.mistakesTitle }));
+      r.mistakes.forEach(function (g) { page.appendChild(mistakeGroup(g)); });
+    }
+    app.appendChild(page);
+    app.focus({ preventScroll: true });
   }
 })();
